@@ -141,6 +141,7 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       <Terminal />
       <PhoneBooth />
       <BellDesk />
+      <ProjectsDoor />
       <FreightDoor />
       <CampusDoor />
       <GalleryDoor />
@@ -438,6 +439,32 @@ function LuggageCart() {
       <RoundedBox args={[0.9, 0.6, 0.8]} radius={0.1} smoothness={3} position={[0.7, 0.95, 0]} castShadow>
         <meshStandardMaterial color={C.pink} roughness={0.9} />
       </RoundedBox>
+    </group>
+  );
+}
+
+/** the wide, unlocked way into the projects wall */
+function ProjectsDoor() {
+  return (
+    <group position={[-5.2, 0, -9.6]}>
+      <RoundedBox args={[6.4, 7.4, 0.4]} radius={0.16} smoothness={4} position={[0, 3.7, 0]} castShadow>
+        <meshStandardMaterial color={C.plum} roughness={0.8} />
+      </RoundedBox>
+      <mesh position={[0, 3.5, 0.24]}>
+        <planeGeometry args={[5.4, 6]} />
+        <meshStandardMaterial color="#181229" roughness={0.9} />
+      </mesh>
+      {/* the three boards, glowing through the doorway */}
+      {[-1, 0, 1].map((i) => (
+        <mesh key={i} position={[i * 1.7, 4.4, 0.26]}>
+          <planeGeometry args={[1.35, 1.7]} />
+          <meshStandardMaterial color={C.neon} emissive={C.neon} emissiveIntensity={0.4} toneMapped={false} />
+        </mesh>
+      ))}
+      <mesh position={[0, 7.8, 0.1]}>
+        <planeGeometry args={[6.4, 0.9]} />
+        <meshStandardMaterial color={C.neon} emissive={C.neon} emissiveIntensity={0.9} toneMapped={false} />
+      </mesh>
     </group>
   );
 }

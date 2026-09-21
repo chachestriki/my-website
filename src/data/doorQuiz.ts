@@ -8,9 +8,13 @@ export type DoorQuestion = {
   note: string;
 };
 
-/** each scene door asks one question before it opens; keyed by station id */
+/**
+ * Only the side rooms ask a question before they open; keyed by station id.
+ * Projects, Vice Resell, the career log and contact stay open — a recruiter
+ * should never have to pass a test to see the work.
+ */
 export const doorQuiz: Record<string, DoorQuestion[]> = {
-  factory: [
+  study: [
     {
       question: "In Python, what does a dict comprehension `{k: v for k, v in pairs}` do with duplicate keys?",
       options: ["Raises KeyError", "Keeps the last value", "Keeps the first value", "Stores a list of both"],
@@ -29,8 +33,6 @@ export const doorQuiz: Record<string, DoorQuestion[]> = {
       answer: 0,
       note: "Constant on average, linear in the pathological collision case.",
     },
-  ],
-  study: [
     {
       question: "What does SQL's `LEFT JOIN` keep that an `INNER JOIN` drops?",
       options: [
@@ -55,7 +57,7 @@ export const doorQuiz: Record<string, DoorQuestion[]> = {
       note: "`==` coerces types first, which is why `0 == \"\"` is true.",
     },
   ],
-  career: [
+  hobbies: [
     {
       question: "What does an index on a database column mainly trade away?",
       options: ["Read speed", "Write speed and storage", "Consistency", "Type safety"],
@@ -79,8 +81,6 @@ export const doorQuiz: Record<string, DoorQuestion[]> = {
       answer: 2,
       note: "Touching mutable globals is exactly what makes a function impure.",
     },
-  ],
-  hobbies: [
     {
       question: "What does `git stash` do with your uncommitted changes?",
       options: [
