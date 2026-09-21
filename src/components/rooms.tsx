@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import IntegrationBoard from "@/components/IntegrationBoard";
-import { education, profile, roles, skills } from "@/data/cv";
+import { career } from "@/data/career";
+import { education, profile, skills } from "@/data/cv";
 import { viceResell } from "@/data/viceResell";
 
 export function AboutRoom() {
@@ -28,10 +29,8 @@ export function AboutRoom() {
       <div>
         <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Mission</h3>
         <p className="mt-2 text-sm leading-relaxed text-ink/75">
-          Legacy operational systems — PMS, CRM, POS, payment gateways — hold the real business
-          logic of entire industries, and almost none of it is reachable by modern software or by
-          agents. I build the layer that makes it reachable: typed APIs, idempotent jobs, and MCP
-          tools that let an LLM actually <em>do</em> the work instead of describing it.
+          Make legacy hotel systems reachable — typed APIs, idempotent jobs and MCP tools an agent
+          can actually <em>use</em>.
         </p>
       </div>
 
@@ -72,51 +71,35 @@ export function ProjectsRoom() {
   return (
     <div className="space-y-4">
       <p className="text-sm leading-relaxed text-ink/70">
-        This is the back office of the hotel — the wiring diagram behind the front desk. Hover a
-        node to isolate what it touches; click it for the case study.
+        The wiring behind the front desk. Hover a node, click it for the detail.
       </p>
       <IntegrationBoard />
     </div>
   );
 }
 
-export function ExperienceRoom() {
+export function CareerRoom() {
   return (
-    <div className="space-y-6">
-      <p className="font-mono text-xs uppercase tracking-widest text-teal">
-        PMS terminal · career log
-      </p>
-      <ol className="relative space-y-6 border-l border-brass/25 pl-6">
-        {roles.map((r, i) => (
+    <div className="space-y-5">
+      <ol className="relative space-y-4 border-l border-brass/25 pl-6">
+        {career.map((s, i) => (
           <motion.li
-            key={r.id}
+            key={s.id}
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.06 }}
             className="relative"
           >
-            <span className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-brass bg-[#fff6ea]" />
+            <span
+              className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-[#fff6ea]"
+              style={{ background: s.color }}
+            />
             <div className="flex flex-wrap items-baseline gap-x-3">
-              <h3 className="text-lg font-semibold text-brass">{r.company}</h3>
-              <p className="font-mono text-xs text-ink/50">{r.period}</p>
+              <h3 className="font-semibold text-brass">{s.company}</h3>
+              <p className="font-mono text-xs text-ink/50">{s.period}</p>
             </div>
-            <p className="text-sm text-ink/60">{r.role}</p>
-            <p className="mt-2 text-sm leading-relaxed text-ink/80">{r.summary}</p>
-            <ul className="mt-2 space-y-1.5 text-sm text-ink/70">
-              {r.highlights.map((h) => (
-                <li key={h} className="flex gap-2">
-                  <span className="text-brass/70">▸</span>
-                  <span>{h}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {r.stack.map((s) => (
-                <span key={s} className="rounded border border-brass/25 px-2 py-0.5 font-mono text-[11px] text-brass/90">
-                  {s}
-                </span>
-              ))}
-            </div>
+            <p className="text-xs text-ink/55">{s.role}</p>
+            <p className="mt-1 text-sm leading-relaxed text-ink/80">{s.note}</p>
           </motion.li>
         ))}
       </ol>
@@ -124,7 +107,7 @@ export function ExperienceRoom() {
         href="/cv"
         className="inline-block rounded-lg border border-brass/40 bg-brass/10 px-4 py-2 text-sm text-brass transition hover:bg-brass/20"
       >
-        Open the plain-text CV →
+        Full CV →
       </a>
     </div>
   );
@@ -162,8 +145,7 @@ export function ConciergeRoom() {
   return (
     <div className="space-y-4">
       <p className="text-sm leading-relaxed text-ink/70">
-        At Room Mate I put ElevenLabs voice agents on top of hotel operations. This is the same idea,
-        scripted — no API key required.
+        A scripted version of the voice agents I put on hotel operations.
       </p>
       <div className="max-h-80 space-y-3 overflow-y-auto rounded-xl border border-brass/20 bg-[#fff6ea] p-4">
         {log.map((l, i) => (
@@ -205,9 +187,7 @@ export function ContactRoom() {
   ];
   return (
     <div className="space-y-5">
-      <p className="text-sm leading-relaxed text-ink/70">
-        Ring the bell. I read everything that isn&apos;t a recruiter template.
-      </p>
+      <p className="text-sm leading-relaxed text-ink/70">Ring the bell.</p>
       <ul className="space-y-2">
         {links.map((l) => (
           <li key={l.label} className="flex items-baseline gap-4">
@@ -241,8 +221,7 @@ export function EducationRoom() {
       tint: "from-[#ffb03a]/25",
       accent: "text-[#c0392b]",
       notes: [
-        "Management & Technology: accounting, finance and strategy taught next to systems and data.",
-        "Learned to argue a business case in Spanish before writing the code that backed it.",
+        "Management & Technology: finance and strategy next to systems and data.",
         "Where the hospitality and operations side of my work started.",
       ],
     },
@@ -253,9 +232,8 @@ export function EducationRoom() {
       tint: "from-[#3f72d8]/25",
       accent: "text-[#2f5fbf]",
       notes: [
-        "Computer Science and Business: algorithms, systems and databases, plus the commercial half.",
-        "Project-heavy engineering culture — ship it, measure it, defend it.",
-        "Where the software engineering discipline behind Vice Resell came from.",
+        "Computer Science and Business: algorithms, systems and databases.",
+        "Project-heavy: ship it, measure it, defend it.",
       ],
     },
   ];
@@ -263,9 +241,7 @@ export function EducationRoom() {
   return (
     <div className="space-y-6">
       <p className="text-sm leading-relaxed text-ink/75">
-        Two halves of the same degree path, 8,000 km apart: business in Madrid, computers in Texas.
-        The campus plaza behind the lobby door is that split — Alcalá, Cibeles and a café desk on one
-        side, the Capitol dome, a longhorn and a lab bench on the other, a globe in the middle.
+        One degree path, 8,000 km apart: business in Madrid, computers in Texas.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -293,9 +269,7 @@ export function EducationRoom() {
       </div>
 
       <p className="text-sm leading-relaxed text-ink/70">
-        The combination is the point: I can read a P&L and a stack trace in the same afternoon, which
-        is why the systems I build are judged on what they do to the business, not on their
-        architecture diagrams.
+        The combination is the point: a P&amp;L and a stack trace in the same afternoon.
       </p>
     </div>
   );
