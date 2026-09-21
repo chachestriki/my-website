@@ -80,4 +80,29 @@ export const doorQuiz: Record<string, DoorQuestion[]> = {
       note: "Touching mutable globals is exactly what makes a function impure.",
     },
   ],
+  hobbies: [
+    {
+      question: "What does `git stash` do with your uncommitted changes?",
+      options: [
+        "Deletes them",
+        "Saves them aside and cleans the tree",
+        "Commits them to HEAD",
+        "Pushes them to the remote",
+      ],
+      answer: 1,
+      note: "They wait on a stack until you `git stash pop` them back.",
+    },
+    {
+      question: "Which data structure works first-in, first-out?",
+      options: ["Stack", "Queue", "Heap", "Set"],
+      answer: 1,
+      note: "A stack is LIFO; a queue is FIFO.",
+    },
+    {
+      question: "What is `localhost:3000` in a dev URL?",
+      options: ["A public domain", "Your own machine on port 3000", "A DNS record", "A proxy"],
+      answer: 1,
+      note: "localhost resolves to 127.0.0.1 — the machine you're sitting at.",
+    },
+  ],
 };

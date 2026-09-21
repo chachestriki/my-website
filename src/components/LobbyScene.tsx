@@ -9,6 +9,7 @@ import {
   ConciergeRoom,
   ContactRoom,
   EducationRoom,
+  HobbiesRoom,
   ProjectsRoom,
   ViceResellRoom,
 } from "@/components/rooms";
@@ -17,6 +18,7 @@ import DoorQuiz from "@/components/DoorQuiz";
 import ViceResellPanel from "@/components/ViceResellPanel";
 import CampusPanel from "@/components/CampusPanel";
 import GalleryPanel from "@/components/GalleryPanel";
+import HobbiesPanel from "@/components/HobbiesPanel";
 import HatMark from "@/components/HatMark";
 import { stations } from "@/data/stations";
 import { profile } from "@/data/cv";
@@ -58,13 +60,23 @@ const Gallery3D = dynamic(() => import("@/components/Gallery3D"), {
   ),
 });
 
-type SceneId = "factory" | "campus" | "gallery";
+const Hobbies3D = dynamic(() => import("@/components/Hobbies3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center bg-[#3a2233] font-mono text-sm text-[#ff2fa0]">
+      Plugging in…
+    </div>
+  ),
+});
+
+type SceneId = "factory" | "campus" | "gallery" | "hobbies";
 
 /** which station opens which full 3D scene */
 const SCENES: Record<string, SceneId> = {
   factory: "factory",
   study: "campus",
   career: "gallery",
+  hobbies: "hobbies",
 };
 
 const CONTENT: Record<string, ReactNode> = {
@@ -75,6 +87,7 @@ const CONTENT: Record<string, ReactNode> = {
   bell: <ContactRoom />,
   study: <EducationRoom />,
   factory: <ViceResellRoom />,
+  hobbies: <HobbiesRoom />,
 };
 
 export default function LobbyScene() {
@@ -179,11 +192,15 @@ export default function LobbyScene() {
             {scene === "gallery" && (
               <Gallery3D api={api} onMove={onMove} onDesk={openPanel} panelOpen={panel} />
             )}
+            {scene === "hobbies" && (
+              <Hobbies3D api={api} onMove={onMove} onDesk={openPanel} panelOpen={panel} />
+            )}
 
             <AnimatePresence>
               {panel && scene === "factory" && <ViceResellPanel onClose={closePanel} />}
               {panel && scene === "campus" && <CampusPanel onClose={closePanel} />}
               {panel && scene === "gallery" && <GalleryPanel onClose={closePanel} />}
+              {panel && scene === "hobbies" && <HobbiesPanel onClose={closePanel} />}
             </AnimatePresence>
 
             {!panel && (

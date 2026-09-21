@@ -11,14 +11,16 @@ A game-like personal site: a saturated cartoon hotel lobby rendered in 3D (top-d
 | Service bell | Contact + CV |
 | Education door | Swaps the lobby for the Madrid/Texas campus |
 | Freight door | Swaps the lobby for the Vice Resell clothing factory |
+| Lounge door | Swaps the lobby for the hobbies and personal goals room |
 
-Each door is locked behind a multiple-choice programming question (`src/data/doorQuiz.ts`): pick the right answer once and that room stays unlocked for the session. The three doors replace the whole scene with another walkable world; `Esc` or the back button returns to the lobby. Inside a scene the side panel is not fixed: walk onto the stand or press `1` to open it, `Esc` or `✕` closes it without leaving the room.
+Each door is locked behind a multiple-choice programming question (`src/data/doorQuiz.ts`): pick the right answer once and that room stays unlocked for the session. The four doors replace the whole scene with another walkable world; `Esc` or the back button returns to the lobby. Inside a scene the side panel is not fixed: walk onto the stand or press `1` to open it, `Esc` or `✕` closes it without leaving the room.
 
 - **Career hall** — framed company logos on a timeline: Lenovo, a marketing agency, Mastel Hospitality, Vice Resell, ODYN AI, Room Mate Hotels (`src/data/career.ts`).
 - **Campus** — Puerta de Alcalá, Cibeles, the bear and the madroño and a café desk on the Madrid side; the Capitol dome, a water tower, a pumpjack, a longhorn and a CS lab bench on the Texas side, with a globe on the meridian between them.
 - **Factory floor** — moving garment rails, shoe conveyors, stockroom shelving, dense hanger aisles, a packing bench and a photo studio, plus a side panel about the fashion-industry software. Panel photos live in `public/vice-resell/` and are wired up in `src/data/viceResell.ts`.
+- **Hobbies lounge** — an electric guitar on its stand with an amp, a family tree painted on the wall and one framed memory per story. Drop photos in `public/hobbies/` and set each memory's `src` in `src/data/hobbies.ts`; a frame paints a placeholder until then.
 
-Keyboard: `1`–`7` jump to a station, `1` toggles the panel inside a scene, `WASD`/arrows walk relative to the camera, `Esc` closes a panel or leaves a scene. Mobile falls back to a linear list, and `/cv` is a plain recruiter-friendly résumé.
+Keyboard: `1`–`8` jump to a station, `1` toggles the panel inside a scene, `WASD`/arrows walk relative to the camera, `Esc` closes a panel or leaves a scene. Mobile falls back to a linear list, and `/cv` is a plain recruiter-friendly résumé.
 
 ## Stack
 

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import IntegrationBoard from "@/components/IntegrationBoard";
 import { career } from "@/data/career";
 import { education, profile, skills } from "@/data/cv";
+import { hobbies } from "@/data/hobbies";
 import { viceResell } from "@/data/viceResell";
 
 export function AboutRoom() {
@@ -208,6 +209,33 @@ export function ContactRoom() {
       >
         Read the CV →
       </a>
+    </div>
+  );
+}
+
+export function HobbiesRoom() {
+  return (
+    <div className="space-y-5">
+      <p className="text-sm leading-relaxed text-ink/75">{hobbies.intro}</p>
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {hobbies.memories.map((m) => (
+          <li key={m.id} className="rounded-2xl border-2 border-white bg-white/60 p-4">
+            <div className="flex flex-wrap items-baseline gap-x-2">
+              <h3 className="font-semibold text-brass">{m.title}</h3>
+              <p className="font-mono text-[11px] text-ink/45">{m.when}</p>
+            </div>
+            <p className="mt-1 text-sm leading-relaxed text-ink/75">{m.note}</p>
+          </li>
+        ))}
+      </ul>
+      <div>
+        <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Next up</h3>
+        <ul className="mt-2 space-y-1 text-sm text-ink/75">
+          {hobbies.goals.map((g) => (
+            <li key={g}>· {g}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

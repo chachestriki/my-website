@@ -63,6 +63,15 @@ export const stations: Station[] = [
     kind: "scene",
   },
   {
+    id: "hobbies",
+    object: "Lounge door",
+    title: "Hobbies",
+    subtitle: "Guitar, family, challenges",
+    label: [-11.4, 8.4, -7.4],
+    stand: [-10.2, -7.4],
+    kind: "scene",
+  },
+  {
     id: "factory",
     object: "Freight door",
     title: "Vice Resell floor",

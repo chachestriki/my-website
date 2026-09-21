@@ -144,6 +144,7 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       <FreightDoor />
       <CampusDoor />
       <GalleryDoor />
+      <LoungeDoor />
       <Plant x={-11} z={6.5} />
       <Plant x={11.5} z={4} />
       <Sofa />
@@ -295,6 +296,38 @@ function FreightDoor() {
       <mesh position={[0, 7, 0.1]}>
         <planeGeometry args={[4.4, 0.9]} />
         <meshStandardMaterial color={C.magenta} emissive={C.magenta} emissiveIntensity={0.8} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
+/** the door into the hobbies lounge */
+function LoungeDoor() {
+  return (
+    <group position={[-12.9, 0, -7.4]} rotation={[0, Math.PI / 2, 0]}>
+      <RoundedBox args={[4.2, 6.4, 0.4]} radius={0.16} smoothness={4} position={[0, 3.2, 0]} castShadow>
+        <meshStandardMaterial color={C.mint} roughness={0.8} />
+      </RoundedBox>
+      <mesh position={[0, 3.2, 0.24]}>
+        <planeGeometry args={[3.4, 5.4]} />
+        <meshStandardMaterial color="#2c1c3a" roughness={0.9} />
+      </mesh>
+      {/* a guitar silhouette on the door: body, neck and headstock */}
+      <mesh position={[0, 2.2, 0.28]}>
+        <circleGeometry args={[0.85, 28]} />
+        <meshStandardMaterial color={C.pink} emissive={C.pink} emissiveIntensity={0.5} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 4, 0.28]}>
+        <planeGeometry args={[0.34, 2.8]} />
+        <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.4} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 5.5, 0.28]}>
+        <planeGeometry args={[0.6, 0.7]} />
+        <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.4} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 6.9, 0.1]}>
+        <planeGeometry args={[4.2, 0.8]} />
+        <meshStandardMaterial color={C.mint} emissive={C.mint} emissiveIntensity={0.7} toneMapped={false} />
       </mesh>
     </group>
   );
