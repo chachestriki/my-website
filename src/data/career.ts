@@ -20,6 +20,7 @@ export const career: CareerStop[] = [
     period: "2021",
     note: "Hardware, big-company process, first taste of enterprise.",
     color: "#e2231a",
+    logo: "/career/lenovo.jpg",
   },
   {
     id: "agency",
@@ -36,7 +37,8 @@ export const career: CareerStop[] = [
     role: "Full-stack engineer",
     period: "2023 – 2026",
     note: "Payments and PMS automation: FreedomPay ↔ Opera Cloud, on Kubernetes.",
-    color: "#1f7ae0",
+    color: "#c4a860",
+    logo: "/career/mastel.jpg",
   },
   {
     id: "vice-resell",
@@ -62,6 +64,7 @@ export const career: CareerStop[] = [
     role: "Full-stack engineer",
     period: "2026 – now",
     note: "Opera Cloud ↔ Salesforce, plus an MCP tool layer for LLM agents.",
-    color: "#f2a33c",
+    color: "#0b39a8",
+    logo: "/career/room-mate.jpg",
   },
 ];
