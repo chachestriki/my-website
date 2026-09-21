@@ -7,7 +7,7 @@ const CONTROLS: { keys: string[]; action: string }[] = [
   { keys: ["click"], action: "walk to that spot" },
   { keys: ["W", "A", "S", "D"], action: "step around" },
   { keys: ["↑", "←", "↓", "→"], action: "step around" },
-  { keys: ["1", "–", "7"], action: "go to a station" },
+  { keys: ["1", "–", "8"], action: "go to a station" },
   { keys: ["1"], action: "in a room: open the panel" },
   { keys: ["esc"], action: "close · leave a room" },
 ];

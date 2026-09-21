@@ -29,6 +29,12 @@ export const viceResell = {
     { value: "5.0 ★", label: "426 Whop reviews" },
     { value: "Acquired", label: "exit in 2026" },
   ],
+  earnings: {
+    heading: "Gross transaction value",
+    value: "11.617,30 US$",
+    body: "Whop payouts the software drove, 2016 – 2026.",
+    src: "/vice-resell/earnings.png",
+  },
   /** verbatim public reviews from the Whop listing */
   testimonials: [
     {

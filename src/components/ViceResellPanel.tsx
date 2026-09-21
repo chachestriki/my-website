@@ -55,6 +55,22 @@ export default function ViceResellPanel({ onClose }: { onClose: () => void }) {
         <span className="mt-2 inline-block font-mono text-[11px] text-[#00e5ff]">whop.com/vice-resell →</span>
       </a>
 
+      <div className="rounded-2xl border border-[#b6ff3d]/35 bg-white/5 p-3">
+        <p className="font-mono text-[10px] uppercase tracking-widest text-[#00e5ff]">
+          {viceResell.earnings.heading}
+        </p>
+        <p className="text-lg font-extrabold text-[#b6ff3d]">{viceResell.earnings.value}</p>
+        <Image
+          src={viceResell.earnings.src}
+          alt={`${viceResell.earnings.heading} — ${viceResell.earnings.value}`}
+          width={1024}
+          height={404}
+          className="mt-2 w-full rounded-lg bg-white"
+          sizes="400px"
+        />
+        <p className="mt-2 text-xs leading-relaxed text-[#e8f0ff]/65">{viceResell.earnings.body}</p>
+      </div>
+
       {viceResell.blocks.map((b) => (
         <div key={b.heading}>
           <h3 className="font-mono text-[11px] uppercase tracking-widest text-[#00e5ff]">{b.heading}</h3>

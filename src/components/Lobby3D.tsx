@@ -119,6 +119,17 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
         <boxGeometry args={[0.6, 8, 20]} />
         <meshStandardMaterial color={C.wallSide} roughness={1} />
       </mesh>
+      {/* the camera-side wall is glazed, so it frames the room without hiding it */}
+      <mesh position={[13.2, 4, 0]}>
+        <boxGeometry args={[0.3, 8, 20]} />
+        <meshStandardMaterial color="#bfe6ff" transparent opacity={0.2} roughness={0.15} />
+      </mesh>
+      {[-8, -4, 4, 8].map((z) => (
+        <mesh key={z} position={[13.2, 4, z]}>
+          <boxGeometry args={[0.36, 8, 0.18]} />
+          <meshStandardMaterial color={C.gold} roughness={0.6} metalness={0.3} />
+        </mesh>
+      ))}
       {/* skirting */}
       <mesh position={[0, 0.3, -9.65]}>
         <boxGeometry args={[27, 0.6, 0.3]} />
@@ -130,9 +141,11 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       <Terminal />
       <PhoneBooth />
       <BellDesk />
+      <ProjectsDoor />
       <FreightDoor />
       <CampusDoor />
       <GalleryDoor />
+      <LoungeDoor />
       <Plant x={-11} z={6.5} />
       <Plant x={11.5} z={4} />
       <Sofa />
@@ -266,7 +279,7 @@ function BellDesk() {
 /** the door out to the Vice Resell floor */
 function FreightDoor() {
   return (
-    <group position={[-9.4, 0, -9.6]}>
+    <group position={[-12.9, 0, 4.5]} rotation={[0, Math.PI / 2, 0]}>
       <RoundedBox args={[4.4, 6.4, 0.4]} radius={0.14} smoothness={4} position={[0, 3.2, 0]} castShadow>
         <meshStandardMaterial color={C.gold} roughness={0.6} metalness={0.15} />
       </RoundedBox>
@@ -284,6 +297,38 @@ function FreightDoor() {
       <mesh position={[0, 7, 0.1]}>
         <planeGeometry args={[4.4, 0.9]} />
         <meshStandardMaterial color={C.magenta} emissive={C.magenta} emissiveIntensity={0.8} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
+/** the door into the hobbies lounge */
+function LoungeDoor() {
+  return (
+    <group position={[-12.9, 0, -7.4]} rotation={[0, Math.PI / 2, 0]}>
+      <RoundedBox args={[4.2, 6.4, 0.4]} radius={0.16} smoothness={4} position={[0, 3.2, 0]} castShadow>
+        <meshStandardMaterial color={C.mint} roughness={0.8} />
+      </RoundedBox>
+      <mesh position={[0, 3.2, 0.24]}>
+        <planeGeometry args={[3.4, 5.4]} />
+        <meshStandardMaterial color="#2c1c3a" roughness={0.9} />
+      </mesh>
+      {/* a guitar silhouette on the door: body, neck and headstock */}
+      <mesh position={[0, 2.2, 0.28]}>
+        <circleGeometry args={[0.85, 28]} />
+        <meshStandardMaterial color={C.pink} emissive={C.pink} emissiveIntensity={0.5} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 4, 0.28]}>
+        <planeGeometry args={[0.34, 2.8]} />
+        <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.4} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 5.5, 0.28]}>
+        <planeGeometry args={[0.6, 0.7]} />
+        <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.4} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 6.9, 0.1]}>
+        <planeGeometry args={[4.2, 0.8]} />
+        <meshStandardMaterial color={C.mint} emissive={C.mint} emissiveIntensity={0.7} toneMapped={false} />
       </mesh>
     </group>
   );
@@ -398,6 +443,32 @@ function LuggageCart() {
   );
 }
 
+/** the wide, unlocked way into the projects wall */
+function ProjectsDoor() {
+  return (
+    <group position={[-5.2, 0, -9.6]}>
+      <RoundedBox args={[6.4, 7.4, 0.4]} radius={0.16} smoothness={4} position={[0, 3.7, 0]} castShadow>
+        <meshStandardMaterial color={C.plum} roughness={0.8} />
+      </RoundedBox>
+      <mesh position={[0, 3.5, 0.24]}>
+        <planeGeometry args={[5.4, 6]} />
+        <meshStandardMaterial color="#181229" roughness={0.9} />
+      </mesh>
+      {/* the three boards, glowing through the doorway */}
+      {[-1, 0, 1].map((i) => (
+        <mesh key={i} position={[i * 1.7, 4.4, 0.26]}>
+          <planeGeometry args={[1.35, 1.7]} />
+          <meshStandardMaterial color={C.neon} emissive={C.neon} emissiveIntensity={0.4} toneMapped={false} />
+        </mesh>
+      ))}
+      <mesh position={[0, 7.8, 0.1]}>
+        <planeGeometry args={[6.4, 0.9]} />
+        <meshStandardMaterial color={C.neon} emissive={C.neon} emissiveIntensity={0.9} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
 /** the door into the career hall */
 function GalleryDoor() {
   return (
@@ -427,7 +498,7 @@ function GalleryDoor() {
 /** the door out to the education campus */
 function CampusDoor() {
   return (
-    <group position={[11.5, 0, -9.6]}>
+    <group position={[12.9, 0, -1]} rotation={[0, -Math.PI / 2, 0]}>
       <RoundedBox args={[4.6, 6.8, 0.4]} radius={0.16} smoothness={4} position={[0, 3.4, 0]} castShadow>
         <meshStandardMaterial color={C.wood} roughness={0.8} />
       </RoundedBox>

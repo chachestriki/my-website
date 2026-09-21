@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import IntegrationBoard from "@/components/IntegrationBoard";
 import { career } from "@/data/career";
 import { education, profile, skills } from "@/data/cv";
+import { hobbies } from "@/data/hobbies";
+import { projects } from "@/data/projects";
 import { viceResell } from "@/data/viceResell";
 
 export function AboutRoom() {
@@ -69,11 +71,40 @@ export function AboutRoom() {
 
 export function ProjectsRoom() {
   return (
-    <div className="space-y-4">
-      <p className="text-sm leading-relaxed text-ink/70">
-        The wiring behind the front desk. Hover a node, click it for the detail.
-      </p>
-      <IntegrationBoard />
+    <div className="space-y-5">
+      <ul className="space-y-4">
+        {projects.map((p) => (
+          <li key={p.id} className="rounded-2xl border-2 border-white bg-white/60 p-4">
+            <div className="flex flex-wrap items-baseline gap-x-2">
+              <h3 className="text-lg font-bold text-brass">{p.name}</h3>
+              <p className="font-mono text-[11px] text-ink/45">{p.period}</p>
+            </div>
+            <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: p.color }}>
+              {p.role}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-ink/75">{p.blurb}</p>
+            <ul className="mt-2 space-y-1 text-xs leading-relaxed text-ink/65">
+              {p.bullets.map((b) => (
+                <li key={b}>· {b}</li>
+              ))}
+            </ul>
+            {p.link && (
+              <a
+                href={p.link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-block rounded-lg border border-brass/40 bg-brass/10 px-3 py-1.5 text-xs text-brass transition hover:bg-brass/20"
+              >
+                {p.link.label} →
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div>
+        <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-teal">Systems I&apos;ve wired together</p>
+        <IntegrationBoard />
+      </div>
     </div>
   );
 }
@@ -208,6 +239,33 @@ export function ContactRoom() {
       >
         Read the CV →
       </a>
+    </div>
+  );
+}
+
+export function HobbiesRoom() {
+  return (
+    <div className="space-y-5">
+      <p className="text-sm leading-relaxed text-ink/75">{hobbies.intro}</p>
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {hobbies.memories.map((m) => (
+          <li key={m.id} className="rounded-2xl border-2 border-white bg-white/60 p-4">
+            <div className="flex flex-wrap items-baseline gap-x-2">
+              <h3 className="font-semibold text-brass">{m.title}</h3>
+              <p className="font-mono text-[11px] text-ink/45">{m.when}</p>
+            </div>
+            <p className="mt-1 text-sm leading-relaxed text-ink/75">{m.note}</p>
+          </li>
+        ))}
+      </ul>
+      <div>
+        <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Next up</h3>
+        <ul className="mt-2 space-y-1 text-sm text-ink/75">
+          {hobbies.goals.map((g) => (
+            <li key={g}>· {g}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
