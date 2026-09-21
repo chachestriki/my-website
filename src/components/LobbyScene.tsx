@@ -14,6 +14,8 @@ import {
 } from "@/components/rooms";
 import ControlsLegend from "@/components/ControlsLegend";
 import ViceResellPanel from "@/components/ViceResellPanel";
+import CampusPanel from "@/components/CampusPanel";
+import HatMark from "@/components/HatMark";
 import { stations } from "@/data/stations";
 import { profile } from "@/data/cv";
 import type { LobbyApi } from "@/components/Lobby3D";
@@ -36,6 +38,21 @@ const Factory3D = dynamic(() => import("@/components/Factory3D"), {
   ),
 });
 
+const Campus3D = dynamic(() => import("@/components/Campus3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center bg-[#7fd0ff] font-mono text-sm text-white">
+      Boarding the flight…
+    </div>
+  ),
+});
+
+/** which station opens which full 3D scene */
+const SCENES: Record<string, "factory" | "campus"> = {
+  factory: "factory",
+  study: "campus",
+};
+
 const CONTENT: Record<string, ReactNode> = {
   "front-desk": <AboutRoom />,
   "key-rack": <ProjectsRoom />,
@@ -50,7 +67,7 @@ export default function LobbyScene() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [near, setNear] = useState<string | null>(null);
   const [moved, setMoved] = useState(false);
-  const [inFactory, setInFactory] = useState(false);
+  const [scene, setScene] = useState<"factory" | "campus" | null>(null);
 
   const api = useRef<LobbyApi>({});
   const open = stations.find((s) => s.id === openId) ?? null;
@@ -59,22 +76,22 @@ export default function LobbyScene() {
   const onOpen = useCallback((id: string) => {
     const s = stations.find((v) => v.id === id);
     if (s?.kind === "scene") {
-      setInFactory(true);
+      setScene(SCENES[id] ?? null);
       setNear(null);
       return;
     }
     setOpenId(id);
   }, []);
-  const leaveFactory = useCallback(() => setInFactory(false), []);
+  const leaveScene = useCallback(() => setScene(null), []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (openId) return close();
-        return leaveFactory();
+        return leaveScene();
       }
       const n = Number(e.key);
-      if (!inFactory && n >= 1 && n <= stations.length) return api.current.goTo?.(stations[n - 1].id);
+      if (!scene && n >= 1 && n <= stations.length) return api.current.goTo?.(stations[n - 1].id);
       /* screen-relative: +right walks right on screen, +forward walks away from the camera */
       const nudge: Record<string, [number, number]> = {
         ArrowLeft: [-3, 0],
@@ -94,25 +111,38 @@ export default function LobbyScene() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [close, inFactory, leaveFactory, openId]);
+  }, [close, leaveScene, openId, scene]);
 
   return (
     <div className="relative min-h-dvh lobby-vignette">
       {/* ---------------- desktop / tablet: the walkable 3D lobby ---------------- */}
       <div className="relative hidden h-dvh w-full overflow-hidden md:block">
-        {inFactory ? (
+        {scene ? (
           <motion.div
-            key="factory"
+            key={scene}
             initial={{ opacity: 0, scale: 1.06 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
             className="absolute inset-0"
           >
-            <Factory3D api={api} onMove={onMove} />
-            <ViceResellPanel onClose={leaveFactory} />
+            {scene === "factory" ? (
+              <>
+                <Factory3D api={api} onMove={onMove} />
+                <ViceResellPanel onClose={leaveScene} />
+              </>
+            ) : (
+              <>
+                <Campus3D api={api} onMove={onMove} />
+                <CampusPanel onClose={leaveScene} />
+              </>
+            )}
             <button
-              onClick={leaveFactory}
-              className="absolute left-6 top-6 z-30 rounded-full border-2 border-[#00e5ff]/60 bg-[#141a2b]/80 px-4 py-2 font-mono text-xs font-semibold text-[#00e5ff] transition hover:bg-[#00e5ff] hover:text-[#141a2b]"
+              onClick={leaveScene}
+              className={`absolute left-6 top-6 z-30 rounded-full border-2 px-4 py-2 font-mono text-xs font-semibold transition ${
+                scene === "factory"
+                  ? "border-[#00e5ff]/60 bg-[#141a2b]/80 text-[#00e5ff] hover:bg-[#00e5ff] hover:text-[#141a2b]"
+                  : "border-white bg-white/85 text-brass hover:bg-brass hover:text-white"
+              }`}
             >
               ← back to the lobby
             </button>
@@ -121,7 +151,7 @@ export default function LobbyScene() {
           <Lobby3D api={api} onNear={setNear} onOpen={onOpen} onMove={onMove} />
         )}
 
-        {!moved && !inFactory && (
+        {!moved && !scene && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -132,13 +162,16 @@ export default function LobbyScene() {
           </motion.div>
         )}
 
-        {!inFactory && <ControlsLegend />}
+        {!scene && <ControlsLegend />}
 
-        {!inFactory && (
+        {!scene && (
         <header className="pointer-events-none absolute left-0 right-0 top-0 z-20 flex items-start justify-between p-6">
-          <div className="pointer-events-auto rounded-2xl border-2 border-white bg-white/85 px-4 py-2.5 shadow-[0_6px_0_rgba(107,91,143,0.12)]">
-            <h1 className="text-xl font-extrabold tracking-tight text-brass">{profile.name}</h1>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-ink/50">{profile.title}</p>
+          <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border-2 border-white bg-white/85 px-4 py-2.5 shadow-[0_6px_0_rgba(107,91,143,0.12)]">
+            <HatMark className="h-9 w-9 shrink-0" />
+            <div>
+              <h1 className="text-xl font-extrabold tracking-tight text-brass">{profile.name}</h1>
+              <p className="font-mono text-[11px] uppercase tracking-widest text-ink/50">{profile.title}</p>
+            </div>
           </div>
           <nav className="pointer-events-auto flex items-center gap-3 text-xs">
             <a
@@ -151,7 +184,7 @@ export default function LobbyScene() {
         </header>
         )}
 
-        {!inFactory && (
+        {!scene && (
         <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-wrap items-center justify-center gap-2 p-5">
           {stations.map((s, i) => (
             <button
@@ -174,6 +207,7 @@ export default function LobbyScene() {
       {/* ---------------- mobile: linear mode ---------------- */}
       <div className="md:hidden">
         <div className="space-y-2 px-5 pb-4 pt-8">
+          <HatMark className="h-10 w-10" />
           <h1 className="text-2xl font-extrabold text-brass">{profile.name}</h1>
           <p className="font-mono text-xs uppercase tracking-widest text-ink/50">{profile.title}</p>
           <p className="pt-2 text-sm leading-relaxed text-ink/75">{profile.tagline}</p>

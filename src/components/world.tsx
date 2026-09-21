@@ -120,12 +120,15 @@ export function useWalker({
   return { targetRef, playerRef, walkTo, zoom };
 }
 
+/** `shift` pushes the framing towards screen-right, to keep the player clear of a side panel */
 export function CameraRig({
   posRef,
   start,
+  shift = 0,
 }: {
   posRef: MutableRefObject<THREE.Vector3>;
   start: [number, number, number];
+  shift?: number;
 }) {
   const camera = useThree((s) => s.camera);
   const look = useRef(new THREE.Vector3(...start));
@@ -134,8 +137,10 @@ export function CameraRig({
     const dt = Math.min(delta, 0.05);
     look.current.x = THREE.MathUtils.damp(look.current.x, posRef.current.x, 3.5, dt);
     look.current.z = THREE.MathUtils.damp(look.current.z, posRef.current.z, 3.5, dt);
-    camera.position.set(look.current.x + CAM_OFFSET[0], CAM_OFFSET[1], look.current.z + CAM_OFFSET[2]);
-    camera.lookAt(look.current.x, 2.2, look.current.z);
+    const cx = look.current.x + RIGHT.x * shift;
+    const cz = look.current.z + RIGHT.y * shift;
+    camera.position.set(cx + CAM_OFFSET[0], CAM_OFFSET[1], cz + CAM_OFFSET[2]);
+    camera.lookAt(cx, 2.2, cz);
   });
 
   return null;
