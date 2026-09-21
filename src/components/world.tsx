@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type MutableRefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -66,23 +66,27 @@ export function useWalker({
   bounds,
   start,
   onMove,
+  fit = 1,
 }: {
   api: MutableRefObject<LobbyApi>;
   spots: Spot[];
   bounds: Bounds;
   start: [number, number, number];
   onMove: () => void;
+  /** multiplier on the fitted zoom, to frame a room tighter or wider */
+  fit?: number;
 }) {
   const targetRef = useRef<THREE.Vector3 | null>(null);
   const playerRef = useRef(new THREE.Vector3(...start));
   const [zoom, setZoom] = useState(30);
 
   useEffect(() => {
-    const fit = () => setZoom(Math.min(window.innerWidth / 36, window.innerHeight / 23));
-    fit();
-    window.addEventListener("resize", fit);
-    return () => window.removeEventListener("resize", fit);
-  }, []);
+    const measure = () =>
+      setZoom(Math.min(window.innerWidth / 36, window.innerHeight / 23) * fit);
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [fit]);
 
   useEffect(() => {
     const ref = api;
@@ -210,12 +214,93 @@ export function InfoStand({
   );
 }
 
+/** a door sign: the room's name painted on a lit board, plus an "extra" tag for quiz rooms */
+export function DoorSign({
+  label,
+  extra = false,
+  color,
+  width = 4.4,
+}: {
+  label: string;
+  extra?: boolean;
+  color: string;
+  width?: number;
+}) {
+  const texture = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1024;
+    canvas.height = 220;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    ctx.fillStyle = "#1b1430";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, canvas.width, 10);
+    ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#fff6ea";
+    ctx.font = "800 104px ui-sans-serif, system-ui, sans-serif";
+    ctx.fillText(label.toUpperCase(), canvas.width / 2, extra ? 92 : canvas.height / 2);
+    if (extra) {
+      ctx.fillStyle = color;
+      ctx.font = "600 44px ui-monospace, monospace";
+      ctx.fillText("side room · quiz", canvas.width / 2, 172);
+    }
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 4;
+    return tex;
+  }, [color, extra, label]);
+
+  if (!texture) return null;
+  return (
+    <mesh>
+      <planeGeometry args={[width, width * 0.215]} />
+      <meshStandardMaterial map={texture} emissiveMap={texture} emissive="#ffffff" emissiveIntensity={0.55} toneMapped={false} />
+    </mesh>
+  );
+}
+
+/** a pulsing ring with a bobbing arrow, dropped on the spot the visitor should try first */
+export function Beacon({ x, z, color }: { x: number; z: number; color: string }) {
+  const ring = useRef<THREE.Mesh>(null);
+  const arrow = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    if (ring.current) {
+      const s = 1 + (t % 1.6) * 0.75;
+      ring.current.scale.setScalar(s);
+      (ring.current.material as THREE.MeshBasicMaterial).opacity = Math.max(0, 0.75 - (t % 1.6) * 0.5);
+    }
+    if (arrow.current) arrow.current.position.y = 4.6 + Math.sin(t * 3) * 0.35;
+  });
+
+  return (
+    <group position={[x, 0, z]}>
+      <mesh ref={ring} position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[1.5, 1.9, 40]} />
+        <meshBasicMaterial color={color} transparent opacity={0.7} toneMapped={false} />
+      </mesh>
+      <mesh ref={arrow} position={[0, 4.6, 0]} rotation={[Math.PI, 0, 0]}>
+        <coneGeometry args={[0.6, 1.2, 4]} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.9} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
 /** the penguin in a stetson: walks to a target, waddles, flaps, tips his hat */
 export function Penguin({
   targetRef,
   posRef,
   spots,
   start,
+  facing = 0,
   onNear,
   onOpen,
 }: {
@@ -223,6 +308,8 @@ export function Penguin({
   posRef: MutableRefObject<THREE.Vector3>;
   spots: Spot[];
   start: [number, number, number];
+  /** initial heading in radians, so he can already look at the first door */
+  facing?: number;
   onNear: (id: string | null) => void;
   onOpen: (id: string) => void;
 }) {
@@ -297,7 +384,7 @@ export function Penguin({
   });
 
   return (
-    <group ref={group} position={start} scale={1.25}>
+    <group ref={group} position={start} rotation={[0, facing, 0]} scale={1.25}>
       {/* webbed feet */}
       <mesh ref={legL} position={[-0.22, 0.16, 0.06]} castShadow>
         <boxGeometry args={[0.34, 0.16, 0.56]} />

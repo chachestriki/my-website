@@ -5,7 +5,18 @@ import { Canvas, type ThreeEvent } from "@react-three/fiber";
 import { Html, OrthographicCamera, RoundedBox } from "@react-three/drei";
 import { useMemo } from "react";
 import { stations } from "@/data/stations";
-import { C, CAM_OFFSET, CameraRig, Penguin, Pad, useWalker, type LobbyApi } from "@/components/world";
+import {
+  Beacon,
+  C,
+  CAM_OFFSET,
+  CameraRig,
+  DoorSign,
+  Penguin,
+  Pad,
+  useWalker,
+  type LobbyApi,
+} from "@/components/world";
+import { doorQuiz } from "@/data/doorQuiz";
 
 
 export type { LobbyApi };
@@ -18,11 +29,14 @@ export default function Lobby3D({
   onNear,
   onOpen,
   onMove,
+  moved,
 }: {
   api: MutableRefObject<LobbyApi>;
   onNear: (id: string | null) => void;
   onOpen: (id: string) => void;
   onMove: () => void;
+  /** before the first step only the projects door is labelled, to keep the first view calm */
+  moved: boolean;
 }) {
   const spots = useMemo(() => stations.map((s) => ({ id: s.id, stand: s.stand })), []);
   const { targetRef, playerRef, walkTo, zoom } = useWalker({
@@ -31,7 +45,9 @@ export default function Lobby3D({
     bounds: BOUNDS,
     start: START,
     onMove,
+    fit: 1.06,
   });
+  const projects = stations.find((s) => s.id === "projects");
 
   return (
     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true }} style={{ touchAction: "none" }}>
@@ -55,16 +71,26 @@ export default function Lobby3D({
       />
 
       <Lobby onFloorClick={walkTo} />
+      <Signpost onGo={(id) => api.current.goTo?.(id)} />
+
+      {!moved && projects && <Beacon x={projects.stand[0]} z={projects.stand[1]} color={C.neon} />}
 
       {stations.map((s) => (
         <group key={s.id}>
           <Pad x={s.stand[0]} z={s.stand[1]} onClick={() => api.current.goTo?.(s.id)} />
+          {(moved || s.id === "projects") && (
           <Html position={s.label} center zIndexRange={[10, 0]} className="pointer-events-none">
             <div className="whitespace-nowrap rounded-2xl border-2 border-white bg-white/90 px-3 py-1.5 text-center shadow-[0_6px_0_rgba(107,91,143,0.18)]">
               <span className="block font-mono text-[10px] uppercase tracking-widest text-teal">{s.object}</span>
               <span className="block text-sm font-bold text-brass">{s.title}</span>
+              {s.kind === "scene" && Boolean(doorQuiz[s.id]?.length) && (
+                <span className="block font-mono text-[9px] uppercase tracking-widest text-ink/40">
+                  side room · quiz
+                </span>
+              )}
             </div>
           </Html>
+          )}
         </group>
       ))}
 
@@ -73,10 +99,85 @@ export default function Lobby3D({
         posRef={playerRef}
         spots={spots}
         start={START}
+        facing={Math.atan2((projects?.stand[0] ?? 0) - START[0], (projects?.stand[1] ?? 0) - START[2])}
         onNear={onNear}
         onOpen={onOpen}
       />
     </Canvas>
+  );
+}
+
+/** the arrows you read on arrival: every section, and which way it is */
+const DIRECTIONS: { id: string; label: string; color: string }[] = [
+  { id: "projects", label: "Projects", color: C.neon },
+  { id: "career", label: "Career log", color: C.gold },
+  { id: "factory", label: "Vice Resell", color: C.magenta },
+  { id: "study", label: "Education", color: C.sky },
+  { id: "hobbies", label: "Hobbies", color: C.mint },
+  { id: "bell", label: "Contact", color: C.pink },
+];
+
+/** where the post stands, and the yaw that turns a sign flat towards the camera */
+const SIGN: [number, number] = [-5.4, 7.6];
+const SIGN_YAW = Math.atan2(CAM_OFFSET[2], CAM_OFFSET[0]) + Math.PI / 2;
+
+function Signpost({ onGo }: { onGo: (id: string) => void }) {
+  const arms = useMemo(
+    () =>
+      DIRECTIONS.map((d) => {
+        const s = stations.find((v) => v.id === d.id);
+        const yaw = s ? Math.atan2(s.stand[0] - SIGN[0], s.stand[1] - SIGN[1]) : 0;
+        return { ...d, arrow: yaw - SIGN_YAW };
+      }),
+    []
+  );
+
+  return (
+    <group position={[SIGN[0], 0, SIGN[1]]}>
+      <mesh position={[0, 3.6, 0]} castShadow>
+        <cylinderGeometry args={[0.16, 0.2, 7.2, 12]} />
+        <meshStandardMaterial color={C.woodDark} roughness={0.9} />
+      </mesh>
+      <mesh position={[0, 0.12, 0]} receiveShadow>
+        <cylinderGeometry args={[0.9, 1.1, 0.24, 20]} />
+        <meshStandardMaterial color={C.wood} roughness={0.9} />
+      </mesh>
+      <mesh position={[0, 7.4, 0]} castShadow>
+        <coneGeometry args={[0.45, 0.7, 12]} />
+        <meshStandardMaterial color={C.gold} roughness={0.5} metalness={0.3} />
+      </mesh>
+      {arms.map((a, i) => (
+        <group
+          key={a.id}
+          position={[0, 6.6 - i * 0.82, 0]}
+          rotation={[0, SIGN_YAW, 0]}
+          onClick={(e) => {
+            e.stopPropagation();
+            onGo(a.id);
+          }}
+        >
+          <group position={[0, 0, 1.9]}>
+            <RoundedBox args={[0.32, 0.66, 3.6]} radius={0.06} smoothness={3} castShadow>
+              <meshStandardMaterial color={a.color} roughness={0.75} />
+            </RoundedBox>
+            <group position={[-0.18, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+              <DoorSign label={a.label} color={a.color} width={3.4} />
+            </group>
+            <group position={[0, 0, 2.1]} rotation={[0, a.arrow, 0]}>
+              <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
+                <coneGeometry args={[0.3, 0.72, 4]} />
+                <meshStandardMaterial color={a.color} roughness={0.7} />
+              </mesh>
+            </group>
+          </group>
+        </group>
+      ))}
+      <Html position={[0, 8.4, 0]} center zIndexRange={[10, 0]} className="pointer-events-none">
+        <div className="whitespace-nowrap rounded-full border-2 border-white bg-white/90 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-brass">
+          this way
+        </div>
+      </Html>
+    </group>
   );
 }
 
@@ -293,11 +394,10 @@ function FreightDoor() {
           <meshStandardMaterial color={C.gold} roughness={0.6} />
         </mesh>
       ))}
-      {/* factory sign over the door */}
-      <mesh position={[0, 7, 0.1]}>
-        <planeGeometry args={[4.4, 0.9]} />
-        <meshStandardMaterial color={C.magenta} emissive={C.magenta} emissiveIntensity={0.8} toneMapped={false} />
-      </mesh>
+      <Handle y={3.2} x={1.5} />
+      <group position={[0, 7.1, 0.1]}>
+        <DoorSign label="Vice Resell" color={C.magenta} width={4.8} />
+      </group>
     </group>
   );
 }
@@ -326,10 +426,10 @@ function LoungeDoor() {
         <planeGeometry args={[0.6, 0.7]} />
         <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.4} toneMapped={false} />
       </mesh>
-      <mesh position={[0, 6.9, 0.1]}>
-        <planeGeometry args={[4.2, 0.8]} />
-        <meshStandardMaterial color={C.mint} emissive={C.mint} emissiveIntensity={0.7} toneMapped={false} />
-      </mesh>
+      <Handle y={3.2} x={1.4} />
+      <group position={[0, 7, 0.1]}>
+        <DoorSign label="Hobbies" color={C.mint} width={4.6} extra />
+      </group>
     </group>
   );
 }
@@ -461,10 +561,28 @@ function ProjectsDoor() {
           <meshStandardMaterial color={C.neon} emissive={C.neon} emissiveIntensity={0.4} toneMapped={false} />
         </mesh>
       ))}
-      <mesh position={[0, 7.8, 0.1]}>
-        <planeGeometry args={[6.4, 0.9]} />
-        <meshStandardMaterial color={C.neon} emissive={C.neon} emissiveIntensity={0.9} toneMapped={false} />
+      <Handle y={3.2} x={2.2} />
+      <group position={[0, 7.9, 0.1]}>
+        <DoorSign label="Projects" color={C.neon} width={6.4} />
+      </group>
+    </group>
+  );
+}
+
+/** the push bar every door gets, so a doorway reads as a door */
+function Handle({ x, y }: { x: number; y: number }) {
+  return (
+    <group position={[x, y, 0.3]}>
+      <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.09, 0.09, 1.3, 10]} />
+        <meshStandardMaterial color={C.gold} roughness={0.4} metalness={0.5} />
       </mesh>
+      {[-0.6, 0.6].map((dy) => (
+        <mesh key={dy} position={[0, dy, -0.12]} rotation={[0, Math.PI / 2, 0]}>
+          <cylinderGeometry args={[0.06, 0.06, 0.26, 8]} />
+          <meshStandardMaterial color={C.gold} roughness={0.4} metalness={0.5} />
+        </mesh>
+      ))}
     </group>
   );
 }
@@ -487,10 +605,10 @@ function GalleryDoor() {
           <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.35} toneMapped={false} />
         </mesh>
       ))}
-      <mesh position={[0, 7, 0.1]}>
-        <planeGeometry args={[4.2, 0.8]} />
-        <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.7} toneMapped={false} />
-      </mesh>
+      <Handle y={3.3} x={1.4} />
+      <group position={[0, 7.1, 0.1]}>
+        <DoorSign label="Career log" color={C.gold} width={4.6} />
+      </group>
     </group>
   );
 }
@@ -515,6 +633,10 @@ function CampusDoor() {
         <circleGeometry args={[2.3, 24, 0, Math.PI]} />
         <meshStandardMaterial color="#ffe08a" emissive="#ffb703" emissiveIntensity={0.4} roughness={0.9} />
       </mesh>
+      <Handle y={3.4} x={1.6} />
+      <group position={[0, 8.1, 0.16]}>
+        <DoorSign label="Education" color={C.sky} width={4.8} extra />
+      </group>
       {/* pennants over the doorway, half Spain, half Texas */}
       {Array.from({ length: 7 }, (_, i) => (
         <mesh key={i} position={[-2.4 + i * 0.8, 7.4 - Math.sin((i / 6) * Math.PI) * 0.35, 0.3]} rotation={[0, 0, Math.PI]}>

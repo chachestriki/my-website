@@ -48,8 +48,24 @@ body {
   }
 }
 
+@keyframes bars {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.animate-bars {
+  transform-origin: bottom;
+  animation: bars 0.9s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  [class*="pad-pulse"] {
+  [class*="pad-pulse"],
+  .animate-bars {
     animation: none;
   }
 }

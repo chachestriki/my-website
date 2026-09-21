@@ -23,6 +23,8 @@ import ProjectsPanel from "@/components/ProjectsPanel";
 import OdynPanel from "@/components/OdynPanel";
 import BotLabPanel from "@/components/BotLabPanel";
 import HatMark from "@/components/HatMark";
+import Intro from "@/components/Intro";
+import LofiToggle from "@/components/LofiToggle";
 import { stations } from "@/data/stations";
 import { doorQuiz } from "@/data/doorQuiz";
 import { profile } from "@/data/cv";
@@ -33,6 +35,15 @@ const Lobby3D = dynamic(() => import("@/components/Lobby3D"), {
   loading: () => (
     <div className="flex h-full w-full items-center justify-center font-mono text-sm text-brass">
       Opening the lobby…
+    </div>
+  ),
+});
+
+const Street3D = dynamic(() => import("@/components/Street3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center bg-[#8fd0ff] font-mono text-sm text-white">
+      Arriving…
     </div>
   ),
 });
@@ -111,6 +122,9 @@ const SCENES: Record<string, SceneId> = {
   hobbies: "hobbies",
 };
 
+/** rooms whose panel is already open when you walk in */
+const GREETS: SceneId[] = ["factory", "campus"];
+
 const CONTENT: Record<string, ReactNode> = {
   "front-desk": <AboutRoom />,
   projects: <ProjectsRoom />,
@@ -126,8 +140,12 @@ export default function LobbyScene() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [near, setNear] = useState<string | null>(null);
   const [moved, setMoved] = useState(false);
+  /** the lobby stays behind the intro card until the visitor chooses to play */
+  const [entered, setEntered] = useState(false);
+  const [stationList, setStationList] = useState(false);
   const [scene, setScene] = useState<SceneId | null>(null);
-  /** the scene's own panel, opened from the stand inside the room — not fixed */
+  /** the scene's own panel, opened from the stand inside the room — not fixed;
+   *  these two rooms greet you with it open instead */
   const [panel, setPanel] = useState(false);
   /** the door whose keycard question is on screen, and the doors already answered */
   const [locked, setLocked] = useState<string | null>(null);
@@ -147,7 +165,7 @@ export default function LobbyScene() {
       return next;
     });
     setNear(null);
-    setPanel(false);
+    setPanel(GREETS.includes(next));
     setLocked(null);
   }, []);
   const enterScene = useCallback(
@@ -185,6 +203,7 @@ export default function LobbyScene() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (!entered && !scene) return;
       if (e.key === "Escape") {
         if (locked) return setLocked(null);
         if (openId) return close();
@@ -214,7 +233,7 @@ export default function LobbyScene() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [close, closePanel, leaveScene, locked, openId, panel, scene]);
+  }, [close, closePanel, entered, leaveScene, locked, openId, panel, scene]);
 
   const lockedStation = stations.find((s) => s.id === locked) ?? null;
 
@@ -282,23 +301,57 @@ export default function LobbyScene() {
             </button>
           </motion.div>
         ) : (
-          <Lobby3D api={api} onNear={setNear} onOpen={onOpen} onMove={onMove} />
+          entered && (
+            <motion.div
+              className="absolute inset-0"
+              initial={{ scale: 1.14, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 1.1, ease: "easeOut" }}
+            >
+              <Lobby3D api={api} onNear={setNear} onOpen={onOpen} onMove={onMove} moved={moved} />
+            </motion.div>
+          )
         )}
 
-        {!moved && !scene && (
+        {!moved && !scene && entered && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
             className="pointer-events-none absolute bottom-24 left-1/2 z-20 -translate-x-1/2 rounded-full border-2 border-white bg-white/90 px-5 py-2.5 text-sm font-semibold text-brass shadow-[0_6px_0_rgba(107,91,143,0.15)]"
           >
-            Click the floor to walk · get close to something to open it
+            Walk to the glowing ring to open Projects
           </motion.div>
         )}
 
-        {!scene && <ControlsLegend />}
+        <AnimatePresence>
+          {!entered && !scene && (
+            <motion.div
+              key="street"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.45 }}
+              className="absolute inset-0 z-30"
+            >
+              <Street3D api={api} onEnter={() => setEntered(true)} />
+              <Intro onEnter={() => setEntered(true)} />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {!scene && (
+        {/* mounted once so the loop survives walking between rooms */}
+        <div
+          className={`pointer-events-none absolute bottom-6 z-30 transition-all ${
+            panel ? "right-4 max-sm:hidden sm:right-[25.5rem]" : "right-6"
+          }`}
+        >
+          <LofiToggle />
+        </div>
+
+        {!scene && moved && <ControlsLegend />}
+
+        {!scene && entered && (
         <header className="pointer-events-none absolute left-0 right-0 top-0 z-20 flex items-start justify-between p-6">
           <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border-2 border-white bg-white/85 px-4 py-2.5 shadow-[0_6px_0_rgba(107,91,143,0.12)]">
             <HatMark className="h-9 w-9 shrink-0" />
@@ -321,9 +374,15 @@ export default function LobbyScene() {
         </header>
         )}
 
-        {!scene && (
+        {!scene && entered && (
         <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-wrap items-center justify-center gap-2 p-5">
-          {stations.map((s, i) => (
+          <button
+            onClick={() => setStationList((v) => !v)}
+            className="pointer-events-auto rounded-full border-2 border-white bg-white/85 px-4 py-2 font-mono text-[11px] font-semibold text-brass shadow-[0_4px_0_rgba(107,91,143,0.12)] transition hover:bg-white"
+          >
+            {stationList ? "hide rooms" : "all rooms"}
+          </button>
+          {stationList && stations.map((s, i) => (
             <button
               key={s.id}
               onClick={() => api.current.goTo?.(s.id)}
@@ -334,7 +393,7 @@ export default function LobbyScene() {
               }`}
             >
               <span className={`mr-1.5 ${near === s.id ? "text-white/70" : "text-brass/70"}`}>{i + 1}</span>
-              {s.object}
+              {s.title}
               {s.kind === "scene" && Boolean(doorQuiz[s.id]?.length) && !unlocked.includes(s.id) && (
                 <span className={`ml-1.5 text-[9px] ${near === s.id ? "text-white/70" : "text-ink/40"}`}>
                   locked
