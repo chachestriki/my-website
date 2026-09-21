@@ -121,7 +121,7 @@ export default function Lobby3D({
       {stations.map((s) => (
         <group key={s.id}>
           <Pad x={s.stand[0]} z={s.stand[1]} onClick={() => api.current.goTo?.(s.id)} />
-          <Html position={s.label} center distanceFactor={26} zIndexRange={[20, 0]} className="pointer-events-none">
+          <Html position={s.label} center zIndexRange={[10, 0]} className="pointer-events-none">
             <div className="whitespace-nowrap rounded-2xl border-2 border-white bg-white/90 px-3 py-1.5 text-center shadow-[0_6px_0_rgba(107,91,143,0.18)]">
               <span className="block font-mono text-[10px] uppercase tracking-widest text-teal">{s.object}</span>
               <span className="block text-sm font-bold text-brass">{s.title}</span>
