@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useRef, type MutableRefObject } from "react";
-import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
+import { Suspense, useMemo, useRef, type MutableRefObject } from "react";
+import { Canvas, useFrame, useLoader, type ThreeEvent } from "@react-three/fiber";
 import { OrthographicCamera, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import { C, CAM_OFFSET, CameraRig, Penguin, Pad, useWalker, type LobbyApi } from "@/components/world";
@@ -149,6 +149,28 @@ function usePaintedLogo(stop: CareerStop) {
   }, [stop]);
 }
 
+/** a real logo file, matted on the painted canvas */
+function LogoCanvas({ src, color }: { src: string; color: string }) {
+  const texture = useLoader(THREE.TextureLoader, src);
+
+  return (
+    <group>
+      <mesh>
+        <planeGeometry args={[3.9, 2.7]} />
+        <meshStandardMaterial color="#fdf6ea" roughness={0.9} />
+      </mesh>
+      <mesh position={[0, 0, 0.02]}>
+        <planeGeometry args={[2.4, 2.4]} />
+        <meshStandardMaterial map={texture} map-colorSpace={THREE.SRGBColorSpace} roughness={0.85} />
+      </mesh>
+      <mesh position={[0, -1.18, 0.02]}>
+        <planeGeometry args={[3.9, 0.14]} />
+        <meshStandardMaterial color={color} roughness={0.8} />
+      </mesh>
+    </group>
+  );
+}
+
 function Painting({ stop, x, index, last }: { stop: CareerStop; x: number; index: number; last: boolean }) {
   const texture = usePaintedLogo(stop);
   const node = useRef<THREE.Mesh>(null);
@@ -166,14 +188,29 @@ function Painting({ stop, x, index, last }: { stop: CareerStop; x: number; index
       <RoundedBox args={[4.4, 3.2, 0.3]} radius={0.06} smoothness={3} position={[0, 5.4, 0]} castShadow>
         <meshStandardMaterial color={C.gold} roughness={0.45} metalness={0.35} />
       </RoundedBox>
-      <mesh position={[0, 5.4, 0.18]}>
-        <planeGeometry args={[3.9, 2.7]} />
-        {texture ? (
-          <meshStandardMaterial map={texture} roughness={0.9} />
-        ) : (
-          <meshStandardMaterial color={stop.color} roughness={0.9} />
-        )}
-      </mesh>
+      {stop.logo ? (
+        <group position={[0, 5.4, 0.18]}>
+          <Suspense
+            fallback={
+              <mesh>
+                <planeGeometry args={[3.9, 2.7]} />
+                <meshStandardMaterial color="#fdf6ea" roughness={0.9} />
+              </mesh>
+            }
+          >
+            <LogoCanvas src={stop.logo} color={stop.color} />
+          </Suspense>
+        </group>
+      ) : (
+        <mesh position={[0, 5.4, 0.18]}>
+          <planeGeometry args={[3.9, 2.7]} />
+          {texture ? (
+            <meshStandardMaterial map={texture} roughness={0.9} />
+          ) : (
+            <meshStandardMaterial color={stop.color} roughness={0.9} />
+          )}
+        </mesh>
+      )}
 
       {/* plaque */}
       <mesh position={[0, 3.45, 0.12]} castShadow>
