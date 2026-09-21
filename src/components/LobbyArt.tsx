@@ -108,18 +108,18 @@ export default function LobbyArt() {
 
       {/* floor */}
       <rect x="0" y="594" width="1600" height="306" fill="#080d1a" />
-      <path d="M 300 900 L 640 594 L 960 594 L 1300 900 Z" fill="#2a1f3d" opacity="0.55" />
-      <path d="M 340 900 L 664 610 L 936 610 L 1260 900 Z" fill="none" stroke="#d8b26a" strokeOpacity="0.25" strokeWidth="2" />
+      <path d="M 250 900 L 600 730 L 1000 730 L 1350 900 Z" fill="#2a1f3d" opacity="0.55" />
+      <path d="M 300 890 L 628 742 L 972 742 L 1300 890 Z" fill="none" stroke="#d8b26a" strokeOpacity="0.25" strokeWidth="2" />
 
       {/* reception desk */}
-      <path d="M 430 760 L 470 520 L 1130 520 L 1170 760 Z" fill="url(#desk)" stroke="#d8b26a" strokeOpacity="0.4" strokeWidth="2" />
+      <path d="M 445 690 L 470 520 L 1130 520 L 1155 690 Z" fill="url(#desk)" stroke="#d8b26a" strokeOpacity="0.4" strokeWidth="2" />
       <path d="M 424 520 L 1176 520 L 1180 548 L 420 548 Z" fill="#4a3620" />
       <path d="M 424 512 L 1176 512 L 1182 542 L 418 542 Z" fill="url(#brassGrad)" opacity="0.55" />
       <text
         x="800"
-        y="690"
+        y="625"
         textAnchor="middle"
-        fontSize="26"
+        fontSize="24"
         letterSpacing="10"
         fill="#d8b26a"
         opacity="0.75"

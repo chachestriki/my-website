@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Avatar from "@/components/Avatar";
 import LobbyArt from "@/components/LobbyArt";
 import { AboutRoom, ConciergeRoom, ContactRoom, ExperienceRoom, ProjectsRoom } from "@/components/rooms";
 import { profile } from "@/data/cv";
@@ -11,22 +12,30 @@ type Room = {
   object: string;
   title: string;
   subtitle: string;
-  hint: string;
-  /** position in % of the scene box */
+  /** the object's pin, in % of the 16:9 stage */
   x: number;
   y: number;
+  /** where the character has to stand to trigger it */
+  stand: { x: number; y: number };
   content: ReactNode;
 };
+
+/** Walkable floor, in % of the stage. */
+const FLOOR = { top: 81, bottom: 96, left: 5, right: 95 };
+/** How close (in stage %, x compressed) the character must get. */
+const TRIGGER_RADIUS = 5;
+/** Stage %-units per second. */
+const SPEED = 26;
 
 const ROOMS: Room[] = [
   {
     id: "front-desk",
-    object: "Front desk",
+    object: "Recepción",
     title: "Check in",
     subtitle: "Who I am and what I'm for",
-    hint: "The engineer behind the counter",
     x: 44,
-    y: 71,
+    y: 62,
+    stand: { x: 44, y: 93 },
     content: <AboutRoom />,
   },
   {
@@ -34,9 +43,9 @@ const ROOMS: Room[] = [
     object: "Key rack",
     title: "The integration board",
     subtitle: "Every system I've wired to another",
-    hint: "One key per system",
     x: 15.6,
     y: 32.5,
+    stand: { x: 11, y: 85 },
     content: <ProjectsRoom />,
   },
   {
@@ -44,9 +53,9 @@ const ROOMS: Room[] = [
     object: "PMS terminal",
     title: "Career log",
     subtitle: "Roles, shipped work, stack",
-    hint: "Opera Cloud, logged in",
     x: 66,
     y: 48.5,
+    stand: { x: 80, y: 85 },
     content: <ExperienceRoom />,
   },
   {
@@ -54,9 +63,9 @@ const ROOMS: Room[] = [
     object: "Voice line",
     title: "Ask the agent",
     subtitle: "A scripted version of what I built at Room Mate",
-    hint: "Pick up the receiver",
     x: 34.2,
     y: 55,
+    stand: { x: 26, y: 89 },
     content: <ConciergeRoom />,
   },
   {
@@ -64,103 +73,175 @@ const ROOMS: Room[] = [
     object: "Service bell",
     title: "Get in touch",
     subtitle: "Email, phone, CV",
-    hint: "Ring for service",
     x: 54.7,
     y: 56,
+    stand: { x: 62, y: 89 },
     content: <ContactRoom />,
   },
 ];
 
-function Hotspot({ room, onOpen }: { room: Room; onOpen: () => void }) {
-  return (
-    <button
-      onClick={onOpen}
-      aria-label={`${room.object}: ${room.title}`}
-      className="group absolute -translate-x-1/2 -translate-y-1/2 focus:outline-none"
-      style={{ left: `${room.x}%`, top: `${room.y}%` }}
-    >
-      <span className="relative flex h-10 w-10 items-center justify-center">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brass/25 [animation-duration:2.6s]" />
-        <span className="absolute inline-flex h-7 w-7 rounded-full border border-brass/50" />
-        <span className="relative inline-flex h-4 w-4 rounded-full border border-[#f4dfae] bg-brass shadow-[0_0_14px_4px_rgba(216,178,106,0.55)] transition group-hover:scale-125 group-focus-visible:scale-125" />
-      </span>
-      <span className="pointer-events-none absolute left-1/2 top-11 w-max max-w-[220px] -translate-x-1/2 rounded-lg border border-brass/30 bg-[#0b1223]/95 px-3 py-2 text-left opacity-0 shadow-xl shadow-black/50 backdrop-blur transition group-hover:opacity-100 group-focus-visible:opacity-100">
-        <span className="block font-mono text-[10px] uppercase tracking-widest text-teal">{room.object}</span>
-        <span className="block text-sm font-semibold text-brass">{room.title}</span>
-        <span className="block text-xs text-white/60">{room.subtitle}</span>
-      </span>
-    </button>
-  );
+/** x is compressed because the stage is 16:9 — keeps the trigger circle round-ish. */
+function dist(a: { x: number; y: number }, b: { x: number; y: number }) {
+  const dx = (a.x - b.x) * 0.56;
+  const dy = a.y - b.y;
+  return Math.hypot(dx, dy);
 }
 
-function Dust() {
-  const motes = Array.from({ length: 18 }, (_, i) => ({
-    left: (i * 37) % 100,
-    top: 30 + ((i * 53) % 60),
-    dur: 9 + ((i * 7) % 11),
-    delay: (i * 1.7) % 9,
-    size: 1 + (i % 3),
-  }));
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      {motes.map((m, i) => (
-        <span
-          key={i}
-          className="dust absolute rounded-full bg-brass/60"
-          style={{
-            left: `${m.left}%`,
-            top: `${m.top}%`,
-            width: m.size,
-            height: m.size,
-            animationDuration: `${m.dur}s`,
-            animationDelay: `${m.delay}s`,
-          }}
-        />
-      ))}
-    </div>
-  );
+function clampToFloor(p: { x: number; y: number }) {
+  return {
+    x: Math.min(FLOOR.right, Math.max(FLOOR.left, p.x)),
+    y: Math.min(FLOOR.bottom, Math.max(FLOOR.top, p.y)),
+  };
 }
 
 export default function LobbyScene() {
   const [openId, setOpenId] = useState<string | null>(null);
-  const open = ROOMS.find((r) => r.id === openId) ?? null;
+  const [pos, setPos] = useState({ x: 92, y: 95 });
+  const [facing, setFacing] = useState<1 | -1>(1);
+  const [walking, setWalking] = useState(false);
+  const [near, setNear] = useState<string | null>(null);
+  const [moved, setMoved] = useState(false);
 
+  const target = useRef<{ x: number; y: number } | null>(null);
+  const posRef = useRef(pos);
+  const nearRef = useRef<string | null>(null);
+  const armed = useRef(true);
+  const hasMoved = useRef(false);
+
+  const open = ROOMS.find((r) => r.id === openId) ?? null;
   const close = useCallback(() => setOpenId(null), []);
 
+  const goTo = useCallback((p: { x: number; y: number }) => {
+    const t = clampToFloor(p);
+    target.current = t;
+    hasMoved.current = true;
+    setMoved(true);
+    setWalking(true);
+    if (Math.abs(t.x - posRef.current.x) > 0.4) setFacing(t.x > posRef.current.x ? 1 : -1);
+  }, []);
+
+  /* movement loop */
+  useEffect(() => {
+    let raf = 0;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const t = target.current;
+
+      if (t) {
+        const cur = posRef.current;
+        const dx = t.x - cur.x;
+        const dy = t.y - cur.y;
+        const d = Math.hypot(dx * 0.56, dy);
+        if (d < 0.5) {
+          target.current = null;
+          setWalking(false);
+        } else {
+          const step = Math.min(1, (SPEED * dt) / d);
+          const next = { x: cur.x + dx * step, y: cur.y + dy * step };
+          posRef.current = next;
+          setPos(next);
+        }
+      }
+
+      // proximity
+      const hit = ROOMS.find((r) => dist(posRef.current, r.stand) < TRIGGER_RADIUS) ?? null;
+      const hitId = hit?.id ?? null;
+      if (hitId !== nearRef.current) {
+        nearRef.current = hitId;
+        setNear(hitId);
+        if (hitId === null) armed.current = true;
+      }
+      if (hitId && armed.current && hasMoved.current && !target.current) {
+        armed.current = false;
+        setOpenId(hitId);
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  /* keyboard: esc closes, 1-5 walk to a station, arrows nudge */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
+      if (e.key === "Escape") return close();
       const n = Number(e.key);
-      if (n >= 1 && n <= ROOMS.length) setOpenId(ROOMS[n - 1].id);
+      if (n >= 1 && n <= ROOMS.length) return goTo(ROOMS[n - 1].stand);
+      const nudge: Record<string, [number, number]> = {
+        ArrowLeft: [-9, 0],
+        ArrowRight: [9, 0],
+        ArrowUp: [0, -6],
+        ArrowDown: [0, 6],
+        a: [-9, 0],
+        d: [9, 0],
+        w: [0, -6],
+        s: [0, 6],
+      };
+      const v = nudge[e.key];
+      if (v) {
+        e.preventDefault();
+        const from = target.current ?? posRef.current;
+        goTo({ x: from.x + v[0], y: from.y + v[1] });
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [close]);
+  }, [close, goTo]);
+
+  const onStageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    goTo({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    });
+  };
 
   return (
     <div className="relative min-h-dvh lobby-vignette">
-      {/* ---------------- desktop / tablet: the lobby ---------------- */}
+      {/* ---------------- desktop / tablet: the walkable lobby ---------------- */}
       <div className="relative hidden h-dvh w-full items-center justify-center overflow-hidden md:flex">
-        {/* fixed 16:9 stage so SVG art and HTML hotspots always share coordinates */}
-        <div className="relative aspect-video max-h-dvh w-full max-w-[calc(100dvh*16/9)]">
+        {/* fixed 16:9 stage so SVG art, floor pads and the character share coordinates */}
+        <div
+          className="relative aspect-video max-h-dvh w-full max-w-[calc(100dvh*16/9)] cursor-pointer select-none"
+          onClick={onStageClick}
+        >
           <LobbyArt />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 floor-grid opacity-40" />
           <Dust />
 
           {ROOMS.map((r) => (
-            <Hotspot key={r.id} room={r} onOpen={() => setOpenId(r.id)} />
+            <Station key={r.id} room={r} active={near === r.id} onWalk={() => goTo(r.stand)} />
           ))}
+
+          <Avatar x={pos.x} y={pos.y} facing={facing} walking={walking} />
+
+          {!moved && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="pointer-events-none absolute left-1/2 top-[84%] -translate-x-1/2 rounded-full border border-brass/40 bg-black/60 px-4 py-2 font-mono text-xs text-brass backdrop-blur"
+            >
+              Click the floor to walk · get close to an object to open it
+            </motion.div>
+          )}
         </div>
 
-        <header className="absolute left-0 right-0 top-0 flex items-start justify-between p-6">
+        <header className="pointer-events-none absolute left-0 right-0 top-0 flex items-start justify-between p-6">
           <div>
             <h1 className="text-xl font-semibold tracking-tight text-brass">{profile.name}</h1>
             <p className="font-mono text-xs uppercase tracking-widest text-white/50">{profile.title}</p>
           </div>
-          <nav className="flex items-center gap-3 text-xs">
-            <span className="hidden font-mono text-white/35 lg:inline">press 1–5</span>
+          <nav className="pointer-events-auto flex items-center gap-3 text-xs">
+            <span className="hidden font-mono text-white/35 lg:inline">1–5 / WASD</span>
             <a
               href="/cv"
+              onClick={(e) => e.stopPropagation()}
               className="rounded-lg border border-brass/35 px-3 py-1.5 font-mono text-brass/90 transition hover:bg-brass/15"
             >
               Skip the lobby → CV
@@ -172,8 +253,15 @@ export default function LobbyScene() {
           {ROOMS.map((r, i) => (
             <button
               key={r.id}
-              onClick={() => setOpenId(r.id)}
-              className="rounded-full border border-white/10 bg-black/40 px-3 py-1.5 font-mono text-[11px] text-white/60 backdrop-blur transition hover:border-brass/40 hover:text-brass"
+              onClick={(e) => {
+                e.stopPropagation();
+                goTo(r.stand);
+              }}
+              className={`rounded-full border px-3 py-1.5 font-mono text-[11px] backdrop-blur transition ${
+                near === r.id
+                  ? "border-brass/70 bg-brass/20 text-brass"
+                  : "border-white/10 bg-black/40 text-white/60 hover:border-brass/40 hover:text-brass"
+              }`}
             >
               <span className="mr-1.5 text-brass/70">{i + 1}</span>
               {r.object}
@@ -201,10 +289,7 @@ export default function LobbyScene() {
               <span className="block text-xs text-white/60">{r.subtitle}</span>
             </button>
           ))}
-          <a
-            href="/cv"
-            className="block rounded-xl border border-white/10 p-4 text-center font-mono text-xs text-white/60"
-          >
+          <a href="/cv" className="block rounded-xl border border-white/10 p-4 text-center font-mono text-xs text-white/60">
             Plain CV →
           </a>
         </div>
@@ -250,6 +335,79 @@ export default function LobbyScene() {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+function Station({ room, active, onWalk }: { room: Room; active: boolean; onWalk: () => void }) {
+  return (
+    <>
+      {/* floor pad you can walk onto */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onWalk();
+        }}
+        aria-label={`Walk to ${room.object}: ${room.title}`}
+        className="group absolute z-10 h-12 w-24 -translate-x-1/2 -translate-y-1/2 focus:outline-none"
+        style={{ left: `${room.stand.x}%`, top: `${room.stand.y}%` }}
+      >
+        <span
+          className={`absolute inset-0 rounded-[50%] border transition ${
+            active ? "border-brass bg-brass/25" : "border-brass/45 bg-brass/10 group-hover:bg-brass/20"
+          }`}
+        />
+        <span
+          className={`absolute left-1/2 top-1/2 h-[120%] w-[112%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-brass/25 ${
+            active ? "" : "animate-[pad-pulse_2.6s_ease-in-out_infinite]"
+          }`}
+        />
+      </button>
+
+      {/* label pinned to the object itself */}
+      <div
+        className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2"
+        style={{ left: `${room.x}%`, top: `${room.y}%` }}
+      >
+        <div
+          className={`rounded-lg border px-2.5 py-1.5 text-center backdrop-blur transition ${
+            active
+              ? "border-brass/70 bg-[#0b1223]/95 shadow-lg shadow-black/50"
+              : "border-brass/25 bg-[#0b1223]/70"
+          }`}
+        >
+          <span className="block font-mono text-[10px] uppercase tracking-widest text-teal">{room.object}</span>
+          <span className="block text-xs font-semibold text-brass">{room.title}</span>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function Dust() {
+  const motes = Array.from({ length: 18 }, (_, i) => ({
+    left: (i * 37) % 100,
+    top: 30 + ((i * 53) % 60),
+    dur: 9 + ((i * 7) % 11),
+    delay: (i * 1.7) % 9,
+    size: 1 + (i % 3),
+  }));
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {motes.map((m, i) => (
+        <span
+          key={i}
+          className="dust absolute rounded-full bg-brass/60"
+          style={{
+            left: `${m.left}%`,
+            top: `${m.top}%`,
+            width: m.size,
+            height: m.size,
+            animationDuration: `${m.dur}s`,
+            animationDelay: `${m.delay}s`,
+          }}
+        />
+      ))}
     </div>
   );
 }
