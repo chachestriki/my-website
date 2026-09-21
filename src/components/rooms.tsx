@@ -4,7 +4,11 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import IntegrationBoard from "@/components/IntegrationBoard";
 import Postcards from "@/components/postcards";
-import { education, profile, roles, skills } from "@/data/cv";
+import { career } from "@/data/career";
+import { education, profile, skills } from "@/data/cv";
+import { hobbies } from "@/data/hobbies";
+import { projects } from "@/data/projects";
+import { viceResell } from "@/data/viceResell";
 
 export function AboutRoom() {
   return (
@@ -28,10 +32,8 @@ export function AboutRoom() {
       <div>
         <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Mission</h3>
         <p className="mt-2 text-sm leading-relaxed text-ink/75">
-          Legacy operational systems — PMS, CRM, POS, payment gateways — hold the real business
-          logic of entire industries, and almost none of it is reachable by modern software or by
-          agents. I build the layer that makes it reachable: typed APIs, idempotent jobs, and MCP
-          tools that let an LLM actually <em>do</em> the work instead of describing it.
+          Make legacy hotel systems reachable — typed APIs, idempotent jobs and MCP tools an agent
+          can actually <em>use</em>.
         </p>
       </div>
 
@@ -72,53 +74,66 @@ export function AboutRoom() {
 
 export function ProjectsRoom() {
   return (
-    <div className="space-y-4">
-      <p className="text-sm leading-relaxed text-ink/70">
-        This is the back office of the hotel — the wiring diagram behind the front desk. Hover a
-        node to isolate what it touches; click it for the case study.
-      </p>
-      <IntegrationBoard />
+    <div className="space-y-5">
+      <ul className="space-y-4">
+        {projects.map((p) => (
+          <li key={p.id} className="rounded-2xl border-2 border-white bg-white/60 p-4">
+            <div className="flex flex-wrap items-baseline gap-x-2">
+              <h3 className="text-lg font-bold text-brass">{p.name}</h3>
+              <p className="font-mono text-[11px] text-ink/45">{p.period}</p>
+            </div>
+            <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: p.color }}>
+              {p.role}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-ink/75">{p.blurb}</p>
+            <ul className="mt-2 space-y-1 text-xs leading-relaxed text-ink/65">
+              {p.bullets.map((b) => (
+                <li key={b}>· {b}</li>
+              ))}
+            </ul>
+            {p.link && (
+              <a
+                href={p.link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-block rounded-lg border border-brass/40 bg-brass/10 px-3 py-1.5 text-xs text-brass transition hover:bg-brass/20"
+              >
+                {p.link.label} →
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div>
+        <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-teal">Systems I&apos;ve wired together</p>
+        <IntegrationBoard />
+      </div>
     </div>
   );
 }
 
-export function ExperienceRoom() {
+export function CareerRoom() {
   return (
-    <div className="space-y-6">
-      <p className="font-mono text-xs uppercase tracking-widest text-teal">
-        PMS terminal · career log
-      </p>
-      <ol className="relative space-y-6 border-l border-brass/25 pl-6">
-        {roles.map((r, i) => (
+    <div className="space-y-5">
+      <ol className="relative space-y-4 border-l border-brass/25 pl-6">
+        {career.map((s, i) => (
           <motion.li
-            key={r.id}
+            key={s.id}
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.06 }}
             className="relative"
           >
-            <span className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-brass bg-[#fff6ea]" />
+            <span
+              className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-[#fff6ea]"
+              style={{ background: s.color }}
+            />
             <div className="flex flex-wrap items-baseline gap-x-3">
-              <h3 className="text-lg font-semibold text-brass">{r.company}</h3>
-              <p className="font-mono text-xs text-ink/50">{r.period}</p>
+              <h3 className="font-semibold text-brass">{s.company}</h3>
+              <p className="font-mono text-xs text-ink/50">{s.period}</p>
             </div>
-            <p className="text-sm text-ink/60">{r.role}</p>
-            <p className="mt-2 text-sm leading-relaxed text-ink/80">{r.summary}</p>
-            <ul className="mt-2 space-y-1.5 text-sm text-ink/70">
-              {r.highlights.map((h) => (
-                <li key={h} className="flex gap-2">
-                  <span className="text-brass/70">▸</span>
-                  <span>{h}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {r.stack.map((s) => (
-                <span key={s} className="rounded border border-brass/25 px-2 py-0.5 font-mono text-[11px] text-brass/90">
-                  {s}
-                </span>
-              ))}
-            </div>
+            <p className="text-xs text-ink/55">{s.role}</p>
+            <p className="mt-1 text-sm leading-relaxed text-ink/80">{s.note}</p>
           </motion.li>
         ))}
       </ol>
@@ -126,7 +141,7 @@ export function ExperienceRoom() {
         href="/cv"
         className="inline-block rounded-lg border border-brass/40 bg-brass/10 px-4 py-2 text-sm text-brass transition hover:bg-brass/20"
       >
-        Open the plain-text CV →
+        Full CV →
       </a>
     </div>
   );
@@ -164,8 +179,7 @@ export function ConciergeRoom() {
   return (
     <div className="space-y-4">
       <p className="text-sm leading-relaxed text-ink/70">
-        At Room Mate I put ElevenLabs voice agents on top of hotel operations. This is the same idea,
-        scripted — no API key required.
+        A scripted version of the voice agents I put on hotel operations.
       </p>
       <div className="max-h-80 space-y-3 overflow-y-auto rounded-xl border border-brass/20 bg-[#fff6ea] p-4">
         {log.map((l, i) => (
@@ -207,9 +221,7 @@ export function ContactRoom() {
   ];
   return (
     <div className="space-y-5">
-      <p className="text-sm leading-relaxed text-ink/70">
-        Ring the bell. I read everything that isn&apos;t a recruiter template.
-      </p>
+      <p className="text-sm leading-relaxed text-ink/70">Ring the bell.</p>
       <ul className="space-y-2">
         {links.map((l) => (
           <li key={l.label} className="flex items-baseline gap-4">
@@ -230,6 +242,108 @@ export function ContactRoom() {
       >
         Read the CV →
       </a>
+    </div>
+  );
+}
+
+export function HobbiesRoom() {
+  return (
+    <div className="space-y-5">
+      <p className="text-sm leading-relaxed text-ink/75">{hobbies.intro}</p>
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {hobbies.memories.map((m) => (
+          <li key={m.id} className="rounded-2xl border-2 border-white bg-white/60 p-4">
+            <div className="flex flex-wrap items-baseline gap-x-2">
+              <h3 className="font-semibold text-brass">{m.title}</h3>
+              <p className="font-mono text-[11px] text-ink/45">{m.when}</p>
+            </div>
+            <p className="mt-1 text-sm leading-relaxed text-ink/75">{m.note}</p>
+          </li>
+        ))}
+      </ul>
+      <div>
+        <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Next up</h3>
+        <ul className="mt-2 space-y-1 text-sm text-ink/75">
+          {hobbies.goals.map((g) => (
+            <li key={g}>· {g}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+export function EducationRoom() {
+  const wings = [
+    {
+      city: "Madrid",
+      flag: "🇪🇸",
+      school: education.find((e) => e.place.includes("Madrid")),
+      tint: "from-[#ffb03a]/25",
+      accent: "text-[#c0392b]",
+      notes: ["Finance and strategy next to systems and data."],
+    },
+    {
+      city: "Texas",
+      flag: "🤠",
+      school: education.find((e) => e.place.includes("TX")),
+      tint: "from-[#3f72d8]/25",
+      accent: "text-[#2f5fbf]",
+      notes: ["Algorithms, systems and databases, project by project."],
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <p className="text-sm leading-relaxed text-ink/75">
+        Business in Madrid, computers in Texas.
+      </p>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        {wings.map((w) => (
+          <div
+            key={w.city}
+            className={`rounded-2xl border border-brass/20 bg-gradient-to-b ${w.tint} to-white/60 p-5`}
+          >
+            <p className="font-mono text-xs uppercase tracking-widest text-teal">
+              {w.flag} {w.city}
+            </p>
+            <h3 className={`mt-1 text-lg font-extrabold ${w.accent}`}>{w.school?.school}</h3>
+            <p className="text-sm text-ink/70">{w.school?.degree}</p>
+            <p className="font-mono text-[11px] text-ink/45">{w.school?.place}</p>
+            <ul className="mt-3 space-y-1.5 text-sm leading-relaxed text-ink/75">
+              {w.notes.map((n) => (
+                <li key={n} className="flex gap-2">
+                  <span className="text-brass">·</span>
+                  {n}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function ViceResellRoom() {
+  return (
+    <div className="space-y-5">
+      <p className="text-sm leading-relaxed text-ink/75">{viceResell.intro}</p>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {viceResell.stats.map((s) => (
+          <div key={s.label} className="rounded-xl border border-brass/20 bg-white/70 p-4">
+            <p className="font-mono text-xl text-brass">{s.value}</p>
+            <p className="mt-1 text-xs leading-relaxed text-ink/60">{s.label}</p>
+          </div>
+        ))}
+      </div>
+      {viceResell.blocks.map((b) => (
+        <div key={b.heading}>
+          <h3 className="font-mono text-xs uppercase tracking-widest text-teal">{b.heading}</h3>
+          <p className="mt-1 text-sm leading-relaxed text-ink/75">{b.body}</p>
+        </div>
+      ))}
     </div>
   );
 }
