@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fdeee4;
+  --foreground: #4a3f63;
+  --ink: #4a3f63;
+  --brass: #d3607f;
+  --brass-dim: #f2b8c8;
+  --teal: #2f9e8f;
+  --plum: #8b7ac2;
+  --card: #fffaf4;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brass: var(--brass);
+  --color-brass-dim: var(--brass-dim);
+  --color-teal: var(--teal);
+  --color-plum: var(--plum);
+  --color-ink: var(--ink);
+  --color-card: var(--card);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Soft pastel daylight behind the 3D lobby */
+.lobby-vignette {
+  background:
+    radial-gradient(120% 80% at 50% 12%, #fff6ea 0%, #ffe7ef 45%, #fdeee4 100%);
+}
+
+@keyframes pad-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="pad-pulse"] {
+    animation: none;
+  }
+}
+
+::selection {
+  background: var(--brass);
+  color: #fff;
+}
