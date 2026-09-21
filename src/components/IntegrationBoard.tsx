@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { boardEdges, boardNodes, roles, type BoardNode } from "@/data/cv";
 
 const KIND_STYLE: Record<BoardNode["kind"], { fill: string; stroke: string; tag: string }> = {
-  system: { fill: "#131c33", stroke: "#4fd1c5", tag: "SYSTEM" },
-  service: { fill: "#1a1530", stroke: "#d8b26a", tag: "SERVICE" },
-  agent: { fill: "#161033", stroke: "#b48cff", tag: "AGENT" },
-  store: { fill: "#0f2030", stroke: "#60a5fa", tag: "MARKET" },
+  system: { fill: "#d9f2ea", stroke: "#2f9e8f", tag: "SYSTEM" },
+  service: { fill: "#ffe2ea", stroke: "#d3607f", tag: "SERVICE" },
+  agent: { fill: "#e9e2ff", stroke: "#8b7ac2", tag: "AGENT" },
+  store: { fill: "#dfebff", stroke: "#5b8fd6", tag: "MARKET" },
 };
 
 const W = 100;
@@ -43,12 +43,12 @@ export default function IntegrationBoard() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-      <div className="relative overflow-hidden rounded-2xl border border-brass/20 bg-[#080d1a]">
-        <div className="pointer-events-none absolute inset-0 opacity-[0.35] [background-image:linear-gradient(rgba(216,178,106,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(216,178,106,.08)_1px,transparent_1px)] [background-size:28px_28px]" />
+      <div className="relative overflow-hidden rounded-2xl border-2 border-white bg-[#fff6ea] shadow-[0_6px_0_rgba(107,91,143,0.1)]">
+        <div className="pointer-events-none absolute inset-0 opacity-[0.5] [background-image:linear-gradient(rgba(139,122,194,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(139,122,194,.1)_1px,transparent_1px)] [background-size:28px_28px]" />
         <svg viewBox={`-2 -2 ${W + 4} ${H + 4}`} className="relative block h-full w-full" role="img" aria-label="Integration architecture diagram">
           <defs>
             <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#d8b26a" opacity="0.7" />
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#d3607f" opacity="0.7" />
             </marker>
           </defs>
 
@@ -58,8 +58,8 @@ export default function IntegrationBoard() {
             const dim = active !== null && !activeEdges.has(key);
             return (
               <g key={key} opacity={dim ? 0.15 : 1}>
-                <path d={d} fill="none" stroke="#d8b26a" strokeWidth={0.28} strokeOpacity={0.55} markerEnd="url(#arrow)" />
-                <circle r={0.75} fill="#4fd1c5">
+                <path d={d} fill="none" stroke="#d3607f" strokeWidth={0.28} strokeOpacity={0.55} markerEnd="url(#arrow)" />
+                <circle r={0.75} fill="#2f9e8f">
                   <animateMotion dur={`${3 + (e.packet.length % 3)}s`} repeatCount="indefinite" path={d} />
                 </circle>
               </g>
@@ -78,7 +78,7 @@ export default function IntegrationBoard() {
                 y={(a.y + b.y) / 2 - 0.8}
                 textAnchor="middle"
                 fontSize={1.8}
-                fill="#93a4c4"
+                fill="#8b7ac2"
                 opacity={dim ? 0.12 : 0.85}
                 className="font-mono"
               >
@@ -118,13 +118,13 @@ export default function IntegrationBoard() {
                   rx={1.4}
                   fill={s.fill}
                   stroke={s.stroke}
-                  strokeWidth={isActive ? 0.5 : 0.25}
+                  strokeWidth={isActive ? 0.6 : 0.3}
                 />
                 <rect width={NODE_W} height={1} rx={0.5} fill={s.stroke} opacity={0.5} />
-                <text x={1.6} y={4.6} fontSize={2.2} fill="#f2ece1" className="font-semibold">
+                <text x={1.6} y={4.6} fontSize={2.2} fill="#4a3f63" className="font-semibold">
                   {n.label}
                 </text>
-                <text x={1.6} y={7.3} fontSize={1.7} fill={s.stroke} className="font-mono" opacity={0.85}>
+                <text x={1.6} y={7.3} fontSize={1.7} fill={s.stroke} className="font-mono" opacity={0.9}>
                   {s.tag}
                 </text>
               </g>
@@ -137,22 +137,22 @@ export default function IntegrationBoard() {
         key={node?.id ?? "empty"}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-brass/20 bg-[#0b1223] p-5"
+        className="rounded-2xl border-2 border-white bg-[#fff6ea] p-5 shadow-[0_6px_0_rgba(107,91,143,0.1)]"
       >
         {node ? (
           <>
             <p className="font-mono text-xs uppercase tracking-widest text-teal">{KIND_STYLE[node.kind].tag}</p>
             <h3 className="mt-1 text-xl font-semibold text-brass">{node.label}</h3>
             {role && (
-              <p className="mt-1 font-mono text-xs text-white/50">
+              <p className="mt-1 font-mono text-xs text-ink/50">
                 {role.company} · {role.period}
               </p>
             )}
-            <p className="mt-3 text-sm leading-relaxed text-white/80">{node.blurb}</p>
+            <p className="mt-3 text-sm leading-relaxed text-ink/80">{node.blurb}</p>
             {role && (
               <>
-                <p className="mt-5 font-mono text-xs uppercase tracking-widest text-white/40">What I shipped</p>
-                <ul className="mt-2 space-y-2 text-sm text-white/75">
+                <p className="mt-5 font-mono text-xs uppercase tracking-widest text-ink/40">What I shipped</p>
+                <ul className="mt-2 space-y-2 text-sm text-ink/75">
                   {role.highlights.map((h) => (
                     <li key={h} className="flex gap-2">
                       <span className="text-brass">▸</span>
@@ -174,12 +174,12 @@ export default function IntegrationBoard() {
           <>
             <p className="font-mono text-xs uppercase tracking-widest text-teal">Integration board</p>
             <h3 className="mt-1 text-xl font-semibold text-brass">Pick a node</h3>
-            <p className="mt-3 text-sm leading-relaxed text-white/70">
+            <p className="mt-3 text-sm leading-relaxed text-ink/70">
               Every box is a system I&apos;ve wired into another one. The moving dots are real payloads —
               reservations, guest profiles, card authorizations, agent tool calls. Hover to isolate a
               subgraph, click to read the case study.
             </p>
-            <ul className="mt-5 space-y-2 text-sm text-white/60">
+            <ul className="mt-5 space-y-2 text-sm text-ink/60">
               {Object.entries(KIND_STYLE).map(([k, v]) => (
                 <li key={k} className="flex items-center gap-2 font-mono text-xs">
                   <span className="inline-block h-3 w-3 rounded-sm border" style={{ borderColor: v.stroke, background: v.fill }} />

@@ -8,8 +8,8 @@ import { education, profile, roles, skills } from "@/data/cv";
 export function AboutRoom() {
   return (
     <div className="space-y-6">
-      <p className="text-lg leading-relaxed text-white/85">{profile.tagline}</p>
-      <p className="text-sm leading-relaxed text-white/70">{profile.summary}</p>
+      <p className="text-lg leading-relaxed text-ink/85">{profile.tagline}</p>
+      <p className="text-sm leading-relaxed text-ink/70">{profile.summary}</p>
 
       <div className="grid gap-4 sm:grid-cols-3">
         {[
@@ -17,16 +17,16 @@ export function AboutRoom() {
           { k: "4", v: "hotel groups running on integrations I designed" },
           { k: "2", v: "degrees: CS & Business (Texas A&M), Management & Tech (UC3M)" },
         ].map((s) => (
-          <div key={s.k} className="rounded-xl border border-brass/20 bg-white/[0.03] p-4">
+          <div key={s.k} className="rounded-xl border border-brass/20 bg-white/70 p-4">
             <p className="font-mono text-2xl text-brass">{s.k}</p>
-            <p className="mt-1 text-xs leading-relaxed text-white/60">{s.v}</p>
+            <p className="mt-1 text-xs leading-relaxed text-ink/60">{s.v}</p>
           </div>
         ))}
       </div>
 
       <div>
         <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Mission</h3>
-        <p className="mt-2 text-sm leading-relaxed text-white/75">
+        <p className="mt-2 text-sm leading-relaxed text-ink/75">
           Legacy operational systems — PMS, CRM, POS, payment gateways — hold the real business
           logic of entire industries, and almost none of it is reachable by modern software or by
           agents. I build the layer that makes it reachable: typed APIs, idempotent jobs, and MCP
@@ -39,10 +39,10 @@ export function AboutRoom() {
         <div className="mt-3 space-y-3">
           {skills.map((g) => (
             <div key={g.group} className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-4">
-              <p className="w-40 shrink-0 font-mono text-xs uppercase text-white/40">{g.group}</p>
+              <p className="w-40 shrink-0 font-mono text-xs uppercase text-ink/40">{g.group}</p>
               <div className="flex flex-wrap gap-1.5">
                 {g.items.map((i) => (
-                  <span key={i} className="rounded border border-white/10 bg-white/[0.04] px-2 py-0.5 text-xs text-white/80">
+                  <span key={i} className="rounded border border-ink/10 bg-white/70 px-2 py-0.5 text-xs text-ink/80">
                     {i}
                   </span>
                 ))}
@@ -54,11 +54,11 @@ export function AboutRoom() {
 
       <div>
         <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Education</h3>
-        <ul className="mt-2 space-y-1 text-sm text-white/75">
+        <ul className="mt-2 space-y-1 text-sm text-ink/75">
           {education.map((e) => (
             <li key={e.school}>
               <span className="text-brass">{e.school}</span> — {e.degree}{" "}
-              <span className="text-white/40">({e.place})</span>
+              <span className="text-ink/40">({e.place})</span>
             </li>
           ))}
         </ul>
@@ -70,7 +70,7 @@ export function AboutRoom() {
 export function ProjectsRoom() {
   return (
     <div className="space-y-4">
-      <p className="text-sm leading-relaxed text-white/70">
+      <p className="text-sm leading-relaxed text-ink/70">
         This is the back office of the hotel — the wiring diagram behind the front desk. Hover a
         node to isolate what it touches; click it for the case study.
       </p>
@@ -94,14 +94,14 @@ export function ExperienceRoom() {
             transition={{ delay: i * 0.06 }}
             className="relative"
           >
-            <span className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-brass bg-[#0b1223]" />
+            <span className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-brass bg-[#fff6ea]" />
             <div className="flex flex-wrap items-baseline gap-x-3">
               <h3 className="text-lg font-semibold text-brass">{r.company}</h3>
-              <p className="font-mono text-xs text-white/50">{r.period}</p>
+              <p className="font-mono text-xs text-ink/50">{r.period}</p>
             </div>
-            <p className="text-sm text-white/60">{r.role}</p>
-            <p className="mt-2 text-sm leading-relaxed text-white/80">{r.summary}</p>
-            <ul className="mt-2 space-y-1.5 text-sm text-white/70">
+            <p className="text-sm text-ink/60">{r.role}</p>
+            <p className="mt-2 text-sm leading-relaxed text-ink/80">{r.summary}</p>
+            <ul className="mt-2 space-y-1.5 text-sm text-ink/70">
               {r.highlights.map((h) => (
                 <li key={h} className="flex gap-2">
                   <span className="text-brass/70">▸</span>
@@ -160,19 +160,19 @@ export function ConciergeRoom() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm leading-relaxed text-white/70">
+      <p className="text-sm leading-relaxed text-ink/70">
         At Room Mate I put ElevenLabs voice agents on top of hotel operations. This is the same idea,
         scripted — no API key required.
       </p>
-      <div className="max-h-80 space-y-3 overflow-y-auto rounded-xl border border-brass/20 bg-[#0b1223] p-4">
+      <div className="max-h-80 space-y-3 overflow-y-auto rounded-xl border border-brass/20 bg-[#fff6ea] p-4">
         {log.map((l, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            className={l.role === "agent" ? "text-sm text-white/85" : "text-sm text-brass"}
+            className={l.role === "agent" ? "text-sm text-ink/85" : "text-sm text-brass"}
           >
-            <span className="mr-2 font-mono text-[11px] uppercase text-white/35">
+            <span className="mr-2 font-mono text-[11px] uppercase text-ink/35">
               {l.role === "agent" ? "agent" : "you"}
             </span>
             {l.text}
@@ -204,19 +204,19 @@ export function ContactRoom() {
   ];
   return (
     <div className="space-y-5">
-      <p className="text-sm leading-relaxed text-white/70">
+      <p className="text-sm leading-relaxed text-ink/70">
         Ring the bell. I read everything that isn&apos;t a recruiter template.
       </p>
       <ul className="space-y-2">
         {links.map((l) => (
           <li key={l.label} className="flex items-baseline gap-4">
-            <span className="w-24 shrink-0 font-mono text-xs uppercase text-white/40">{l.label}</span>
+            <span className="w-24 shrink-0 font-mono text-xs uppercase text-ink/40">{l.label}</span>
             {l.href ? (
               <a href={l.href} className="text-brass underline-offset-4 hover:underline">
                 {l.value}
               </a>
             ) : (
-              <span className="text-white/80">{l.value}</span>
+              <span className="text-ink/80">{l.value}</span>
             )}
           </li>
         ))}
