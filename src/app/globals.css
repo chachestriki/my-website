@@ -1,26 +1,79 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #070b16;
+  --foreground: #f2ece1;
+  --brass: #d8b26a;
+  --brass-dim: #8c7038;
+  --teal: #4fd1c5;
+  --plum: #2a1f3d;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brass: var(--brass);
+  --color-brass-dim: var(--brass-dim);
+  --color-teal: var(--teal);
+  --color-plum: var(--plum);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Warm vignette so the lobby reads as a lit interior */
+.lobby-vignette {
+  background:
+    radial-gradient(
+      120% 80% at 50% 18%,
+      rgba(216, 178, 106, 0.22) 0%,
+      rgba(216, 178, 106, 0.06) 38%,
+      rgba(7, 11, 22, 0) 70%
+    ),
+    linear-gradient(180deg, #0d1426 0%, #0a1020 45%, #070b16 100%);
+}
+
+.floor-grid {
+  background-image:
+    linear-gradient(rgba(216, 178, 106, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(216, 178, 106, 0.16) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: perspective(520px) rotateX(62deg);
+  transform-origin: top center;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 78%);
+}
+
+@keyframes dust-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(14px, -140px, 0);
+    opacity: 0;
+  }
+}
+
+.dust {
+  animation: dust-drift linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dust {
+    animation: none;
+    opacity: 0.25;
+  }
+}
+
+::selection {
+  background: var(--brass);
+  color: #0b1020;
 }
