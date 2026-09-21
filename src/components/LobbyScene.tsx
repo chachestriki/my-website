@@ -39,6 +39,15 @@ const Lobby3D = dynamic(() => import("@/components/Lobby3D"), {
   ),
 });
 
+const Street3D = dynamic(() => import("@/components/Street3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center bg-[#8fd0ff] font-mono text-sm text-white">
+      Arriving…
+    </div>
+  ),
+});
+
 const Factory3D = dynamic(() => import("@/components/Factory3D"), {
   ssr: false,
   loading: () => (
@@ -292,14 +301,16 @@ export default function LobbyScene() {
             </button>
           </motion.div>
         ) : (
-          <motion.div
-            className="absolute inset-0"
-            initial={{ scale: 1.12, opacity: 0.4 }}
-            animate={{ scale: entered ? 1 : 1.12, opacity: 1 }}
-            transition={{ duration: 1.1, ease: "easeOut" }}
-          >
-            <Lobby3D api={api} onNear={setNear} onOpen={onOpen} onMove={onMove} moved={moved} />
-          </motion.div>
+          entered && (
+            <motion.div
+              className="absolute inset-0"
+              initial={{ scale: 1.14, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 1.1, ease: "easeOut" }}
+            >
+              <Lobby3D api={api} onNear={setNear} onOpen={onOpen} onMove={onMove} moved={moved} />
+            </motion.div>
+          )
         )}
 
         {!moved && !scene && entered && (
@@ -313,7 +324,21 @@ export default function LobbyScene() {
           </motion.div>
         )}
 
-        <AnimatePresence>{!entered && !scene && <Intro onEnter={() => setEntered(true)} />}</AnimatePresence>
+        <AnimatePresence>
+          {!entered && !scene && (
+            <motion.div
+              key="street"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.45 }}
+              className="absolute inset-0 z-30"
+            >
+              <Street3D api={api} onEnter={() => setEntered(true)} />
+              <Intro onEnter={() => setEntered(true)} />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* mounted once so the loop survives walking between rooms */}
         <div
@@ -326,7 +351,7 @@ export default function LobbyScene() {
 
         {!scene && moved && <ControlsLegend />}
 
-        {!scene && (
+        {!scene && entered && (
         <header className="pointer-events-none absolute left-0 right-0 top-0 z-20 flex items-start justify-between p-6">
           <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border-2 border-white bg-white/85 px-4 py-2.5 shadow-[0_6px_0_rgba(107,91,143,0.12)]">
             <HatMark className="h-9 w-9 shrink-0" />
@@ -349,7 +374,7 @@ export default function LobbyScene() {
         </header>
         )}
 
-        {!scene && (
+        {!scene && entered && (
         <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-wrap items-center justify-center gap-2 p-5">
           <button
             onClick={() => setStationList((v) => !v)}
