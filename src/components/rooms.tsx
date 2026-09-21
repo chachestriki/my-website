@@ -264,8 +264,8 @@ export function EducationRoom() {
     <div className="space-y-6">
       <p className="text-sm leading-relaxed text-ink/75">
         Two halves of the same degree path, 8,000 km apart: business in Madrid, computers in Texas.
-        The study wing off the lobby is that split — a plaza-lit desk on one side, a lab bench on the
-        other, a globe in the middle.
+        The campus plaza behind the lobby door is that split — Alcalá, Cibeles and a café desk on one
+        side, the Capitol dome, a longhorn and a lab bench on the other, a globe in the middle.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2">

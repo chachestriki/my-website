@@ -1,10 +1,9 @@
 "use client";
 
 import type { MutableRefObject } from "react";
-import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, type ThreeEvent } from "@react-three/fiber";
 import { Html, OrthographicCamera, RoundedBox } from "@react-three/drei";
-import { useMemo, useRef } from "react";
-import * as THREE from "three";
+import { useMemo } from "react";
 import { stations } from "@/data/stations";
 import { C, CAM_OFFSET, CameraRig, Cowboy, Pad, useWalker, type LobbyApi } from "@/components/world";
 
@@ -12,7 +11,7 @@ import { C, CAM_OFFSET, CameraRig, Cowboy, Pad, useWalker, type LobbyApi } from 
 export type { LobbyApi };
 
 const START: [number, number, number] = [1.5, 0, 7.4];
-const BOUNDS = { minX: -12.5, maxX: 26.4, minZ: -9, maxZ: 9 };
+const BOUNDS = { minX: -12.5, maxX: 12.5, minZ: -9, maxZ: 9 };
 
 export default function Lobby3D({
   api,
@@ -116,25 +115,6 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
         <boxGeometry args={[27, 8, 0.6]} />
         <meshStandardMaterial color={C.wall} roughness={1} />
       </mesh>
-      {/* divider with an archway into the study wing */}
-      <mesh position={[13.4, 1.4, -6.6]} receiveShadow>
-        <boxGeometry args={[0.6, 2.8, 7]} />
-        <meshStandardMaterial color={C.wallSide} roughness={1} />
-      </mesh>
-      <mesh position={[13.4, 1.4, 5.6]} receiveShadow>
-        <boxGeometry args={[0.6, 2.8, 7]} />
-        <meshStandardMaterial color={C.wallSide} roughness={1} />
-      </mesh>
-      {[-3.2, 2.2].map((z) => (
-        <mesh key={z} position={[13.4, 2.6, z]} castShadow>
-          <cylinderGeometry args={[0.45, 0.5, 5.2, 14]} />
-          <meshStandardMaterial color={C.cream} roughness={0.9} />
-        </mesh>
-      ))}
-      <mesh position={[13.4, 5.4, -0.5]} castShadow>
-        <boxGeometry args={[0.7, 0.8, 6.4]} />
-        <meshStandardMaterial color={C.gold} roughness={0.8} />
-      </mesh>
       <mesh position={[-13.2, 4, 0]} receiveShadow>
         <boxGeometry args={[0.6, 8, 20]} />
         <meshStandardMaterial color={C.wallSide} roughness={1} />
@@ -150,7 +130,8 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       <Terminal />
       <PhoneBooth />
       <BellDesk />
-      <Elevator />
+      <FreightDoor />
+      <CampusDoor />
       <Plant x={-11} z={6.5} />
       <Plant x={11.5} z={4} />
       <Sofa />
@@ -158,7 +139,6 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       <CoffeeTable />
       <Suitcase x={-7.6} z={7.4} rot={0.6} color={C.pink} />
       <Suitcase x={-11.8} z={-6.2} rot={-0.3} color={C.sky} />
-      <StudyWing />
     </group>
   );
 }
@@ -282,7 +262,8 @@ function BellDesk() {
   );
 }
 
-function Elevator() {
+/** the door out to the Vice Resell floor */
+function FreightDoor() {
   return (
     <group position={[-9.4, 0, -9.6]}>
       <RoundedBox args={[4.4, 6.4, 0.4]} radius={0.14} smoothness={4} position={[0, 3.2, 0]} castShadow>
@@ -416,168 +397,33 @@ function LuggageCart() {
   );
 }
 
-function StudyWing() {
-  const plane = useRef<THREE.Group>(null);
-  const globe = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    if (globe.current) globe.current.rotation.y = t * 0.5;
-    if (plane.current) {
-      const a = t * 0.7;
-      plane.current.position.set(20 + Math.cos(a) * 4.6, 6.4 + Math.sin(a * 2) * 0.4, -1 + Math.sin(a) * 4.6);
-      plane.current.rotation.y = -a;
-    }
-  });
-
+/** the door out to the Madrid ↔ Texas campus */
+function CampusDoor() {
   return (
-    <group>
-      {/* wing floor + split between Madrid and Texas */}
-      <mesh position={[20, 0.006, -1]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[14, 18]} />
-        <meshStandardMaterial color={C.cream} roughness={1} />
+    <group position={[11.5, 0, -9.6]}>
+      <RoundedBox args={[4.6, 6.8, 0.4]} radius={0.16} smoothness={4} position={[0, 3.4, 0]} castShadow>
+        <meshStandardMaterial color={C.wood} roughness={0.8} />
+      </RoundedBox>
+      {/* glazed double door showing daylight outside */}
+      <mesh position={[0, 3.4, 0.24]}>
+        <planeGeometry args={[3.8, 5.8]} />
+        <meshStandardMaterial color="#bfe6ff" emissive="#8fd4ff" emissiveIntensity={0.55} roughness={0.3} />
       </mesh>
-      <mesh position={[20, 0.014, -5.6]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[13, 8]} />
-        <meshStandardMaterial color="#ffb03a" roughness={1} />
+      <mesh position={[0, 3.4, 0.26]}>
+        <planeGeometry args={[0.12, 5.8]} />
+        <meshStandardMaterial color={C.woodDark} roughness={0.9} />
       </mesh>
-      <mesh position={[20, 0.014, 3.6]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[13, 8]} />
-        <meshStandardMaterial color="#3f72d8" roughness={1} />
+      <mesh position={[0, 6.9, 0.16]}>
+        <circleGeometry args={[2.3, 24, 0, Math.PI]} />
+        <meshStandardMaterial color="#ffe08a" emissive="#ffb703" emissiveIntensity={0.4} roughness={0.9} />
       </mesh>
-
-      {/* wing walls, only on the far sides so the camera can see in */}
-      <mesh position={[20.5, 4, -10]} receiveShadow>
-        <boxGeometry args={[15, 8, 0.6]} />
-        <meshStandardMaterial color="#ff9f4a" roughness={1} />
-      </mesh>
-      <mesh position={[27.6, 4, -1]} receiveShadow>
-        <boxGeometry args={[0.6, 8, 18]} />
-        <meshStandardMaterial color="#6fb0ff" roughness={1} />
-      </mesh>
-
-      {/* Madrid: arched window over a plaza-tiled corner */}
-      <mesh position={[20, 4.4, -9.6]}>
-        <planeGeometry args={[4.4, 4.4]} />
-        <meshStandardMaterial color="#ffe08a" roughness={1} emissive="#ffb703" emissiveIntensity={0.3} />
-      </mesh>
-      <mesh position={[20, 6.6, -9.58]}>
-        <circleGeometry args={[2.2, 24, 0, Math.PI]} />
-        <meshStandardMaterial color="#ffe08a" roughness={1} emissive="#ffb703" emissiveIntensity={0.3} />
-      </mesh>
-      <mesh position={[20, 4.4, -9.5]}>
-        <planeGeometry args={[0.18, 4.4]} />
-        <meshStandardMaterial color={C.maroon} roughness={0.9} />
-      </mesh>
-
-      {/* Madrid: Carlos III business desk */}
-      <group position={[17, 0, -6]} rotation={[0, 0.3, 0]}>
-        <RoundedBox args={[3.4, 0.24, 1.8]} radius={0.08} smoothness={3} position={[0, 1.5, 0]} castShadow>
-          <meshStandardMaterial color={C.wood} roughness={0.8} />
-        </RoundedBox>
-        {[-1.4, 1.4].map((sx) => (
-          <mesh key={sx} position={[sx, 0.75, 0]} castShadow>
-            <boxGeometry args={[0.22, 1.5, 1.4]} />
-            <meshStandardMaterial color={C.woodDark} roughness={0.9} />
-          </mesh>
-        ))}
-        {[C.maroon, C.mint, C.plum, C.gold].map((col, i) => (
-          <RoundedBox
-            key={col}
-            args={[0.22, 1.1, 0.8]}
-            radius={0.04}
-            smoothness={3}
-            position={[-1 + i * 0.28, 2.17, -0.4]}
-            rotation={[0, 0, i === 3 ? 0.22 : 0]}
-            castShadow
-          >
-            <meshStandardMaterial color={col} roughness={0.9} />
-          </RoundedBox>
-        ))}
-        {/* espresso cup */}
-        <mesh position={[1, 1.72, 0.4]} castShadow>
-          <cylinderGeometry args={[0.18, 0.14, 0.24, 14]} />
-          <meshStandardMaterial color={C.cream} roughness={0.7} />
-        </mesh>
-      </group>
-
-      {/* Texas: computer science bench */}
-      <group position={[23.4, 0, 4.4]} rotation={[0, -0.5, 0]}>
-        <RoundedBox args={[4, 0.24, 1.8]} radius={0.08} smoothness={3} position={[0, 1.5, 0]} castShadow>
-          <meshStandardMaterial color={C.cream} roughness={0.8} />
-        </RoundedBox>
-        {[-1.7, 1.7].map((sx) => (
-          <mesh key={sx} position={[sx, 0.75, 0]} castShadow>
-            <boxGeometry args={[0.2, 1.5, 1.4]} />
-            <meshStandardMaterial color={C.plum} roughness={0.9} />
-          </mesh>
-        ))}
-        {[-1.1, 1.1].map((sx) => (
-          <group key={sx} position={[sx, 1.62, -0.3]}>
-            <mesh position={[0, 0.7, 0]} rotation={[-0.12, 0, 0]} castShadow>
-              <boxGeometry args={[1.7, 1.1, 0.12]} />
-              <meshStandardMaterial color="#1f2547" roughness={0.6} />
-            </mesh>
-            <mesh position={[0, 0.7, 0.08]} rotation={[-0.12, 0, 0]}>
-              <planeGeometry args={[1.5, 0.92]} />
-              <meshStandardMaterial color={C.mint} emissive={C.mint} emissiveIntensity={0.55} roughness={0.4} />
-            </mesh>
-            <mesh position={[0, 0.16, 0]} castShadow>
-              <cylinderGeometry args={[0.1, 0.24, 0.32, 12]} />
-              <meshStandardMaterial color="#1f2547" roughness={0.7} />
-            </mesh>
-          </group>
-        ))}
-        <RoundedBox args={[1.6, 0.08, 0.6]} radius={0.03} smoothness={3} position={[0, 1.66, 0.5]} castShadow>
-          <meshStandardMaterial color={C.sky} roughness={0.8} />
-        </RoundedBox>
-      </group>
-
-      {/* Texas: lone star on the wall */}
-      <mesh position={[27.25, 5, 4]} rotation={[0, -Math.PI / 2, 0]}>
-        <circleGeometry args={[1.5, 5]} />
-        <meshStandardMaterial color={C.gold} emissive="#ffb703" emissiveIntensity={0.3} roughness={0.7} />
-      </mesh>
-
-      {/* globe on a plinth, with a plane circling Madrid ↔ Texas */}
-      <group position={[20, 0, -1]}>
-        <mesh position={[0, 0.8, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[1.1, 1.4, 1.6, 20]} />
-          <meshStandardMaterial color={C.woodDark} roughness={0.9} />
-        </mesh>
-        <mesh ref={globe} position={[0, 2.6, 0]} castShadow>
-          <sphereGeometry args={[1.2, 28, 28]} />
-          <meshStandardMaterial color={C.sky} roughness={0.75} />
-        </mesh>
-        <mesh position={[0, 2.6, 0]} rotation={[0, 0, 0.4]}>
-          <torusGeometry args={[1.45, 0.06, 10, 32]} />
-          <meshStandardMaterial color={C.gold} roughness={0.5} metalness={0.3} />
-        </mesh>
-      </group>
-      <group ref={plane}>
-        <mesh castShadow>
-          <capsuleGeometry args={[0.16, 0.7, 4, 10]} />
-          <meshStandardMaterial color={C.cream} roughness={0.6} />
-        </mesh>
-        <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
-          <boxGeometry args={[0.08, 1.5, 0.34]} />
-          <meshStandardMaterial color={C.scarf} roughness={0.7} />
-        </mesh>
-      </group>
-
-      {/* pennants strung across the wing */}
-      {Array.from({ length: 9 }, (_, i) => (
-        <mesh
-          key={i}
-          position={[15 + i * 1.25, 6.6 - Math.sin((i / 8) * Math.PI) * 0.5, -9.2]}
-          rotation={[0, 0, Math.PI]}
-        >
-          <coneGeometry args={[0.3, 0.7, 3]} />
-          <meshStandardMaterial color={i % 2 ? C.maroon : C.gold} roughness={0.9} />
+      {/* pennants over the doorway, half Spain, half Texas */}
+      {Array.from({ length: 7 }, (_, i) => (
+        <mesh key={i} position={[-2.4 + i * 0.8, 7.4 - Math.sin((i / 6) * Math.PI) * 0.35, 0.3]} rotation={[0, 0, Math.PI]}>
+          <coneGeometry args={[0.26, 0.6, 3]} />
+          <meshStandardMaterial color={i < 3 ? C.maroon : C.gold} roughness={0.9} />
         </mesh>
       ))}
-
-      <Plant x={15.4} z={6.4} />
     </group>
   );
 }

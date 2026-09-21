@@ -7,7 +7,7 @@ import * as THREE from "three";
 import { C, CAM_OFFSET, CameraRig, Cowboy, useWalker, type LobbyApi } from "@/components/world";
 
 const START: [number, number, number] = [-2, 0, 7.2];
-const BOUNDS = { minX: -13, maxX: 13, minZ: -8, maxZ: 8.5 };
+const BOUNDS = { minX: -16, maxX: 18, minZ: -8, maxZ: 8.5 };
 const GARMENT_COLORS = [C.magenta, C.neon, C.lime, C.gold, C.scarf, C.sky, C.plum, C.mint];
 const NO_SPOTS: { id: string; stand: [number, number] }[] = [];
 
@@ -27,7 +27,7 @@ export default function Factory3D({ api, onMove }: { api: MutableRefObject<Lobby
       <fog attach="fog" args={["#141a2b", 44, 82]} />
 
       <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom} near={-120} far={220} />
-      <CameraRig posRef={playerRef} start={START} />
+      <CameraRig posRef={playerRef} start={START} shift={7} />
 
       <hemisphereLight args={["#9fd4ff", "#2b1d4a", 0.7]} />
       <ambientLight intensity={0.35} />
@@ -47,9 +47,14 @@ export default function Factory3D({ api, onMove }: { api: MutableRefObject<Lobby
       <FactoryShell onFloorClick={walkTo} />
       <GarmentRail z={-5.6} speed={1.1} />
       <GarmentRail z={-2.4} speed={-0.85} />
-      <ShoeConveyor y={1.1} z={3.6} speed={3.2} />
-      <ShoeConveyor y={2.4} z={1.4} speed={-2.4} />
+      <ShoeConveyor x={6} y={1.1} z={3.6} speed={3.2} />
+      <ShoeConveyor x={6} y={2.4} z={1.4} speed={-2.4} />
       <SewingRow />
+      <ShelfWall />
+      <HangerAisle x={-11} />
+      <HangerAisle x={-6.5} />
+      <PackingBench />
+      <PhotoStudio />
 
       <Cowboy
         targetRef={targetRef}
@@ -78,17 +83,17 @@ function FactoryShell({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEven
         </mesh>
       ))}
       {/* walls */}
-      <mesh position={[0, 5, -9.4]} receiveShadow>
-        <boxGeometry args={[30, 10, 0.6]} />
+      <mesh position={[1, 5, -9.4]} receiveShadow>
+        <boxGeometry args={[40, 10, 0.6]} />
         <meshStandardMaterial color={C.steelDark} roughness={1} />
       </mesh>
-      <mesh position={[-14.4, 5, 0]} receiveShadow>
+      <mesh position={[-17.4, 5, 0]} receiveShadow>
         <boxGeometry args={[0.6, 10, 20]} />
         <meshStandardMaterial color={C.steel} roughness={1} />
       </mesh>
       {/* corrugated ribs */}
-      {Array.from({ length: 15 }, (_, i) => (
-        <mesh key={i} position={[-14 + i * 2, 5, -9.05]}>
+      {Array.from({ length: 20 }, (_, i) => (
+        <mesh key={i} position={[-17 + i * 2, 5, -9.05]}>
           <boxGeometry args={[0.22, 9, 0.16]} />
           <meshStandardMaterial color={C.steel} roughness={0.9} metalness={0.2} />
         </mesh>
@@ -111,9 +116,9 @@ function FactoryShell({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEven
       ))}
       {/* pallets of boxes */}
       {[
-        [-11, -6.4],
-        [-11, -3.4],
-        [11.5, -6],
+        [-15, -6.4],
+        [-15, -3.4],
+        [11.5, -6.6],
       ].map(([x, z]) => (
         <group key={`${x}:${z}`} position={[x, 0, z]}>
           <mesh position={[0, 0.2, 0]} castShadow receiveShadow>
@@ -185,10 +190,10 @@ function GarmentRail({ z, speed }: { z: number; speed: number }) {
 }
 
 /** a conveyor layer with shoes riding along it */
-function ShoeConveyor({ y, z, speed }: { y: number; z: number; speed: number }) {
+function ShoeConveyor({ x, y, z, speed }: { x: number; y: number; z: number; speed: number }) {
   const shoes = useRef<THREE.Group>(null);
   const rollers = useRef<THREE.Group>(null);
-  const span = 26;
+  const span = 18;
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
@@ -204,7 +209,7 @@ function ShoeConveyor({ y, z, speed }: { y: number; z: number; speed: number }) 
   });
 
   return (
-    <group position={[0, y, z]}>
+    <group position={[x, y, z]}>
       {/* belt */}
       <mesh castShadow receiveShadow>
         <boxGeometry args={[span, 0.24, 1.8]} />
@@ -215,15 +220,15 @@ function ShoeConveyor({ y, z, speed }: { y: number; z: number; speed: number }) 
         <meshStandardMaterial color="#20263c" roughness={1} />
       </mesh>
       {/* legs */}
-      {[-10, -3, 4, 11].map((x) => (
-        <mesh key={x} position={[x, -y / 2, 0]} castShadow>
+      {[-7.5, -2.5, 2.5, 7.5].map((lx) => (
+        <mesh key={lx} position={[lx, -y / 2, 0]} castShadow>
           <boxGeometry args={[0.24, y, 0.24]} />
           <meshStandardMaterial color={C.steel} roughness={0.7} metalness={0.3} />
         </mesh>
       ))}
       <group ref={rollers}>
-        {Array.from({ length: 13 }, (_, i) => (
-          <mesh key={i} position={[-12 + i * 2, 0.2, 0]} rotation={[0, 0, Math.PI / 2]}>
+        {Array.from({ length: 9 }, (_, i) => (
+          <mesh key={i} position={[-8 + i * 2, 0.2, 0]} rotation={[0, 0, Math.PI / 2]}>
             <cylinderGeometry args={[0.13, 0.13, 1.6, 10]} />
             <meshStandardMaterial color={C.steel} metalness={0.7} roughness={0.35} />
           </mesh>
@@ -299,6 +304,291 @@ function SewingRow() {
               toneMapped={false}
             />
           </mesh>
+        ))}
+      </group>
+    </group>
+  );
+}
+
+/** floor-to-ceiling shelving packed with folded stock, like the stockroom photos */
+function ShelfWall() {
+  const stacks = useMemo(
+    () =>
+      Array.from({ length: 4 * 5 * 4 }, (_, i) => ({
+        color: GARMENT_COLORS[(i * 5 + (i % 7)) % GARMENT_COLORS.length],
+        h: 0.3 + ((i * 37) % 5) * 0.06,
+        tilt: (((i * 17) % 7) - 3) * 0.02,
+      })),
+    []
+  );
+
+  return (
+    <group position={[-16.2, 0, -1]} rotation={[0, Math.PI / 2, 0]}>
+      {/* four bays of shelving */}
+      {[-6.6, -2.2, 2.2, 6.6].map((x, bay) => (
+        <group key={x} position={[x, 0, 0]}>
+          {[-2.1, 2.1].map((sx) => (
+            <mesh key={sx} position={[sx, 3.2, 0]} castShadow>
+              <boxGeometry args={[0.18, 6.4, 1.6]} />
+              <meshStandardMaterial color={C.steelDark} roughness={0.8} metalness={0.3} />
+            </mesh>
+          ))}
+          {[0.9, 2.2, 3.5, 4.8, 6.1].map((y, shelf) => (
+            <group key={y}>
+              <mesh position={[0, y, 0]} castShadow receiveShadow>
+                <boxGeometry args={[4.2, 0.12, 1.5]} />
+                <meshStandardMaterial color={C.steel} roughness={0.7} metalness={0.25} />
+              </mesh>
+              {[-1.5, -0.5, 0.5, 1.5].map((sx, col) => {
+                const s = stacks[(bay * 5 + shelf) * 4 + col];
+                return (
+                  <mesh key={sx} position={[sx, y + 0.06 + s.h / 2, 0]} rotation={[0, s.tilt, 0]} castShadow>
+                    <boxGeometry args={[0.9, s.h, 1.2]} />
+                    <meshStandardMaterial color={s.color} roughness={0.95} />
+                  </mesh>
+                );
+              })}
+            </group>
+          ))}
+        </group>
+      ))}
+    </group>
+  );
+}
+
+/** a dense double rail of hanging garments — the aisles you squeeze through */
+function HangerAisle({ x }: { x: number }) {
+  const garments = useMemo(
+    () =>
+      Array.from({ length: 2 * 26 }, (_, i) => ({
+        color: GARMENT_COLORS[(i * 3 + (i % 5)) % GARMENT_COLORS.length],
+        len: 1.3 + ((i * 13) % 6) * 0.14,
+        turn: ((i * 29) % 11) * 0.06,
+      })),
+    []
+  );
+  const span = 9;
+
+  return (
+    <group position={[x, 0, 2.5]}>
+      {/* frame */}
+      {[-span / 2 + 0.3, span / 2 - 0.3].map((z) => (
+        <group key={z} position={[0, 0, z]}>
+          {[-0.75, 0.75].map((sx) => (
+            <mesh key={sx} position={[sx, 2.2, 0]} castShadow>
+              <cylinderGeometry args={[0.09, 0.09, 4.4, 10]} />
+              <meshStandardMaterial color={C.steel} roughness={0.5} metalness={0.6} />
+            </mesh>
+          ))}
+          <mesh position={[0, 4.4, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
+            <cylinderGeometry args={[0.07, 0.07, 1.6, 8]} />
+            <meshStandardMaterial color={C.steel} roughness={0.5} metalness={0.6} />
+          </mesh>
+        </group>
+      ))}
+      {[-0.75, 0.75].map((rx, row) => (
+        <group key={rx} position={[rx, 0, 0]}>
+          <mesh position={[0, 3.6, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+            <cylinderGeometry args={[0.07, 0.07, span, 10]} />
+            <meshStandardMaterial color={C.steel} roughness={0.4} metalness={0.7} />
+          </mesh>
+          {Array.from({ length: 26 }, (_, i) => {
+            const g = garments[row * 26 + i];
+            const z = -span / 2 + 0.3 + i * ((span - 0.6) / 25);
+            return (
+              <group key={i} position={[0, 3.6, z]} rotation={[0, g.turn, 0]}>
+                <mesh position={[0, -0.16, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                  <torusGeometry args={[0.13, 0.03, 6, 12]} />
+                  <meshStandardMaterial color={C.steel} metalness={0.7} roughness={0.35} />
+                </mesh>
+                <mesh position={[0, -0.42, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+                  <boxGeometry args={[0.7, 0.12, 0.28]} />
+                  <meshStandardMaterial color={C.cream} roughness={0.9} />
+                </mesh>
+                <mesh position={[0, -0.42 - g.len / 2, 0]} castShadow>
+                  <boxGeometry args={[0.66, g.len, 0.22]} />
+                  <meshStandardMaterial color={g.color} roughness={0.95} />
+                </mesh>
+              </group>
+            );
+          })}
+        </group>
+      ))}
+      {/* size markers on the floor of the aisle */}
+      <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[2.2, span]} />
+        <meshStandardMaterial color="#7a8399" roughness={1} />
+      </mesh>
+    </group>
+  );
+}
+
+/** packing bench: polybags, tape and labelled parcels going out */
+function PackingBench() {
+  return (
+    <group position={[-2.5, 0, 7]} rotation={[0, 0.25, 0]}>
+      <RoundedBox args={[5.2, 0.22, 2.2]} radius={0.06} smoothness={3} position={[0, 1.5, 0]} castShadow>
+        <meshStandardMaterial color={C.wood} roughness={0.9} />
+      </RoundedBox>
+      {[-2.3, 2.3].map((sx) => (
+        <mesh key={sx} position={[sx, 0.75, 0]} castShadow>
+          <boxGeometry args={[0.2, 1.5, 1.8]} />
+          <meshStandardMaterial color={C.steelDark} roughness={0.85} />
+        </mesh>
+      ))}
+      {/* stacked mailing bags waiting for pickup */}
+      {Array.from({ length: 9 }, (_, i) => (
+        <mesh
+          key={i}
+          position={[-1.9 + (i % 3) * 0.95, 1.72 + Math.floor(i / 3) * 0.22, -0.4 + (i % 2) * 0.3]}
+          rotation={[0, ((i * 31) % 9) * 0.08, 0]}
+          castShadow
+        >
+          <boxGeometry args={[0.8, 0.2, 1]} />
+          <meshStandardMaterial color={i % 3 === 0 ? C.cream : C.magenta} roughness={0.85} />
+        </mesh>
+      ))}
+      {/* label printer */}
+      <RoundedBox args={[0.9, 0.5, 0.7]} radius={0.06} smoothness={3} position={[1.9, 1.85, 0.3]} castShadow>
+        <meshStandardMaterial color={C.steelDark} roughness={0.7} />
+      </RoundedBox>
+      <mesh position={[1.9, 2.12, 0.62]} rotation={[-0.5, 0, 0]}>
+        <planeGeometry args={[0.6, 0.4]} />
+        <meshStandardMaterial color={C.lime} emissive={C.lime} emissiveIntensity={0.7} toneMapped={false} />
+      </mesh>
+      {/* bagged orders on the floor */}
+      {[
+        [-3.4, 1.6],
+        [-3.9, 0.4],
+        [3.4, 1.2],
+      ].map(([px, pz]) => (
+        <mesh key={`${px}:${pz}`} position={[px, 0.35, pz]} rotation={[0, px, 0]} castShadow>
+          <boxGeometry args={[1.3, 0.7, 1]} />
+          <meshStandardMaterial color={C.cream} roughness={0.9} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+/** the shoot corner: cyclorama, softboxes, tripod and a product riser */
+function PhotoStudio() {
+  const flash = useRef<THREE.Mesh>(null);
+  const turntable = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    if (turntable.current) turntable.current.rotation.y = t * 0.7;
+    if (flash.current) {
+      const mat = flash.current.material as THREE.MeshStandardMaterial;
+      const pulse = Math.max(0, Math.sin(t * 0.9) ** 12);
+      mat.emissiveIntensity = 0.6 + pulse * 6;
+    }
+  });
+
+  return (
+    <group position={[14, 0, 3]}>
+      {/* seamless white backdrop curving into the floor */}
+      <mesh position={[0, 3.5, -3.4]} receiveShadow>
+        <boxGeometry args={[9, 7, 0.3]} />
+        <meshStandardMaterial color="#f4f6fa" roughness={0.95} />
+      </mesh>
+      <mesh position={[0, 0.9, -2.5]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
+        <cylinderGeometry args={[1.4, 1.4, 9, 20, 1, true, 0, Math.PI / 2]} />
+        <meshStandardMaterial color="#f4f6fa" roughness={0.95} side={THREE.DoubleSide} />
+      </mesh>
+      <mesh position={[0, 0.03, 0.2]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[9, 5]} />
+        <meshStandardMaterial color="#eef1f6" roughness={1} />
+      </mesh>
+
+      {/* softboxes on stands */}
+      {[-3.2, 3.2].map((x) => (
+        <group key={x} position={[x, 0, 1.4]} rotation={[0, x > 0 ? -0.5 : 0.5, 0]}>
+          <mesh position={[0, 1.7, 0]} castShadow>
+            <cylinderGeometry args={[0.07, 0.09, 3.4, 10]} />
+            <meshStandardMaterial color={C.steelDark} roughness={0.7} metalness={0.3} />
+          </mesh>
+          {[0, 2.1, 4.2].map((a) => (
+            <mesh key={a} position={[Math.cos(a) * 0.5, 0.3, Math.sin(a) * 0.5]} rotation={[0.5, -a, 0]} castShadow>
+              <boxGeometry args={[0.08, 0.08, 1.1]} />
+              <meshStandardMaterial color={C.steelDark} roughness={0.8} />
+            </mesh>
+          ))}
+          <mesh position={[0, 3.6, -0.25]} rotation={[0.35, 0, 0]} castShadow>
+            <boxGeometry args={[1.9, 1.9, 0.5]} />
+            <meshStandardMaterial color={C.steelDark} roughness={0.8} />
+          </mesh>
+          <mesh position={[0, 3.45, 0.05]} rotation={[0.35, 0, 0]}>
+            <planeGeometry args={[1.7, 1.7]} />
+            <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1.1} toneMapped={false} />
+          </mesh>
+        </group>
+      ))}
+      <pointLight position={[0, 4, 2]} intensity={120} color="#ffffff" distance={16} />
+
+      {/* camera on a tripod */}
+      <group position={[0, 0, 3.6]}>
+        {[0, 2.1, 4.2].map((a) => (
+          <mesh key={a} position={[Math.cos(a) * 0.45, 0.85, Math.sin(a) * 0.45]} rotation={[Math.cos(a) * 0.25, 0, -Math.sin(a) * 0.25]} castShadow>
+            <cylinderGeometry args={[0.06, 0.06, 1.8, 8]} />
+            <meshStandardMaterial color={C.steelDark} roughness={0.7} metalness={0.3} />
+          </mesh>
+        ))}
+        <RoundedBox args={[1.1, 0.75, 0.7]} radius={0.08} smoothness={3} position={[0, 2, 0]} castShadow>
+          <meshStandardMaterial color="#1c2133" roughness={0.6} />
+        </RoundedBox>
+        <mesh position={[0, 2, -0.6]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.3, 0.34, 0.7, 16]} />
+          <meshStandardMaterial color="#12151f" roughness={0.4} metalness={0.5} />
+        </mesh>
+        <mesh ref={flash} position={[0, 2.5, 0]}>
+          <sphereGeometry args={[0.16, 12, 12]} />
+          <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.6} toneMapped={false} />
+        </mesh>
+      </group>
+
+      {/* product riser with a pair turning on it */}
+      <mesh position={[0, 0.35, -0.6]} castShadow receiveShadow>
+        <cylinderGeometry args={[1.3, 1.4, 0.7, 24]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.9} />
+      </mesh>
+      <group ref={turntable} position={[0, 0.7, -0.6]}>
+        {[-0.4, 0.4].map((z, i) => (
+          <group key={z} position={[0, 0.2, z]} rotation={[0, i ? 0.2 : -0.15, 0]}>
+            <RoundedBox args={[1.1, 0.34, 0.5]} radius={0.14} smoothness={3} castShadow>
+              <meshStandardMaterial color={i ? C.magenta : C.neon} roughness={0.6} />
+            </RoundedBox>
+            <RoundedBox args={[0.55, 0.4, 0.48]} radius={0.15} smoothness={3} position={[-0.25, 0.3, 0]} castShadow>
+              <meshStandardMaterial color={C.cream} roughness={0.8} />
+            </RoundedBox>
+          </group>
+        ))}
+      </group>
+
+      {/* rail of shoot-ready pieces parked beside the set */}
+      <group position={[4.6, 0, 2.4]} rotation={[0, -0.35, 0]}>
+        {[-1.4, 1.4].map((z) => (
+          <mesh key={z} position={[0, 1.7, z]} castShadow>
+            <cylinderGeometry args={[0.07, 0.07, 3.4, 10]} />
+            <meshStandardMaterial color={C.steel} roughness={0.5} metalness={0.6} />
+          </mesh>
+        ))}
+        <mesh position={[0, 3.4, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.06, 0.06, 3, 10]} />
+          <meshStandardMaterial color={C.steel} roughness={0.4} metalness={0.7} />
+        </mesh>
+        {Array.from({ length: 9 }, (_, i) => (
+          <group key={i} position={[0, 3.4, -1.3 + i * 0.32]}>
+            <mesh position={[0, -0.36, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+              <boxGeometry args={[0.66, 0.12, 0.26]} />
+              <meshStandardMaterial color={C.cream} roughness={0.9} />
+            </mesh>
+            <mesh position={[0, -1.2, 0]} castShadow>
+              <boxGeometry args={[0.62, 1.6, 0.2]} />
+              <meshStandardMaterial color={GARMENT_COLORS[(i * 2) % GARMENT_COLORS.length]} roughness={0.95} />
+            </mesh>
+          </group>
         ))}
       </group>
     </group>

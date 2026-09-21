@@ -54,11 +54,12 @@ export const stations: Station[] = [
   },
   {
     id: "study",
-    object: "Study wing",
+    object: "Campus door",
     title: "Madrid ↔ Texas",
-    subtitle: "Business and computers, on two continents",
-    label: [20, 4.4, -3.4],
-    stand: [20, -1],
+    subtitle: "Walk out onto the campus plaza",
+    label: [11.5, 8.4, -9.4],
+    stand: [11.5, -7.2],
+    kind: "scene",
   },
   {
     id: "factory",
