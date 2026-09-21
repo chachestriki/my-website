@@ -112,6 +112,9 @@ const SCENES: Record<string, SceneId> = {
   hobbies: "hobbies",
 };
 
+/** rooms whose panel is already open when you walk in */
+const GREETS: SceneId[] = ["factory", "campus"];
+
 const CONTENT: Record<string, ReactNode> = {
   "front-desk": <AboutRoom />,
   projects: <ProjectsRoom />,
@@ -128,7 +131,8 @@ export default function LobbyScene() {
   const [near, setNear] = useState<string | null>(null);
   const [moved, setMoved] = useState(false);
   const [scene, setScene] = useState<SceneId | null>(null);
-  /** the scene's own panel, opened from the stand inside the room — not fixed */
+  /** the scene's own panel, opened from the stand inside the room — not fixed;
+   *  these two rooms greet you with it open instead */
   const [panel, setPanel] = useState(false);
   /** the door whose keycard question is on screen, and the doors already answered */
   const [locked, setLocked] = useState<string | null>(null);
@@ -148,7 +152,7 @@ export default function LobbyScene() {
       return next;
     });
     setNear(null);
-    setPanel(false);
+    setPanel(GREETS.includes(next));
     setLocked(null);
   }, []);
   const enterScene = useCallback(

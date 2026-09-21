@@ -278,10 +278,7 @@ export function EducationRoom() {
       school: education.find((e) => e.place.includes("Madrid")),
       tint: "from-[#ffb03a]/25",
       accent: "text-[#c0392b]",
-      notes: [
-        "Management & Technology: finance and strategy next to systems and data.",
-        "Where the hospitality and operations side of my work started.",
-      ],
+      notes: ["Finance and strategy next to systems and data."],
     },
     {
       city: "Texas",
@@ -289,17 +286,14 @@ export function EducationRoom() {
       school: education.find((e) => e.place.includes("TX")),
       tint: "from-[#3f72d8]/25",
       accent: "text-[#2f5fbf]",
-      notes: [
-        "Computer Science and Business: algorithms, systems and databases.",
-        "Project-heavy: ship it, measure it, defend it.",
-      ],
+      notes: ["Algorithms, systems and databases, project by project."],
     },
   ];
 
   return (
     <div className="space-y-6">
       <p className="text-sm leading-relaxed text-ink/75">
-        One degree path, 8,000 km apart: business in Madrid, computers in Texas.
+        Business in Madrid, computers in Texas.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -325,10 +319,6 @@ export function EducationRoom() {
           </div>
         ))}
       </div>
-
-      <p className="text-sm leading-relaxed text-ink/70">
-        The combination is the point: a P&amp;L and a stack trace in the same afternoon.
-      </p>
     </div>
   );
 }
