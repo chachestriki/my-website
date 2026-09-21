@@ -119,6 +119,17 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
         <boxGeometry args={[0.6, 8, 20]} />
         <meshStandardMaterial color={C.wallSide} roughness={1} />
       </mesh>
+      {/* the camera-side wall is glazed, so it frames the room without hiding it */}
+      <mesh position={[13.2, 4, 0]}>
+        <boxGeometry args={[0.3, 8, 20]} />
+        <meshStandardMaterial color="#bfe6ff" transparent opacity={0.2} roughness={0.15} />
+      </mesh>
+      {[-8, -4, 4, 8].map((z) => (
+        <mesh key={z} position={[13.2, 4, z]}>
+          <boxGeometry args={[0.36, 8, 0.18]} />
+          <meshStandardMaterial color={C.gold} roughness={0.6} metalness={0.3} />
+        </mesh>
+      ))}
       {/* skirting */}
       <mesh position={[0, 0.3, -9.65]}>
         <boxGeometry args={[27, 0.6, 0.3]} />
@@ -266,7 +277,7 @@ function BellDesk() {
 /** the door out to the Vice Resell floor */
 function FreightDoor() {
   return (
-    <group position={[-9.4, 0, -9.6]}>
+    <group position={[-12.9, 0, 4.5]} rotation={[0, Math.PI / 2, 0]}>
       <RoundedBox args={[4.4, 6.4, 0.4]} radius={0.14} smoothness={4} position={[0, 3.2, 0]} castShadow>
         <meshStandardMaterial color={C.gold} roughness={0.6} metalness={0.15} />
       </RoundedBox>
@@ -427,7 +438,7 @@ function GalleryDoor() {
 /** the door out to the education campus */
 function CampusDoor() {
   return (
-    <group position={[11.5, 0, -9.6]}>
+    <group position={[12.9, 0, -1]} rotation={[0, -Math.PI / 2, 0]}>
       <RoundedBox args={[4.6, 6.8, 0.4]} radius={0.16} smoothness={4} position={[0, 3.4, 0]} castShadow>
         <meshStandardMaterial color={C.wood} roughness={0.8} />
       </RoundedBox>

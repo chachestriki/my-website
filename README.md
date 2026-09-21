@@ -12,7 +12,7 @@ A game-like personal site: a saturated cartoon hotel lobby rendered in 3D (top-d
 | Education door | Swaps the lobby for the Madrid/Texas campus |
 | Freight door | Swaps the lobby for the Vice Resell clothing factory |
 
-The three doors replace the whole scene with another walkable world; `Esc` or the back button returns to the lobby. Inside a scene the side panel is not fixed: walk onto the stand or press `1` to open it, `Esc` or `✕` closes it without leaving the room.
+Each door is locked behind a multiple-choice programming question (`src/data/doorQuiz.ts`): pick the right answer once and that room stays unlocked for the session. The three doors replace the whole scene with another walkable world; `Esc` or the back button returns to the lobby. Inside a scene the side panel is not fixed: walk onto the stand or press `1` to open it, `Esc` or `✕` closes it without leaving the room.
 
 - **Career hall** — framed company logos on a timeline: Lenovo, a marketing agency, Mastel Hospitality, Vice Resell, ODYN AI, Room Mate Hotels (`src/data/career.ts`).
 - **Campus** — Puerta de Alcalá, Cibeles, the bear and the madroño and a café desk on the Madrid side; the Capitol dome, a water tower, a pumpjack, a longhorn and a CS lab bench on the Texas side, with a globe on the meridian between them.

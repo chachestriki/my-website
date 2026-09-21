@@ -6,9 +6,11 @@ import { OrthographicCamera, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import { C, CAM_OFFSET, CameraRig, InfoStand, Penguin, useWalker, type LobbyApi } from "@/components/world";
 
-const START: [number, number, number] = [0, 0, 6];
-const BOUNDS = { minX: -21, maxX: 21, minZ: -11, maxZ: 12 };
-const DESK: [number, number] = [0, 10];
+/** the plaza is modelled at full size and shrunk so both halves fit on screen */
+const SCALE = 0.62;
+const START: [number, number, number] = [0, 0, 6 * SCALE];
+const BOUNDS = { minX: -21 * SCALE, maxX: 21 * SCALE, minZ: -11 * SCALE, maxZ: 12 * SCALE };
+const DESK: [number, number] = [0, 10 * SCALE];
 const SPOTS = [{ id: "desk", stand: DESK }];
 
 const MADRID = "#e0392b";
@@ -43,7 +45,7 @@ export default function Campus3D({
       <color attach="background" args={["#7fd0ff"]} />
       <fog attach="fog" args={["#7fd0ff", 70, 120]} />
 
-      <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom * 0.5} near={-160} far={260} />
+      <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom * 0.72} near={-160} far={260} />
       <CameraRig posRef={playerRef} start={START} shift={panelOpen ? 10 : 0} />
 
       <hemisphereLight args={["#ffffff", "#ffd28a", 1]} />
@@ -59,10 +61,12 @@ export default function Campus3D({
         shadow-camera-bottom={-34}
       />
 
-      <Ground onFloorClick={walkTo} />
-      <MadridSide />
-      <TexasSide />
-      <Meridian />
+      <group scale={SCALE}>
+        <Ground onFloorClick={walkTo} />
+        <MadridSide />
+        <TexasSide />
+        <Meridian />
+      </group>
       <InfoStand x={DESK[0]} z={DESK[1]} color={C.gold} onOpen={onDesk} />
 
       <Penguin
@@ -92,7 +96,7 @@ function Ground({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) =>
       {Array.from({ length: 28 }, (_, i) => (
         <mesh
           key={i}
-          position={[-21.5 + (i % 7) * 3.2, 0.02, -11 + Math.floor(i / 7) * 6.4]}
+          position={[-21.5 + (i % 7) * 3.2, 0.03, -11 + Math.floor(i / 7) * 6.4]}
           rotation={[-Math.PI / 2, 0, 0]}
         >
           <planeGeometry args={[2.9, 6]} />
@@ -104,8 +108,8 @@ function Ground({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) =>
         <planeGeometry args={[22, 26]} />
         <meshStandardMaterial color="#d9cdb8" roughness={1} />
       </mesh>
-      {/* the meridian path down the middle */}
-      <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      {/* the meridian path down the middle, lifted clear of the paving */}
+      <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[4.4, 26]} />
         <meshStandardMaterial color={MADRID_STONE} roughness={1} />
       </mesh>
@@ -666,11 +670,11 @@ function Meridian() {
       </group>
 
       {/* 8,000 km marker between the two halves */}
-      <mesh position={[0, 0.03, -6]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh position={[0, 0.09, -6]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[4.4, 0.35]} />
         <meshStandardMaterial color={C.plum} roughness={1} />
       </mesh>
-      <mesh position={[0, 0.03, 9]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh position={[0, 0.09, 9]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[4.4, 0.35]} />
         <meshStandardMaterial color={C.plum} roughness={1} />
       </mesh>

@@ -13,6 +13,7 @@ import {
   ViceResellRoom,
 } from "@/components/rooms";
 import ControlsLegend from "@/components/ControlsLegend";
+import DoorQuiz from "@/components/DoorQuiz";
 import ViceResellPanel from "@/components/ViceResellPanel";
 import CampusPanel from "@/components/CampusPanel";
 import GalleryPanel from "@/components/GalleryPanel";
@@ -83,21 +84,38 @@ export default function LobbyScene() {
   const [scene, setScene] = useState<SceneId | null>(null);
   /** the scene's own panel, opened from the stand inside the room — not fixed */
   const [panel, setPanel] = useState(false);
+  /** the door whose keycard question is on screen, and the doors already answered */
+  const [locked, setLocked] = useState<string | null>(null);
+  const [unlocked, setUnlocked] = useState<string[]>([]);
+  const [quizSeed, setQuizSeed] = useState(0);
 
   const api = useRef<LobbyApi>({});
   const open = stations.find((s) => s.id === openId) ?? null;
   const close = useCallback(() => setOpenId(null), []);
   const onMove = useCallback(() => setMoved(true), []);
-  const onOpen = useCallback((id: string) => {
-    const s = stations.find((v) => v.id === id);
-    if (s?.kind === "scene") {
-      setScene(SCENES[id] ?? null);
-      setNear(null);
-      setPanel(false);
-      return;
-    }
-    setOpenId(id);
+  const enterScene = useCallback((id: string) => {
+    setScene(SCENES[id] ?? null);
+    setNear(null);
+    setPanel(false);
+    setLocked(null);
   }, []);
+  const onOpen = useCallback(
+    (id: string) => {
+      const s = stations.find((v) => v.id === id);
+      if (s?.kind === "scene") {
+        if (unlocked.includes(id)) return enterScene(id);
+        setQuizSeed(Math.floor(Math.random() * 1000));
+        return setLocked(id);
+      }
+      setOpenId(id);
+    },
+    [enterScene, unlocked],
+  );
+  const unlockDoor = useCallback(() => {
+    if (!locked) return;
+    setUnlocked((prev) => (prev.includes(locked) ? prev : [...prev, locked]));
+    enterScene(locked);
+  }, [enterScene, locked]);
   const openPanel = useCallback(() => setPanel(true), []);
   const closePanel = useCallback(() => setPanel(false), []);
   const leaveScene = useCallback(() => {
@@ -108,10 +126,12 @@ export default function LobbyScene() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        if (locked) return setLocked(null);
         if (openId) return close();
         if (panel) return closePanel();
         return leaveScene();
       }
+      if (locked) return;
       const n = Number(e.key);
       if (scene && n === 1) return setPanel((p) => !p);
       if (!scene && n >= 1 && n <= stations.length) return api.current.goTo?.(stations[n - 1].id);
@@ -134,7 +154,9 @@ export default function LobbyScene() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [close, closePanel, leaveScene, openId, panel, scene]);
+  }, [close, closePanel, leaveScene, locked, openId, panel, scene]);
+
+  const lockedStation = stations.find((s) => s.id === locked) ?? null;
 
   return (
     <div className="relative min-h-dvh lobby-vignette">
@@ -208,6 +230,9 @@ export default function LobbyScene() {
             </div>
           </div>
           <nav className="pointer-events-auto flex items-center gap-3 text-xs">
+            <span className="rounded-full border-2 border-white bg-white/85 px-4 py-2 font-mono font-semibold text-teal shadow-[0_4px_0_rgba(107,91,143,0.12)]">
+              Currently 2026
+            </span>
             <a
               href="/cv"
               className="rounded-full border-2 border-white bg-white/85 px-4 py-2 font-mono font-semibold text-brass shadow-[0_4px_0_rgba(107,91,143,0.12)] transition hover:bg-white"
@@ -232,6 +257,11 @@ export default function LobbyScene() {
             >
               <span className={`mr-1.5 ${near === s.id ? "text-white/70" : "text-brass/70"}`}>{i + 1}</span>
               {s.object}
+              {s.kind === "scene" && !unlocked.includes(s.id) && (
+                <span className={`ml-1.5 text-[9px] ${near === s.id ? "text-white/70" : "text-ink/40"}`}>
+                  locked
+                </span>
+              )}
             </button>
           ))}
         </footer>
@@ -266,6 +296,20 @@ export default function LobbyScene() {
           </a>
         </div>
       </div>
+
+      {/* ---------------- the door's keycard question ---------------- */}
+      <AnimatePresence>
+        {lockedStation && (
+          <DoorQuiz
+            key={lockedStation.id}
+            stationId={lockedStation.id}
+            doorName={lockedStation.title}
+            seed={quizSeed}
+            onUnlock={unlockDoor}
+            onCancel={() => setLocked(null)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* ---------------- room overlay ---------------- */}
       <AnimatePresence>

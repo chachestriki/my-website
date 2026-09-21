@@ -6,10 +6,12 @@ import { OrthographicCamera, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import { C, CAM_OFFSET, CameraRig, InfoStand, Penguin, useWalker, type LobbyApi } from "@/components/world";
 
-const START: [number, number, number] = [-2, 0, 7.2];
-const BOUNDS = { minX: -16, maxX: 18, minZ: -8, maxZ: 8.5 };
+/** the floor is modelled at full size and shrunk so the whole plant fits on screen */
+const SCALE = 0.72;
+const START: [number, number, number] = [-2 * SCALE, 0, 7.2 * SCALE];
+const BOUNDS = { minX: -16 * SCALE, maxX: 18 * SCALE, minZ: -8 * SCALE, maxZ: 8.5 * SCALE };
 const GARMENT_COLORS = [C.magenta, C.neon, C.lime, C.gold, C.scarf, C.sky, C.plum, C.mint];
-const DESK: [number, number] = [3, 7.4];
+const DESK: [number, number] = [3 * SCALE, 7.4 * SCALE];
 const SPOTS = [{ id: "desk", stand: DESK }];
 
 export default function Factory3D({
@@ -55,17 +57,19 @@ export default function Factory3D({
       <pointLight position={[-8, 7, -2]} intensity={90} color={C.magenta} distance={26} />
       <pointLight position={[8, 7, 2]} intensity={90} color={C.neon} distance={26} />
 
-      <FactoryShell onFloorClick={walkTo} />
-      <GarmentRail z={-5.6} speed={1.1} />
-      <GarmentRail z={-2.4} speed={-0.85} />
-      <ShoeConveyor x={6} y={1.1} z={3.6} speed={3.2} />
-      <ShoeConveyor x={6} y={2.4} z={1.4} speed={-2.4} />
-      <SewingRow />
-      <ShelfWall />
-      <HangerAisle x={-11} />
-      <HangerAisle x={-6.5} />
-      <PackingBench />
-      <PhotoStudio />
+      <group scale={SCALE}>
+        <FactoryShell onFloorClick={walkTo} />
+        <GarmentRail z={-5.6} speed={1.1} />
+        <GarmentRail z={-2.4} speed={-0.85} />
+        <ShoeConveyor x={6} y={1.1} z={3.6} speed={3.2} />
+        <ShoeConveyor x={6} y={2.4} z={1.4} speed={-2.4} />
+        <SewingRow />
+        <ShelfWall />
+        <HangerAisle x={-11} />
+        <HangerAisle x={-6.5} />
+        <PackingBench />
+        <PhotoStudio />
+      </group>
       <InfoStand x={DESK[0]} z={DESK[1]} color={C.neon} onOpen={onDesk} />
 
       <Penguin

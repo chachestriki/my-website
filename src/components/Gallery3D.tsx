@@ -39,7 +39,7 @@ export default function Gallery3D({
       <color attach="background" args={["#2a1b2e"]} />
       <fog attach="fog" args={["#2a1b2e", 52, 96]} />
 
-      <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom * 0.62} near={-140} far={240} />
+      <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom * 0.88} near={-140} far={240} />
       <CameraRig posRef={playerRef} start={START} shift={panelOpen ? 8 : 0} />
 
       <hemisphereLight args={["#ffe6c4", "#3a2438", 0.8]} />
@@ -92,10 +92,19 @@ function Hall({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => v
         <boxGeometry args={[width, 4.8, 0.6]} />
         <meshStandardMaterial color={WALL_DARK} roughness={1} />
       </mesh>
-      {[-width / 2, width / 2].map((x) => (
-        <mesh key={x} position={[x, 5, 0.3]} receiveShadow>
-          <boxGeometry args={[0.6, 10, 15]} />
-          <meshStandardMaterial color={WALL_DARK} roughness={1} />
+      <mesh position={[-width / 2, 5, 0.3]} receiveShadow>
+        <boxGeometry args={[0.6, 10, 15]} />
+        <meshStandardMaterial color={WALL_DARK} roughness={1} />
+      </mesh>
+      {/* the right end is glass, so the hall doesn't close in on the camera */}
+      <mesh position={[width / 2, 5, 0.3]}>
+        <boxGeometry args={[0.3, 10, 15]} />
+        <meshStandardMaterial color="#bfe6ff" transparent opacity={0.18} roughness={0.1} metalness={0.1} />
+      </mesh>
+      {[-4.2, 0.3, 4.8].map((z) => (
+        <mesh key={z} position={[width / 2, 5, z]}>
+          <boxGeometry args={[0.36, 10, 0.16]} />
+          <meshStandardMaterial color={C.gold} roughness={0.5} metalness={0.4} />
         </mesh>
       ))}
       {/* ceiling track lights */}
