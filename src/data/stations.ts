@@ -7,6 +7,8 @@ export type Station = {
   label: [number, number, number];
   /** where the character has to stand for the room to open */
   stand: [number, number];
+  /** "room" opens the overlay, "scene" swaps the whole 3D world */
+  kind?: "room" | "scene";
 };
 
 export const stations: Station[] = [
@@ -49,5 +51,22 @@ export const stations: Station[] = [
     subtitle: "Email, phone, CV",
     label: [5.4, 3, 5],
     stand: [5.4, 3.2],
+  },
+  {
+    id: "study",
+    object: "Study wing",
+    title: "Madrid ↔ Texas",
+    subtitle: "Business and computers, on two continents",
+    label: [20, 4.4, -3.4],
+    stand: [20, -1],
+  },
+  {
+    id: "factory",
+    object: "Freight door",
+    title: "Vice Resell floor",
+    subtitle: "Walk into the clothing factory",
+    label: [-9.4, 8.4, -9.4],
+    stand: [-9.4, -7.2],
+    kind: "scene",
   },
 ];

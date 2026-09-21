@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import IntegrationBoard from "@/components/IntegrationBoard";
 import { education, profile, roles, skills } from "@/data/cv";
+import { viceResell } from "@/data/viceResell";
 
 export function AboutRoom() {
   return (
@@ -227,6 +228,97 @@ export function ContactRoom() {
       >
         Read the CV →
       </a>
+    </div>
+  );
+}
+
+export function EducationRoom() {
+  const wings = [
+    {
+      city: "Madrid",
+      flag: "🇪🇸",
+      school: education.find((e) => e.place.includes("Madrid")),
+      tint: "from-[#ffb03a]/25",
+      accent: "text-[#c0392b]",
+      notes: [
+        "Management & Technology: accounting, finance and strategy taught next to systems and data.",
+        "Learned to argue a business case in Spanish before writing the code that backed it.",
+        "Where the hospitality and operations side of my work started.",
+      ],
+    },
+    {
+      city: "Texas",
+      flag: "🤠",
+      school: education.find((e) => e.place.includes("TX")),
+      tint: "from-[#3f72d8]/25",
+      accent: "text-[#2f5fbf]",
+      notes: [
+        "Computer Science and Business: algorithms, systems and databases, plus the commercial half.",
+        "Project-heavy engineering culture — ship it, measure it, defend it.",
+        "Where the software engineering discipline behind Vice Resell came from.",
+      ],
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <p className="text-sm leading-relaxed text-ink/75">
+        Two halves of the same degree path, 8,000 km apart: business in Madrid, computers in Texas.
+        The study wing off the lobby is that split — a plaza-lit desk on one side, a lab bench on the
+        other, a globe in the middle.
+      </p>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        {wings.map((w) => (
+          <div
+            key={w.city}
+            className={`rounded-2xl border border-brass/20 bg-gradient-to-b ${w.tint} to-white/60 p-5`}
+          >
+            <p className="font-mono text-xs uppercase tracking-widest text-teal">
+              {w.flag} {w.city}
+            </p>
+            <h3 className={`mt-1 text-lg font-extrabold ${w.accent}`}>{w.school?.school}</h3>
+            <p className="text-sm text-ink/70">{w.school?.degree}</p>
+            <p className="font-mono text-[11px] text-ink/45">{w.school?.place}</p>
+            <ul className="mt-3 space-y-1.5 text-sm leading-relaxed text-ink/75">
+              {w.notes.map((n) => (
+                <li key={n} className="flex gap-2">
+                  <span className="text-brass">·</span>
+                  {n}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-sm leading-relaxed text-ink/70">
+        The combination is the point: I can read a P&L and a stack trace in the same afternoon, which
+        is why the systems I build are judged on what they do to the business, not on their
+        architecture diagrams.
+      </p>
+    </div>
+  );
+}
+
+export function ViceResellRoom() {
+  return (
+    <div className="space-y-5">
+      <p className="text-sm leading-relaxed text-ink/75">{viceResell.intro}</p>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {viceResell.stats.map((s) => (
+          <div key={s.label} className="rounded-xl border border-brass/20 bg-white/70 p-4">
+            <p className="font-mono text-xl text-brass">{s.value}</p>
+            <p className="mt-1 text-xs leading-relaxed text-ink/60">{s.label}</p>
+          </div>
+        ))}
+      </div>
+      {viceResell.blocks.map((b) => (
+        <div key={b.heading}>
+          <h3 className="font-mono text-xs uppercase tracking-widest text-teal">{b.heading}</h3>
+          <p className="mt-1 text-sm leading-relaxed text-ink/75">{b.body}</p>
+        </div>
+      ))}
     </div>
   );
 }

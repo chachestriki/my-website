@@ -3,8 +3,17 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
-import { AboutRoom, ConciergeRoom, ContactRoom, ExperienceRoom, ProjectsRoom } from "@/components/rooms";
+import {
+  AboutRoom,
+  ConciergeRoom,
+  ContactRoom,
+  EducationRoom,
+  ExperienceRoom,
+  ProjectsRoom,
+  ViceResellRoom,
+} from "@/components/rooms";
 import ControlsLegend from "@/components/ControlsLegend";
+import ViceResellPanel from "@/components/ViceResellPanel";
 import { stations } from "@/data/stations";
 import { profile } from "@/data/cv";
 import type { LobbyApi } from "@/components/Lobby3D";
@@ -18,39 +27,64 @@ const Lobby3D = dynamic(() => import("@/components/Lobby3D"), {
   ),
 });
 
+const Factory3D = dynamic(() => import("@/components/Factory3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center bg-[#141a2b] font-mono text-sm text-[#00e5ff]">
+      Clocking in…
+    </div>
+  ),
+});
+
 const CONTENT: Record<string, ReactNode> = {
   "front-desk": <AboutRoom />,
   "key-rack": <ProjectsRoom />,
   terminal: <ExperienceRoom />,
   phone: <ConciergeRoom />,
   bell: <ContactRoom />,
+  study: <EducationRoom />,
+  factory: <ViceResellRoom />,
 };
 
 export default function LobbyScene() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [near, setNear] = useState<string | null>(null);
   const [moved, setMoved] = useState(false);
+  const [inFactory, setInFactory] = useState(false);
 
   const api = useRef<LobbyApi>({});
   const open = stations.find((s) => s.id === openId) ?? null;
   const close = useCallback(() => setOpenId(null), []);
   const onMove = useCallback(() => setMoved(true), []);
-  const onOpen = useCallback((id: string) => setOpenId(id), []);
+  const onOpen = useCallback((id: string) => {
+    const s = stations.find((v) => v.id === id);
+    if (s?.kind === "scene") {
+      setInFactory(true);
+      setNear(null);
+      return;
+    }
+    setOpenId(id);
+  }, []);
+  const leaveFactory = useCallback(() => setInFactory(false), []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") return close();
+      if (e.key === "Escape") {
+        if (openId) return close();
+        return leaveFactory();
+      }
       const n = Number(e.key);
-      if (n >= 1 && n <= stations.length) return api.current.goTo?.(stations[n - 1].id);
+      if (!inFactory && n >= 1 && n <= stations.length) return api.current.goTo?.(stations[n - 1].id);
+      /* screen-relative: +right walks right on screen, +forward walks away from the camera */
       const nudge: Record<string, [number, number]> = {
         ArrowLeft: [-3, 0],
         ArrowRight: [3, 0],
-        ArrowUp: [0, -3],
-        ArrowDown: [0, 3],
+        ArrowUp: [0, 3],
+        ArrowDown: [0, -3],
         a: [-3, 0],
         d: [3, 0],
-        w: [0, -3],
-        s: [0, 3],
+        w: [0, 3],
+        s: [0, -3],
       };
       const v = nudge[e.key];
       if (v) {
@@ -60,15 +94,34 @@ export default function LobbyScene() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [close]);
+  }, [close, inFactory, leaveFactory, openId]);
 
   return (
     <div className="relative min-h-dvh lobby-vignette">
       {/* ---------------- desktop / tablet: the walkable 3D lobby ---------------- */}
-      <div className="relative hidden h-dvh w-full md:block">
-        <Lobby3D api={api} onNear={setNear} onOpen={onOpen} onMove={onMove} />
+      <div className="relative hidden h-dvh w-full overflow-hidden md:block">
+        {inFactory ? (
+          <motion.div
+            key="factory"
+            initial={{ opacity: 0, scale: 1.06 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0"
+          >
+            <Factory3D api={api} onMove={onMove} />
+            <ViceResellPanel onClose={leaveFactory} />
+            <button
+              onClick={leaveFactory}
+              className="absolute left-6 top-6 z-30 rounded-full border-2 border-[#00e5ff]/60 bg-[#141a2b]/80 px-4 py-2 font-mono text-xs font-semibold text-[#00e5ff] transition hover:bg-[#00e5ff] hover:text-[#141a2b]"
+            >
+              ← back to the lobby
+            </button>
+          </motion.div>
+        ) : (
+          <Lobby3D api={api} onNear={setNear} onOpen={onOpen} onMove={onMove} />
+        )}
 
-        {!moved && (
+        {!moved && !inFactory && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -79,8 +132,9 @@ export default function LobbyScene() {
           </motion.div>
         )}
 
-        <ControlsLegend />
+        {!inFactory && <ControlsLegend />}
 
+        {!inFactory && (
         <header className="pointer-events-none absolute left-0 right-0 top-0 z-20 flex items-start justify-between p-6">
           <div className="pointer-events-auto rounded-2xl border-2 border-white bg-white/85 px-4 py-2.5 shadow-[0_6px_0_rgba(107,91,143,0.12)]">
             <h1 className="text-xl font-extrabold tracking-tight text-brass">{profile.name}</h1>
@@ -95,7 +149,9 @@ export default function LobbyScene() {
             </a>
           </nav>
         </header>
+        )}
 
+        {!inFactory && (
         <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-wrap items-center justify-center gap-2 p-5">
           {stations.map((s, i) => (
             <button
@@ -112,6 +168,7 @@ export default function LobbyScene() {
             </button>
           ))}
         </footer>
+        )}
       </div>
 
       {/* ---------------- mobile: linear mode ---------------- */}

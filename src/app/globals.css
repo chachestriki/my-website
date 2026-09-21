@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fdeee4;
-  --foreground: #4a3f63;
-  --ink: #4a3f63;
-  --brass: #d3607f;
-  --brass-dim: #f2b8c8;
-  --teal: #2f9e8f;
-  --plum: #8b7ac2;
-  --card: #fffaf4;
+  --background: #ffdfc7;
+  --foreground: #35244d;
+  --ink: #35244d;
+  --brass: #e01f5c;
+  --brass-dim: #ff8fb0;
+  --teal: #00a88c;
+  --plum: #6b45cf;
+  --card: #fff6e8;
 }
 
 @theme inline {
@@ -30,10 +30,10 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-/* Soft pastel daylight behind the 3D lobby */
+/* Saturated cartoon daylight behind the 3D lobby */
 .lobby-vignette {
   background:
-    radial-gradient(120% 80% at 50% 12%, #fff6ea 0%, #ffe7ef 45%, #fdeee4 100%);
+    radial-gradient(120% 80% at 50% 12%, #ffe9b8 0%, #ffc2d6 45%, #ffcfa8 100%);
 }
 
 @keyframes pad-pulse {
