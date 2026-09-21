@@ -23,6 +23,8 @@ Only the side rooms are locked behind a multiple-choice programming question (`s
 - **Factory floor** — moving garment rails, shoe conveyors, stockroom shelving, dense hanger aisles, a packing bench and a photo studio, plus a side panel about the fashion-industry software. Panel photos live in `public/vice-resell/` and are wired up in `src/data/viceResell.ts`.
 - **Hobbies lounge** — an electric guitar on its stand with an amp, a family tree painted on the wall and one framed memory per story. Drop photos in `public/hobbies/` and set each memory's `src` in `src/data/hobbies.ts`; a frame paints a placeholder until then.
 
+The `lofi` button (bottom right) plays a lofi loop synthesised in the browser with the Web Audio API (`src/lib/lofi.ts`) — seventh chords, a soft kick/hat and vinyl crackle, no audio file and nothing to license. It starts muted and keeps playing across rooms.
+
 Keyboard: `1`–`8` jump to a station, `1` toggles the panel inside a scene, `WASD`/arrows walk relative to the camera, `Esc` closes a panel or leaves a scene. Mobile falls back to a linear list, and `/cv` is a plain recruiter-friendly résumé.
 
 ## Stack

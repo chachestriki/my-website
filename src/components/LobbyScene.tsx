@@ -23,6 +23,7 @@ import ProjectsPanel from "@/components/ProjectsPanel";
 import OdynPanel from "@/components/OdynPanel";
 import BotLabPanel from "@/components/BotLabPanel";
 import HatMark from "@/components/HatMark";
+import LofiToggle from "@/components/LofiToggle";
 import { stations } from "@/data/stations";
 import { doorQuiz } from "@/data/doorQuiz";
 import { profile } from "@/data/cv";
@@ -295,6 +296,15 @@ export default function LobbyScene() {
             Click the floor to walk · get close to something to open it
           </motion.div>
         )}
+
+        {/* mounted once so the loop survives walking between rooms */}
+        <div
+          className={`pointer-events-none absolute bottom-6 z-30 transition-all ${
+            panel ? "right-4 max-sm:hidden sm:right-[25.5rem]" : "right-6"
+          }`}
+        >
+          <LofiToggle />
+        </div>
 
         {!scene && <ControlsLegend />}
 
