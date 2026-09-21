@@ -1,6 +1,6 @@
 # Juan Diego Gómez — interactive CV
 
-A game-like personal site: a pastel, cartoon hotel lobby rendered in 3D (top-down isometric) where a character walks to whatever you click. Getting close to a station opens the matching room:
+A game-like personal site: a saturated cartoon hotel lobby rendered in 3D (top-down isometric) where a cowboy walks to whatever you click. Getting close to a station opens the matching room:
 
 | Station | Room |
 | --- | --- |
@@ -9,8 +9,12 @@ A game-like personal site: a pastel, cartoon hotel lobby rendered in 3D (top-dow
 | PMS terminal | Career log |
 | Voice line | Scripted AI agent Q&A |
 | Service bell | Contact + CV |
+| Study wing | Education, split Madrid ↔ Texas |
+| Freight door | Swaps the lobby for the Vice Resell clothing factory |
 
-Keyboard: `1`–`5` jump to a station, `WASD`/arrows walk, `Esc` closes a room. Mobile falls back to a linear list, and `/cv` is a plain recruiter-friendly résumé.
+The freight door replaces the whole scene with a walkable factory floor — moving garment rails, two shoe conveyor layers, workbenches — and a side panel about the fashion-industry software. `Esc` or the back button returns to the lobby. Photos go in `public/vice-resell/` and are wired up in `src/data/viceResell.ts`.
+
+Keyboard: `1`–`7` jump to a station, `WASD`/arrows walk relative to the camera, `Esc` closes a room or leaves the factory. Mobile falls back to a linear list, and `/cv` is a plain recruiter-friendly résumé.
 
 ## Stack
 

@@ -7,8 +7,8 @@ const CONTROLS: { keys: string[]; action: string }[] = [
   { keys: ["click"], action: "walk to that spot" },
   { keys: ["W", "A", "S", "D"], action: "step around" },
   { keys: ["↑", "←", "↓", "→"], action: "step around" },
-  { keys: ["1", "–", "5"], action: "go to a station" },
-  { keys: ["esc"], action: "close a room" },
+  { keys: ["1", "–", "7"], action: "go to a station" },
+  { keys: ["esc"], action: "close a room · leave the factory" },
 ];
 
 export default function ControlsLegend() {
