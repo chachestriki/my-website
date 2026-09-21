@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { AboutRoom, ConciergeRoom, ContactRoom, ExperienceRoom, ProjectsRoom } from "@/components/rooms";
+import ControlsLegend from "@/components/ControlsLegend";
 import { stations } from "@/data/stations";
 import { profile } from "@/data/cv";
 import type { LobbyApi } from "@/components/Lobby3D";
@@ -78,13 +79,14 @@ export default function LobbyScene() {
           </motion.div>
         )}
 
+        <ControlsLegend />
+
         <header className="pointer-events-none absolute left-0 right-0 top-0 flex items-start justify-between p-6">
           <div className="pointer-events-auto rounded-2xl border-2 border-white bg-white/85 px-4 py-2.5 shadow-[0_6px_0_rgba(107,91,143,0.12)]">
             <h1 className="text-xl font-extrabold tracking-tight text-brass">{profile.name}</h1>
             <p className="font-mono text-[11px] uppercase tracking-widest text-ink/50">{profile.title}</p>
           </div>
           <nav className="pointer-events-auto flex items-center gap-3 text-xs">
-            <span className="hidden font-mono text-ink/40 lg:inline">1–5 / WASD</span>
             <a
               href="/cv"
               className="rounded-full border-2 border-white bg-white/85 px-4 py-2 font-mono font-semibold text-brass shadow-[0_4px_0_rgba(107,91,143,0.12)] transition hover:bg-white"
