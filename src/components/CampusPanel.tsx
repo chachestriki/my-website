@@ -14,13 +14,12 @@ export default function CampusPanel({ onClose }: { onClose: () => void }) {
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-widest text-teal">Campus plaza</p>
-          <h2 className="text-2xl font-extrabold text-brass">Madrid ↔ Texas</h2>
-          <p className="text-sm text-ink/55">Business in Spain, computers in Texas</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-teal">Education</p>
+          <h2 className="text-2xl font-extrabold text-brass">Madrid &amp; Texas</h2>
         </div>
         <button
           onClick={onClose}
-          aria-label="Back to the lobby"
+          aria-label="Close the panel"
           className="rounded-full border-2 border-brass/30 px-3 py-1.5 font-mono text-xs font-semibold text-brass transition hover:bg-brass hover:text-white"
         >
           esc ✕
@@ -30,8 +29,7 @@ export default function CampusPanel({ onClose }: { onClose: () => void }) {
       <EducationRoom />
 
       <p className="font-mono text-[10px] uppercase tracking-wider text-ink/40">
-        Walk west for the Puerta de Alcalá, Cibeles and the bear · east for the Capitol dome, the
-        water tower and the pumpjack
+        West: Alcalá, Cibeles, the bear · East: the Capitol dome and the pumpjack
       </p>
     </motion.aside>
   );

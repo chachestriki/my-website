@@ -35,6 +35,9 @@ export const C = {
   denim: "#3f6fd8",
   leather: "#a8521f",
   hat: "#e0a241",
+  tux: "#2a2f4a",
+  belly: "#fff6e6",
+  beak: "#ff9a1f",
   scarf: "#ff3d6e",
   maroon: "#a02040",
   steel: "#5c6a86",
@@ -162,8 +165,53 @@ export function Pad({ x, z, onClick }: { x: number; z: number; onClick: () => vo
   );
 }
 
-/** the cowboy: walks to a target, bobs, swings, tips his hat */
-export function Cowboy({
+/** the "read about this place" stand: walk onto the pad (or press 1) to open a scene's panel */
+export function InfoStand({
+  x,
+  z,
+  color,
+  onOpen,
+}: {
+  x: number;
+  z: number;
+  color: string;
+  onOpen: () => void;
+}) {
+  const screen = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (!screen.current) return;
+    const mat = screen.current.material as THREE.MeshStandardMaterial;
+    mat.emissiveIntensity = 0.7 + Math.sin(state.clock.elapsedTime * 2.6) * 0.3;
+  });
+
+  return (
+    <group>
+      <group position={[x, 0, z - 1.6]}>
+        <mesh position={[0, 0.12, 0]} castShadow>
+          <cylinderGeometry args={[0.7, 0.8, 0.24, 20]} />
+          <meshStandardMaterial color={C.steelDark} roughness={0.8} />
+        </mesh>
+        <mesh position={[0, 1.1, 0]} castShadow>
+          <cylinderGeometry args={[0.14, 0.14, 2, 12]} />
+          <meshStandardMaterial color={C.steel} roughness={0.6} metalness={0.4} />
+        </mesh>
+        <mesh position={[0, 2.3, 0.1]} rotation={[-0.45, 0, 0]} castShadow>
+          <boxGeometry args={[2.2, 1.5, 0.16]} />
+          <meshStandardMaterial color={C.steelDark} roughness={0.7} />
+        </mesh>
+        <mesh ref={screen} position={[0, 2.34, 0.21]} rotation={[-0.45, 0, 0]}>
+          <planeGeometry args={[1.9, 1.2]} />
+          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.8} toneMapped={false} />
+        </mesh>
+      </group>
+      <Pad x={x} z={z} onClick={onOpen} />
+    </group>
+  );
+}
+
+/** the penguin in a stetson: walks to a target, waddles, flaps, tips his hat */
+export function Penguin({
   targetRef,
   posRef,
   spots,
@@ -216,20 +264,20 @@ export function Cowboy({
       }
     }
 
-    clock.current += dt * (walking ? 11 : 2.2);
-    const swing = walking ? Math.sin(clock.current) * 0.62 : Math.sin(clock.current) * 0.05;
-    if (legL.current) legL.current.rotation.x = swing;
-    if (legR.current) legR.current.rotation.x = -swing;
-    if (armL.current) armL.current.rotation.x = -swing * 0.9;
-    if (armR.current) armR.current.rotation.x = swing * 0.9;
+    clock.current += dt * (walking ? 9 : 2);
+    const swing = walking ? Math.sin(clock.current) : Math.sin(clock.current) * 0.08;
+    if (legL.current) legL.current.position.z = 0.06 + swing * 0.26;
+    if (legR.current) legR.current.position.z = 0.06 - swing * 0.26;
+    if (armL.current) armL.current.rotation.x = -swing * 0.5;
+    if (armR.current) armR.current.rotation.x = swing * 0.5;
     if (torso.current) {
-      torso.current.rotation.z = Math.sin(clock.current) * (walking ? 0.07 : 0.02);
-      torso.current.rotation.y = Math.sin(clock.current * 0.5) * (walking ? 0.12 : 0.03);
-      torso.current.scale.y = 1 + Math.sin(clock.current * 2) * (walking ? 0.03 : 0.012);
+      /* the waddle: the whole body rocks side to side over the standing foot */
+      torso.current.rotation.z = swing * (walking ? 0.17 : 0.03);
+      torso.current.scale.y = 1 + Math.sin(clock.current * 2) * (walking ? 0.025 : 0.01);
     }
     if (hat.current) {
-      hat.current.rotation.z = Math.sin(clock.current + 0.6) * (walking ? 0.1 : 0.03);
-      hat.current.position.y = 2.66 + Math.abs(Math.sin(clock.current)) * (walking ? 0.06 : 0.015);
+      hat.current.rotation.z = Math.sin(clock.current + 0.6) * (walking ? 0.12 : 0.03);
+      hat.current.position.y = 2.6 + Math.abs(Math.sin(clock.current)) * (walking ? 0.07 : 0.015);
     }
     g.position.set(posRef.current.x, walking ? Math.abs(Math.sin(clock.current)) * 0.09 : 0, posRef.current.z);
 
@@ -250,78 +298,67 @@ export function Cowboy({
 
   return (
     <group ref={group} position={start} scale={1.25}>
-      {/* denim legs and leather boots */}
-      <mesh ref={legL} position={[-0.19, 0.62, 0]} castShadow>
-        <capsuleGeometry args={[0.16, 0.5, 4, 12]} />
-        <meshStandardMaterial color={C.denim} roughness={0.9} />
+      {/* webbed feet */}
+      <mesh ref={legL} position={[-0.22, 0.16, 0.06]} castShadow>
+        <boxGeometry args={[0.34, 0.16, 0.56]} />
+        <meshStandardMaterial color={C.beak} roughness={0.8} />
       </mesh>
-      <mesh ref={legR} position={[0.19, 0.62, 0]} castShadow>
-        <capsuleGeometry args={[0.16, 0.5, 4, 12]} />
-        <meshStandardMaterial color={C.denim} roughness={0.9} />
-      </mesh>
-      <mesh position={[-0.19, 0.16, 0.08]} castShadow>
-        <boxGeometry args={[0.34, 0.3, 0.52]} />
-        <meshStandardMaterial color={C.leather} roughness={0.7} />
-      </mesh>
-      <mesh position={[0.19, 0.16, 0.08]} castShadow>
-        <boxGeometry args={[0.34, 0.3, 0.52]} />
-        <meshStandardMaterial color={C.leather} roughness={0.7} />
+      <mesh ref={legR} position={[0.22, 0.16, 0.06]} castShadow>
+        <boxGeometry args={[0.34, 0.16, 0.56]} />
+        <meshStandardMaterial color={C.beak} roughness={0.8} />
       </mesh>
 
       <group ref={torso}>
-        {/* shirt and vest */}
-        <mesh position={[0, 1.42, 0]} castShadow>
-          <capsuleGeometry args={[0.42, 0.62, 6, 16]} />
-          <meshStandardMaterial color={C.cream} roughness={0.85} />
+        {/* body and white front */}
+        <mesh position={[0, 1.15, 0]} castShadow>
+          <capsuleGeometry args={[0.6, 0.85, 8, 20]} />
+          <meshStandardMaterial color={C.tux} roughness={0.85} />
         </mesh>
-        <mesh position={[0, 1.42, -0.06]} castShadow>
-          <capsuleGeometry args={[0.44, 0.5, 6, 16]} />
-          <meshStandardMaterial color={C.leather} roughness={0.85} />
-        </mesh>
-        {/* belt and buckle */}
-        <mesh position={[0, 1.02, 0]} castShadow>
-          <cylinderGeometry args={[0.44, 0.44, 0.18, 20]} />
-          <meshStandardMaterial color={C.hair} roughness={0.7} />
-        </mesh>
-        <mesh position={[0, 1.02, 0.42]} castShadow>
-          <boxGeometry args={[0.26, 0.2, 0.08]} />
-          <meshStandardMaterial color={C.gold} roughness={0.3} metalness={0.5} />
+        <mesh position={[0, 1.1, 0.16]} scale={[0.82, 1.02, 0.7]} castShadow>
+          <capsuleGeometry args={[0.52, 0.8, 8, 20]} />
+          <meshStandardMaterial color={C.belly} roughness={0.9} />
         </mesh>
         {/* bandana */}
-        <mesh position={[0, 1.86, 0.06]} rotation={[0.2, 0, 0]} castShadow>
-          <coneGeometry args={[0.36, 0.42, 3]} />
+        <mesh position={[0, 1.78, 0.18]} rotation={[0.25, 0, 0]} castShadow>
+          <coneGeometry args={[0.38, 0.4, 3]} />
           <meshStandardMaterial color={C.scarf} roughness={0.9} />
         </mesh>
 
-        <mesh ref={armL} position={[-0.5, 1.6, 0]} rotation={[0, 0, 0.18]} castShadow>
-          <capsuleGeometry args={[0.12, 0.5, 4, 12]} />
-          <meshStandardMaterial color={C.cream} roughness={0.9} />
+        {/* flippers */}
+        <mesh ref={armL} position={[-0.62, 1.3, 0]} rotation={[0, 0, 0.32]} scale={[1, 1, 0.45]} castShadow>
+          <capsuleGeometry args={[0.13, 0.62, 4, 12]} />
+          <meshStandardMaterial color={C.tux} roughness={0.85} />
         </mesh>
-        <mesh ref={armR} position={[0.5, 1.6, 0]} rotation={[0, 0, -0.18]} castShadow>
-          <capsuleGeometry args={[0.12, 0.5, 4, 12]} />
-          <meshStandardMaterial color={C.cream} roughness={0.9} />
+        <mesh ref={armR} position={[0.62, 1.3, 0]} rotation={[0, 0, -0.32]} scale={[1, 1, 0.45]} castShadow>
+          <capsuleGeometry args={[0.13, 0.62, 4, 12]} />
+          <meshStandardMaterial color={C.tux} roughness={0.85} />
         </mesh>
 
         {/* head */}
-        <mesh position={[0, 2.28, 0]} castShadow>
-          <sphereGeometry args={[0.46, 28, 28]} />
-          <meshStandardMaterial color={C.skin} roughness={0.85} />
+        <mesh position={[0, 2.18, 0]} castShadow>
+          <sphereGeometry args={[0.52, 28, 28]} />
+          <meshStandardMaterial color={C.tux} roughness={0.85} />
         </mesh>
-        <mesh position={[-0.16, 2.3, 0.4]}>
-          <sphereGeometry args={[0.06, 12, 12]} />
-          <meshStandardMaterial color="#2b1d33" />
+        <mesh position={[0, 2.1, 0.26]} scale={[0.78, 0.86, 0.6]} castShadow>
+          <sphereGeometry args={[0.46, 24, 24]} />
+          <meshStandardMaterial color={C.belly} roughness={0.9} />
         </mesh>
-        <mesh position={[0.16, 2.3, 0.4]}>
-          <sphereGeometry args={[0.06, 12, 12]} />
-          <meshStandardMaterial color="#2b1d33" />
+        <mesh position={[-0.18, 2.28, 0.42]}>
+          <sphereGeometry args={[0.075, 12, 12]} />
+          <meshStandardMaterial color="#1a1626" />
         </mesh>
-        <mesh position={[0, 2.12, 0.42]}>
-          <boxGeometry args={[0.3, 0.07, 0.06]} />
-          <meshStandardMaterial color={C.hair} roughness={0.9} />
+        <mesh position={[0.18, 2.28, 0.42]}>
+          <sphereGeometry args={[0.075, 12, 12]} />
+          <meshStandardMaterial color="#1a1626" />
+        </mesh>
+        {/* beak */}
+        <mesh position={[0, 2.06, 0.5]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+          <coneGeometry args={[0.17, 0.4, 12]} />
+          <meshStandardMaterial color={C.beak} roughness={0.7} />
         </mesh>
 
         {/* stetson */}
-        <group ref={hat} position={[0, 2.66, 0]}>
+        <group ref={hat} position={[0, 2.6, 0]}>
           <mesh castShadow>
             <cylinderGeometry args={[0.92, 0.98, 0.09, 28]} />
             <meshStandardMaterial color={C.hat} roughness={0.8} />

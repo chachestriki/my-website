@@ -4,11 +4,12 @@ import { useMemo, useRef, type MutableRefObject } from "react";
 import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import { OrthographicCamera, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
-import { C, CAM_OFFSET, CameraRig, Cowboy, useWalker, type LobbyApi } from "@/components/world";
+import { C, CAM_OFFSET, CameraRig, InfoStand, Penguin, useWalker, type LobbyApi } from "@/components/world";
 
 const START: [number, number, number] = [0, 0, 6];
 const BOUNDS = { minX: -21, maxX: 21, minZ: -11, maxZ: 12 };
-const NO_SPOTS: { id: string; stand: [number, number] }[] = [];
+const DESK: [number, number] = [0, 10];
+const SPOTS = [{ id: "desk", stand: DESK }];
 
 const MADRID = "#e0392b";
 const MADRID_SAND = "#f2d49b";
@@ -17,8 +18,18 @@ const TEXAS = "#7c1430";
 const TEXAS_SKY = "#2f6fd0";
 const GRASS = "#3fbf62";
 
-export default function Campus3D({ api, onMove }: { api: MutableRefObject<LobbyApi>; onMove: () => void }) {
-  const spots = useMemo(() => NO_SPOTS, []);
+export default function Campus3D({
+  api,
+  onMove,
+  onDesk,
+  panelOpen,
+}: {
+  api: MutableRefObject<LobbyApi>;
+  onMove: () => void;
+  onDesk: () => void;
+  panelOpen: boolean;
+}) {
+  const spots = useMemo(() => SPOTS, []);
   const { targetRef, playerRef, walkTo, zoom } = useWalker({
     api,
     spots,
@@ -33,7 +44,7 @@ export default function Campus3D({ api, onMove }: { api: MutableRefObject<LobbyA
       <fog attach="fog" args={["#7fd0ff", 70, 120]} />
 
       <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom * 0.5} near={-160} far={260} />
-      <CameraRig posRef={playerRef} start={START} shift={10} />
+      <CameraRig posRef={playerRef} start={START} shift={panelOpen ? 10 : 0} />
 
       <hemisphereLight args={["#ffffff", "#ffd28a", 1]} />
       <ambientLight intensity={0.45} />
@@ -52,14 +63,15 @@ export default function Campus3D({ api, onMove }: { api: MutableRefObject<LobbyA
       <MadridSide />
       <TexasSide />
       <Meridian />
+      <InfoStand x={DESK[0]} z={DESK[1]} color={C.gold} onOpen={onDesk} />
 
-      <Cowboy
+      <Penguin
         targetRef={targetRef}
         posRef={playerRef}
         spots={spots}
         start={START}
         onNear={() => {}}
-        onOpen={() => {}}
+        onOpen={onDesk}
       />
     </Canvas>
   );

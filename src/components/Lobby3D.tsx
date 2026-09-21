@@ -5,7 +5,7 @@ import { Canvas, type ThreeEvent } from "@react-three/fiber";
 import { Html, OrthographicCamera, RoundedBox } from "@react-three/drei";
 import { useMemo } from "react";
 import { stations } from "@/data/stations";
-import { C, CAM_OFFSET, CameraRig, Cowboy, Pad, useWalker, type LobbyApi } from "@/components/world";
+import { C, CAM_OFFSET, CameraRig, Penguin, Pad, useWalker, type LobbyApi } from "@/components/world";
 
 
 export type { LobbyApi };
@@ -68,7 +68,7 @@ export default function Lobby3D({
         </group>
       ))}
 
-      <Cowboy
+      <Penguin
         targetRef={targetRef}
         posRef={playerRef}
         spots={spots}
@@ -132,6 +132,7 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       <BellDesk />
       <FreightDoor />
       <CampusDoor />
+      <GalleryDoor />
       <Plant x={-11} z={6.5} />
       <Plant x={11.5} z={4} />
       <Sofa />
@@ -397,7 +398,33 @@ function LuggageCart() {
   );
 }
 
-/** the door out to the Madrid ↔ Texas campus */
+/** the door into the career hall */
+function GalleryDoor() {
+  return (
+    <group position={[5.2, 0, -9.6]}>
+      <RoundedBox args={[4.2, 6.6, 0.4]} radius={0.16} smoothness={4} position={[0, 3.3, 0]} castShadow>
+        <meshStandardMaterial color={C.plum} roughness={0.8} />
+      </RoundedBox>
+      <mesh position={[0, 3.3, 0.24]}>
+        <planeGeometry args={[3.4, 5.6]} />
+        <meshStandardMaterial color="#2a1b2e" roughness={0.9} />
+      </mesh>
+      {/* three little frames hinting at the hall inside */}
+      {[-1, 0, 1].map((i) => (
+        <mesh key={i} position={[i * 1.05, 3.8, 0.26]}>
+          <planeGeometry args={[0.8, 1]} />
+          <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.35} toneMapped={false} />
+        </mesh>
+      ))}
+      <mesh position={[0, 7, 0.1]}>
+        <planeGeometry args={[4.2, 0.8]} />
+        <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.7} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
+/** the door out to the education campus */
 function CampusDoor() {
   return (
     <group position={[11.5, 0, -9.6]}>

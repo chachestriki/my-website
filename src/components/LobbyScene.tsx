@@ -5,16 +5,17 @@ import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AboutRoom,
+  CareerRoom,
   ConciergeRoom,
   ContactRoom,
   EducationRoom,
-  ExperienceRoom,
   ProjectsRoom,
   ViceResellRoom,
 } from "@/components/rooms";
 import ControlsLegend from "@/components/ControlsLegend";
 import ViceResellPanel from "@/components/ViceResellPanel";
 import CampusPanel from "@/components/CampusPanel";
+import GalleryPanel from "@/components/GalleryPanel";
 import HatMark from "@/components/HatMark";
 import { stations } from "@/data/stations";
 import { profile } from "@/data/cv";
@@ -47,16 +48,28 @@ const Campus3D = dynamic(() => import("@/components/Campus3D"), {
   ),
 });
 
+const Gallery3D = dynamic(() => import("@/components/Gallery3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center bg-[#2a1b2e] font-mono text-sm text-[#ffc01f]">
+      Hanging the frames…
+    </div>
+  ),
+});
+
+type SceneId = "factory" | "campus" | "gallery";
+
 /** which station opens which full 3D scene */
-const SCENES: Record<string, "factory" | "campus"> = {
+const SCENES: Record<string, SceneId> = {
   factory: "factory",
   study: "campus",
+  career: "gallery",
 };
 
 const CONTENT: Record<string, ReactNode> = {
   "front-desk": <AboutRoom />,
   "key-rack": <ProjectsRoom />,
-  terminal: <ExperienceRoom />,
+  career: <CareerRoom />,
   phone: <ConciergeRoom />,
   bell: <ContactRoom />,
   study: <EducationRoom />,
@@ -67,7 +80,9 @@ export default function LobbyScene() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [near, setNear] = useState<string | null>(null);
   const [moved, setMoved] = useState(false);
-  const [scene, setScene] = useState<"factory" | "campus" | null>(null);
+  const [scene, setScene] = useState<SceneId | null>(null);
+  /** the scene's own panel, opened from the stand inside the room — not fixed */
+  const [panel, setPanel] = useState(false);
 
   const api = useRef<LobbyApi>({});
   const open = stations.find((s) => s.id === openId) ?? null;
@@ -78,19 +93,27 @@ export default function LobbyScene() {
     if (s?.kind === "scene") {
       setScene(SCENES[id] ?? null);
       setNear(null);
+      setPanel(false);
       return;
     }
     setOpenId(id);
   }, []);
-  const leaveScene = useCallback(() => setScene(null), []);
+  const openPanel = useCallback(() => setPanel(true), []);
+  const closePanel = useCallback(() => setPanel(false), []);
+  const leaveScene = useCallback(() => {
+    setScene(null);
+    setPanel(false);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (openId) return close();
+        if (panel) return closePanel();
         return leaveScene();
       }
       const n = Number(e.key);
+      if (scene && n === 1) return setPanel((p) => !p);
       if (!scene && n >= 1 && n <= stations.length) return api.current.goTo?.(stations[n - 1].id);
       /* screen-relative: +right walks right on screen, +forward walks away from the camera */
       const nudge: Record<string, [number, number]> = {
@@ -111,7 +134,7 @@ export default function LobbyScene() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [close, leaveScene, openId, scene]);
+  }, [close, closePanel, leaveScene, openId, panel, scene]);
 
   return (
     <div className="relative min-h-dvh lobby-vignette">
@@ -125,17 +148,28 @@ export default function LobbyScene() {
             transition={{ duration: 0.5 }}
             className="absolute inset-0"
           >
-            {scene === "factory" ? (
-              <>
-                <Factory3D api={api} onMove={onMove} />
-                <ViceResellPanel onClose={leaveScene} />
-              </>
-            ) : (
-              <>
-                <Campus3D api={api} onMove={onMove} />
-                <CampusPanel onClose={leaveScene} />
-              </>
+            {scene === "factory" && (
+              <Factory3D api={api} onMove={onMove} onDesk={openPanel} panelOpen={panel} />
             )}
+            {scene === "campus" && (
+              <Campus3D api={api} onMove={onMove} onDesk={openPanel} panelOpen={panel} />
+            )}
+            {scene === "gallery" && (
+              <Gallery3D api={api} onMove={onMove} onDesk={openPanel} panelOpen={panel} />
+            )}
+
+            <AnimatePresence>
+              {panel && scene === "factory" && <ViceResellPanel onClose={closePanel} />}
+              {panel && scene === "campus" && <CampusPanel onClose={closePanel} />}
+              {panel && scene === "gallery" && <GalleryPanel onClose={closePanel} />}
+            </AnimatePresence>
+
+            {!panel && (
+              <div className="pointer-events-none absolute bottom-6 left-1/2 z-20 -translate-x-1/2 rounded-full border-2 border-white/70 bg-black/45 px-4 py-2 font-mono text-[11px] font-semibold text-white">
+                walk to the stand · or press 1 to read
+              </div>
+            )}
+
             <button
               onClick={leaveScene}
               className={`absolute left-6 top-6 z-30 rounded-full border-2 px-4 py-2 font-mono text-xs font-semibold transition ${
