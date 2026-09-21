@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Juan Diego Gómez — Hotel Integración",
+  title: "Juan Diego's Portfolio",
   description:
-    "An interactive hotel lobby: the CV of a full-stack engineer who wires hospitality systems, payments and LLM agents together.",
+    "An interactive portfolio: the CV of a full-stack engineer who wires hospitality systems, payments and LLM agents together.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
