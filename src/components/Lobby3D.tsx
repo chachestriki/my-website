@@ -19,8 +19,8 @@ import {
 
 export type { LobbyApi };
 
-const START: [number, number, number] = [1.5, 0, 7.4];
-const BOUNDS = { minX: -12.5, maxX: 12.5, minZ: -9, maxZ: 9 };
+const START: [number, number, number] = [1.5, 0, 9.4];
+const BOUNDS = { minX: -15.6, maxX: 15.6, minZ: -11.5, maxZ: 11.5 };
 
 export default function Lobby3D({
   api,
@@ -109,12 +109,12 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       </mesh>
       {/* lobby carpet area */}
       <mesh position={[0, 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[27, 20]} />
+        <planeGeometry args={[34, 25]} />
         <meshStandardMaterial color={C.cream} roughness={1} />
       </mesh>
       {/* chequered inlay */}
       {Array.from({ length: 8 }, (_, i) => (
-        <mesh key={i} position={[-8.75 + i * 2.5, 0.01, 6.5]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh key={i} position={[-8.75 + i * 2.5, 0.01, 8.8]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[2.5, 3]} />
           <meshStandardMaterial color={i % 2 ? C.floorAlt : C.cream} roughness={1} />
         </mesh>
@@ -130,28 +130,28 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       </mesh>
 
       {/* walls */}
-      <mesh position={[0, 4, -10]} receiveShadow>
-        <boxGeometry args={[27, 8, 0.6]} />
+      <mesh position={[0, 4, -12.5]} receiveShadow>
+        <boxGeometry args={[34, 8, 0.6]} />
         <meshStandardMaterial color={C.wall} roughness={1} />
       </mesh>
-      <mesh position={[-13.2, 4, 0]} receiveShadow>
-        <boxGeometry args={[0.6, 8, 20]} />
+      <mesh position={[-16.7, 4, 0]} receiveShadow>
+        <boxGeometry args={[0.6, 8, 25]} />
         <meshStandardMaterial color={C.wallSide} roughness={1} />
       </mesh>
       {/* the camera-side wall is glazed, so it frames the room without hiding it */}
-      <mesh position={[13.2, 4, 0]}>
-        <boxGeometry args={[0.3, 8, 20]} />
+      <mesh position={[16.7, 4, 0]}>
+        <boxGeometry args={[0.3, 8, 25]} />
         <meshStandardMaterial color="#bfe6ff" transparent opacity={0.2} roughness={0.15} />
       </mesh>
-      {[-8, -4, 4, 8].map((z) => (
-        <mesh key={z} position={[13.2, 4, z]}>
+      {[-10, -5, 5, 10].map((z) => (
+        <mesh key={z} position={[16.7, 4, z]}>
           <boxGeometry args={[0.36, 8, 0.18]} />
           <meshStandardMaterial color={C.gold} roughness={0.6} metalness={0.3} />
         </mesh>
       ))}
       {/* skirting */}
-      <mesh position={[0, 0.3, -9.65]}>
-        <boxGeometry args={[27, 0.6, 0.3]} />
+      <mesh position={[0, 0.3, -12.15]}>
+        <boxGeometry args={[34, 0.6, 0.3]} />
         <meshStandardMaterial color={C.cream} roughness={1} />
       </mesh>
 
@@ -164,20 +164,20 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       <CampusDoor />
       <GalleryDoor />
       <LoungeDoor />
-      <Plant x={-11} z={6.5} />
-      <Plant x={11.5} z={4} />
+      <Plant x={-14} z={8.4} />
+      <Plant x={14.6} z={5} />
       <Sofa />
       <LuggageCart />
       <CoffeeTable />
-      <Suitcase x={-7.6} z={7.4} rot={0.6} color={C.pink} />
-      <Suitcase x={-11.8} z={-6.2} rot={-0.3} color={C.sky} />
+      <Suitcase x={-9.2} z={9.4} rot={0.6} color={C.pink} />
+      <Suitcase x={-15} z={-8} rot={-0.3} color={C.sky} />
     </group>
   );
 }
 
 function Reception() {
   return (
-    <group position={[0, 0, -5]}>
+    <group position={[0, 0, -7.4]}>
       <RoundedBox args={[9, 1.9, 2.4]} radius={0.22} smoothness={4} position={[0, 0.95, 0]} castShadow receiveShadow>
         <meshStandardMaterial color={C.wood} roughness={0.85} />
       </RoundedBox>
@@ -207,7 +207,7 @@ function Reception() {
 function KeyRack() {
   const keys = Array.from({ length: 16 }, (_, i) => i);
   return (
-    <group position={[-12.6, 0, -2]} rotation={[0, Math.PI / 2, 0]}>
+    <group position={[-16.1, 0, -2]} rotation={[0, Math.PI / 2, 0]}>
       <RoundedBox args={[6, 4.2, 0.4]} radius={0.16} smoothness={4} position={[0, 4, 0]} castShadow>
         <meshStandardMaterial color={C.cream} roughness={0.9} />
       </RoundedBox>
@@ -229,7 +229,7 @@ function KeyRack() {
 
 function Terminal() {
   return (
-    <group position={[9, 0, -4]} rotation={[0, -0.5, 0]}>
+    <group position={[11, 0, -6]} rotation={[0, -0.5, 0]}>
       <RoundedBox args={[3.4, 1.7, 1.8]} radius={0.16} smoothness={4} position={[0, 0.85, 0]} castShadow receiveShadow>
         <meshStandardMaterial color={C.woodDark} roughness={0.9} />
       </RoundedBox>
@@ -253,7 +253,7 @@ function Terminal() {
 
 function PhoneBooth() {
   return (
-    <group position={[-8.4, 0, 3.6]} rotation={[0, 0.5, 0]}>
+    <group position={[-11.4, 0, 0.4]} rotation={[0, 0.5, 0]}>
       <RoundedBox args={[2.6, 5.4, 2.2]} radius={0.3} smoothness={4} position={[0, 2.7, 0]} castShadow receiveShadow>
         <meshStandardMaterial color={C.sky} roughness={0.9} />
       </RoundedBox>
@@ -273,7 +273,7 @@ function PhoneBooth() {
 
 function BellDesk() {
   return (
-    <group position={[5.4, 0, 5]}>
+    <group position={[6.8, 0, 7]}>
       <mesh position={[0, 0.5, 0]} castShadow receiveShadow>
         <cylinderGeometry args={[1.1, 1.3, 1, 24]} />
         <meshStandardMaterial color={C.cream} roughness={0.9} />
@@ -297,7 +297,7 @@ function BellDesk() {
 /** the door out to the Vice Resell floor */
 function FreightDoor() {
   return (
-    <group position={[-12.9, 0, 4.5]} rotation={[0, Math.PI / 2, 0]}>
+    <group position={[-16.4, 0, 4.5]} rotation={[0, Math.PI / 2, 0]}>
       <RoundedBox args={[4.4, 6.4, 0.4]} radius={0.14} smoothness={4} position={[0, 3.2, 0]} castShadow>
         <meshStandardMaterial color={C.gold} roughness={0.6} metalness={0.15} />
       </RoundedBox>
@@ -322,7 +322,7 @@ function FreightDoor() {
 /** the door into the hobbies lounge */
 function LoungeDoor() {
   return (
-    <group position={[-12.9, 0, -7.4]} rotation={[0, Math.PI / 2, 0]}>
+    <group position={[-16.4, 0, -9]} rotation={[0, Math.PI / 2, 0]}>
       <RoundedBox args={[4.2, 6.4, 0.4]} radius={0.16} smoothness={4} position={[0, 3.2, 0]} castShadow>
         <meshStandardMaterial color={C.mint} roughness={0.8} />
       </RoundedBox>
@@ -375,7 +375,7 @@ function Plant({ x, z }: { x: number; z: number }) {
 
 function Sofa() {
   return (
-    <group position={[9.5, 0, 6]} rotation={[0, -0.7, 0]}>
+    <group position={[12, 0, 8]} rotation={[0, -0.7, 0]}>
       <RoundedBox args={[4.4, 0.9, 1.9]} radius={0.3} smoothness={4} position={[0, 0.65, 0]} castShadow receiveShadow>
         <meshStandardMaterial color={C.mint} roughness={0.95} />
       </RoundedBox>
@@ -394,7 +394,7 @@ function Sofa() {
 
 function CoffeeTable() {
   return (
-    <group position={[12.4, 0, 1.4]}>
+    <group position={[15.4, 0, 1.4]}>
       <RoundedBox args={[2.6, 0.24, 2.6]} radius={0.1} smoothness={3} position={[0, 0.9, 0]} castShadow receiveShadow>
         <meshStandardMaterial color={C.cream} roughness={0.85} />
       </RoundedBox>
@@ -430,7 +430,7 @@ function Suitcase({ x, z, rot, color }: { x: number; z: number; rot: number; col
 
 function LuggageCart() {
   return (
-    <group position={[-2.6, 0, 6.6]} rotation={[0, 0.4, 0]}>
+    <group position={[-3, 0, 8.6]} rotation={[0, 0.4, 0]}>
       <RoundedBox args={[2.4, 0.2, 1.4]} radius={0.06} smoothness={3} position={[0, 0.55, 0]} castShadow>
         <meshStandardMaterial color={C.gold} roughness={0.5} metalness={0.2} />
       </RoundedBox>
@@ -481,7 +481,7 @@ function Handle({ x, y }: { x: number; y: number }) {
 /** the door into the career hall */
 function GalleryDoor() {
   return (
-    <group position={[5.2, 0, -9.6]}>
+    <group position={[6.4, 0, -12.1]}>
       <RoundedBox args={[4.2, 6.6, 0.4]} radius={0.16} smoothness={4} position={[0, 3.3, 0]} castShadow>
         <meshStandardMaterial color={C.plum} roughness={0.8} />
       </RoundedBox>
@@ -507,7 +507,7 @@ function GalleryDoor() {
 /** the door out to the education campus */
 function CampusDoor() {
   return (
-    <group position={[12.9, 0, -1]} rotation={[0, -Math.PI / 2, 0]}>
+    <group position={[16.4, 0, -1]} rotation={[0, -Math.PI / 2, 0]}>
       <RoundedBox args={[4.6, 6.8, 0.4]} radius={0.16} smoothness={4} position={[0, 3.4, 0]} castShadow>
         <meshStandardMaterial color={C.wood} roughness={0.8} />
       </RoundedBox>

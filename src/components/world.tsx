@@ -164,7 +164,7 @@ export function Pad({ x, z, onClick }: { x: number; z: number; onClick: () => vo
       }}
     >
       <circleGeometry args={[1.5, 40]} />
-      <meshStandardMaterial color="#ffc7d8" transparent opacity={0.75} roughness={1} />
+      <meshStandardMaterial color="#9ce8bd" transparent opacity={0.75} roughness={1} />
     </mesh>
   );
 }
