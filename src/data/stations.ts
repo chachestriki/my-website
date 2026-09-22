@@ -42,7 +42,7 @@ export const stations: Station[] = [
     id: "phone",
     object: "Voice line",
     title: "Ask the agent",
-    subtitle: "A scripted voice agent",
+    subtitle: "A live LLM agent on my CV",
     label: [-7.6, 4.4, 3.6],
     stand: [-5.6, 3.8],
   },
