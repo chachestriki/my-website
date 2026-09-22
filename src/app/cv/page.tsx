@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { education, profile, roles, skills } from "@/data/cv";
+import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: `CV — ${profile.name}`,
@@ -55,6 +56,38 @@ export default function CvPage() {
                   <li key={h}>{h}</li>
                 ))}
               </ul>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="font-mono text-xs uppercase tracking-widest text-teal">Projects</h2>
+        <div className="mt-4 space-y-5">
+          {projects.map((p) => (
+            <article key={p.id}>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 className="text-lg font-semibold text-brass">
+                  {p.name} <span className="text-ink/60">— {p.role}</span>
+                </h3>
+                <p className="font-mono text-xs text-ink/50">{p.period}</p>
+              </div>
+              <p className="mt-1 text-sm leading-relaxed text-ink/75">{p.blurb}</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink/75 marker:text-brass/60">
+                {p.bullets.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+              {p.link && (
+                <a
+                  href={p.link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-1 inline-block font-mono text-xs text-teal underline-offset-4 hover:underline"
+                >
+                  {p.link.label} →
+                </a>
+              )}
             </article>
           ))}
         </div>

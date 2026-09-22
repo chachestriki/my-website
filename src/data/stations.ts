@@ -21,15 +21,6 @@ export const stations: Station[] = [
     stand: [0, -1.6],
   },
   {
-    id: "projects",
-    object: "Projects wall",
-    title: "Projects",
-    subtitle: "Vice Resell, ODYN AI, bot detection",
-    label: [-5.2, 9.2, -9.4],
-    stand: [-5.2, -7.2],
-    kind: "scene",
-  },
-  {
     id: "career",
     object: "Gallery door",
     title: "Career log",

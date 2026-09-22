@@ -1,43 +1,42 @@
 "use client";
 
-import type { MutableRefObject } from "react";
-import { useMemo } from "react";
-import { Canvas, type ThreeEvent } from "@react-three/fiber";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Html, OrthographicCamera, RoundedBox } from "@react-three/drei";
-import {
-  Beacon,
-  C,
-  CAM_OFFSET,
-  CameraRig,
-  DoorSign,
-  Pad,
-  Penguin,
-  useWalker,
-  type LobbyApi,
-} from "@/components/world";
+import { Group, Vector3 } from "three";
+import { C, CAM_OFFSET, CameraRig, DoorSign, Penguin } from "@/components/world";
 
-const START: [number, number, number] = [0, 0, 9];
-const BOUNDS = { minX: -11, maxX: 11, minZ: -1.5, maxZ: 11 };
-/** the welcome mat in front of the revolving doors */
-const DOOR: [number, number] = [0, 0.6];
+/** the range, laid out along z so the arrow crosses the screen towards the doors */
+const TARGET_Z = 1.6;
+const BOW_Z = 7.8;
+const START: [number, number, number] = [0, 0, BOW_Z];
+/** the arrow leaves flat at this height: you time the bobbing target onto the line */
+const AIM_Y = 3.2;
+const BOB_LOW = 1.9;
+const BOB_HIGH = 5;
+const FLIGHT = 0.42;
+const BULLSEYE = 0.45;
+const RING = 1.25;
+const RINGS: [number, string][] = [
+  [1.5, C.cream],
+  [1.1, C.sky],
+  [0.7, C.cream],
+  [0.34, C.pink],
+];
 
 /** the sidewalk you land on: the hotel front, its sign, and the way in */
-export default function Street3D({
-  api,
-  onEnter,
-}: {
-  api: MutableRefObject<LobbyApi>;
-  onEnter: () => void;
-}) {
-  const spots = useMemo(() => [{ id: "door", stand: DOOR }], []);
-  const { targetRef, playerRef, walkTo, zoom } = useWalker({
-    api,
-    spots,
-    bounds: BOUNDS,
-    start: START,
-    onMove: () => {},
-    fit: 0.74,
-  });
+export default function Street3D({ onEnter }: { onEnter: () => void }) {
+  /* the penguin stands still on the range: the only way in is the bullseye or the CV card */
+  const targetRef = useRef<Vector3 | null>(null);
+  const playerRef = useRef(new Vector3(...START));
+  const [zoom, setZoom] = useState(30);
+
+  useEffect(() => {
+    const measure = () => setZoom(Math.min(window.innerWidth / 36, window.innerHeight / 23) * 0.74);
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   return (
     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true }} style={{ touchAction: "none" }}>
@@ -60,38 +59,130 @@ export default function Street3D({
         shadow-camera-bottom={-34}
       />
 
-      <Block onFloorClick={walkTo} />
-      <Beacon x={DOOR[0]} z={DOOR[1]} color={C.gold} />
-      <Pad x={DOOR[0]} z={DOOR[1]} onClick={() => api.current.goTo?.("door")} />
-      <Html position={[DOOR[0], 2.4, DOOR[1] + 2.6]} center zIndexRange={[10, 0]} className="pointer-events-none">
-        <div className="whitespace-nowrap rounded-full border-2 border-white bg-white/90 px-4 py-1.5 text-sm font-bold text-brass shadow-[0_5px_0_rgba(107,91,143,0.14)]">
-          Walk in →
-        </div>
-      </Html>
+      <Block />
+      <Range onBullseye={onEnter} />
 
       <Penguin
         targetRef={targetRef}
         posRef={playerRef}
-        spots={spots}
+        spots={[]}
         start={START}
         facing={Math.PI}
         onNear={() => {}}
-        onOpen={onEnter}
+        onOpen={() => {}}
       />
     </Canvas>
   );
 }
 
-function Block({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => void }) {
+/** the bullseye that bobs in front of the doors, the bow, and the arrow you loose at it */
+function Range({ onBullseye }: { onBullseye: () => void }) {
+  const target = useRef<Group>(null);
+  const arrow = useRef<Group>(null);
+  const flight = useRef<number | null>(null);
+  const wonRef = useRef(false);
+  const [won, setWon] = useState(false);
+  const [shots, setShots] = useState(0);
+  const [note, setNote] = useState<string | null>(null);
+
+  const shoot = useCallback(() => {
+    if (wonRef.current || flight.current !== null) return;
+    flight.current = 0;
+    setNote(null);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code !== "Space") return;
+      e.preventDefault();
+      shoot();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [shoot]);
+
+  useFrame((state, dt) => {
+    const mid = (BOB_LOW + BOB_HIGH) / 2;
+    if (target.current && !wonRef.current) {
+      target.current.position.y = mid + Math.sin(state.clock.elapsedTime * 1.5) * ((BOB_HIGH - BOB_LOW) / 2);
+    }
+    if (flight.current === null || !arrow.current) return;
+    flight.current = Math.min(1, flight.current + dt / FLIGHT);
+    arrow.current.visible = true;
+    arrow.current.position.set(0, AIM_Y, BOW_Z + (TARGET_Z - BOW_Z) * flight.current);
+    if (flight.current < 1) return;
+    flight.current = null;
+    arrow.current.visible = false;
+    const miss = Math.abs((target.current?.position.y ?? 0) - AIM_Y);
+    setShots((n) => n + 1);
+    if (miss < BULLSEYE) {
+      wonRef.current = true;
+      setWon(true);
+      setNote("Bullseye — the doors are opening");
+      window.setTimeout(onBullseye, 900);
+      return;
+    }
+    setNote(miss < RING ? "Outer ring — shoot again" : "Wide — shoot again");
+  });
+
+  return (
+    <group>
+      <group ref={target} position={[0, 3.2, TARGET_Z]} rotation={[-0.45, Math.PI / 4, 0]} onClick={shoot}>
+        {RINGS.map(([r, color], i) => (
+          <mesh key={r} position={[0, 0, 0.03 * i]}>
+            <circleGeometry args={[r, 40]} />
+            <meshStandardMaterial color={color} roughness={0.85} />
+          </mesh>
+        ))}
+      </group>
+      <mesh position={[0, 0.9, TARGET_Z]} castShadow>
+        <cylinderGeometry args={[0.12, 0.16, 1.8, 10]} />
+        <meshStandardMaterial color={C.wood} roughness={0.9} />
+      </mesh>
+
+      {/* the bow the penguin holds, and the arrow in flight */}
+      <mesh position={[0.95, 2.2, BOW_Z]} rotation={[0, Math.PI / 4, 0]} castShadow>
+        <torusGeometry args={[0.9, 0.09, 8, 24, Math.PI * 1.2]} />
+        <meshStandardMaterial color={C.wood} roughness={0.8} />
+      </mesh>
+      <group ref={arrow} position={[0, AIM_Y, BOW_Z]} visible={false}>
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.06, 0.06, 1.5, 8]} />
+          <meshStandardMaterial color={C.woodDark} roughness={0.8} />
+        </mesh>
+        <mesh position={[0, 0, -0.9]} rotation={[-Math.PI / 2, 0, 0]}>
+          <coneGeometry args={[0.16, 0.5, 10]} />
+          <meshStandardMaterial color={C.gold} metalness={0.4} roughness={0.4} />
+        </mesh>
+      </group>
+
+      <Html position={[0, 7.4, TARGET_Z]} center zIndexRange={[10, 0]} className="pointer-events-none">
+        <div className="w-72 space-y-1 text-center">
+          <div className="rounded-full border-2 border-white bg-white/90 px-4 py-1.5 text-sm font-bold text-brass shadow-[0_5px_0_rgba(107,91,143,0.14)]">
+            Hit the bullseye to come in
+          </div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white drop-shadow">
+            {note ?? `space or click the target · ${shots} shot${shots === 1 ? "" : "s"}`}
+          </div>
+          {shots >= 5 && !won && (
+            <button
+              onClick={onBullseye}
+              className="pointer-events-auto rounded-full border-2 border-white/70 bg-white/20 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-white transition hover:bg-white hover:text-brass"
+            >
+              or just walk in →
+            </button>
+          )}
+        </div>
+      </Html>
+    </group>
+  );
+}
+
+function Block() {
   return (
     <group>
       {/* road and sidewalk */}
-      <mesh
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, 0, 6]}
-        receiveShadow
-        onClick={onFloorClick}
-      >
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 6]} receiveShadow>
         <planeGeometry args={[60, 20]} />
         <meshStandardMaterial color="#ffd9c0" roughness={1} />
       </mesh>

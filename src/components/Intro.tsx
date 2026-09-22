@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import HatMark from "@/components/HatMark";
 import { profile } from "@/data/cv";
 
-/** the first screen: who this is and the two ways out — play, or read the CV */
-export default function Intro({ onEnter }: { onEnter: () => void }) {
+/** the card over the street: who this is, and the two ways in — the bullseye or the CV */
+export default function Intro() {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -26,22 +26,16 @@ export default function Intro({ onEnter }: { onEnter: () => void }) {
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-ink/75">{profile.tagline}</p>
 
         <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <button
-            onClick={onEnter}
-            className="w-full rounded-full border-2 border-brass bg-brass px-7 py-3 text-sm font-bold text-white shadow-[0_5px_0_rgba(107,91,143,0.25)] transition hover:brightness-110 sm:w-auto"
-          >
-            Enter the hotel →
-          </button>
           <a
             href="/cv"
-            className="w-full rounded-full border-2 border-brass/30 px-7 py-3 text-sm font-bold text-brass transition hover:bg-brass/10 sm:w-auto"
+            className="w-full rounded-full border-2 border-brass bg-brass px-7 py-3 text-sm font-bold text-white shadow-[0_5px_0_rgba(107,91,143,0.25)] transition hover:brightness-110 sm:w-auto"
           >
             Read the CV
           </a>
         </div>
 
         <p className="mt-4 font-mono text-[10px] uppercase tracking-widest text-ink/40">
-          Or walk the penguin to the doors
+          Or press space and hit the bullseye to walk in
         </p>
       </motion.div>
     </motion.div>
