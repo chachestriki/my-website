@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { stations } from "@/data/stations";
 
 const CONTROLS: { keys: string[]; action: string }[] = [
   { keys: ["click"], action: "walk to that spot" },
   { keys: ["W", "A", "S", "D"], action: "step around" },
   { keys: ["↑", "←", "↓", "→"], action: "step around" },
-  { keys: ["1", "–", "8"], action: "go to a station" },
+  { keys: ["1", "–", String(stations.length)], action: "go to a section" },
   { keys: ["1"], action: "in a room: open the panel" },
   { keys: ["esc"], action: "close · leave a room" },
 ];
@@ -16,7 +17,7 @@ export default function ControlsLegend() {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="pointer-events-auto absolute bottom-20 left-5 z-20 w-56">
+    <div className="pointer-events-auto w-full">
       <AnimatePresence initial={false}>
         {open && (
           <motion.div

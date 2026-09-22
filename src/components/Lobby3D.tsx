@@ -16,8 +16,6 @@ import {
   useWalker,
   type LobbyApi,
 } from "@/components/world";
-import { doorQuiz } from "@/data/doorQuiz";
-
 
 export type { LobbyApi };
 
@@ -35,7 +33,7 @@ export default function Lobby3D({
   onNear: (id: string | null) => void;
   onOpen: (id: string) => void;
   onMove: () => void;
-  /** before the first step only the projects door is labelled, to keep the first view calm */
+  /** before the first step only the career door is labelled, to keep the first view calm */
   moved: boolean;
 }) {
   const spots = useMemo(() => stations.map((s) => ({ id: s.id, stand: s.stand })), []);
@@ -47,7 +45,7 @@ export default function Lobby3D({
     onMove,
     fit: 1.06,
   });
-  const projects = stations.find((s) => s.id === "projects");
+  const first = stations.find((s) => s.id === "career");
 
   return (
     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true }} style={{ touchAction: "none" }}>
@@ -71,23 +69,17 @@ export default function Lobby3D({
       />
 
       <Lobby onFloorClick={walkTo} />
-      <Signpost onGo={(id) => api.current.goTo?.(id)} />
 
-      {!moved && projects && <Beacon x={projects.stand[0]} z={projects.stand[1]} color={C.neon} />}
+      {!moved && first && <Beacon x={first.stand[0]} z={first.stand[1]} color={C.gold} />}
 
       {stations.map((s) => (
         <group key={s.id}>
           <Pad x={s.stand[0]} z={s.stand[1]} onClick={() => api.current.goTo?.(s.id)} />
-          {(moved || s.id === "projects") && (
+          {(moved || s.id === "career") && (
           <Html position={s.label} center zIndexRange={[10, 0]} className="pointer-events-none">
             <div className="whitespace-nowrap rounded-2xl border-2 border-white bg-white/90 px-3 py-1.5 text-center shadow-[0_6px_0_rgba(107,91,143,0.18)]">
               <span className="block font-mono text-[10px] uppercase tracking-widest text-teal">{s.object}</span>
               <span className="block text-sm font-bold text-brass">{s.title}</span>
-              {s.kind === "scene" && Boolean(doorQuiz[s.id]?.length) && (
-                <span className="block font-mono text-[9px] uppercase tracking-widest text-ink/40">
-                  side room · quiz
-                </span>
-              )}
             </div>
           </Html>
           )}
@@ -99,85 +91,11 @@ export default function Lobby3D({
         posRef={playerRef}
         spots={spots}
         start={START}
-        facing={Math.atan2((projects?.stand[0] ?? 0) - START[0], (projects?.stand[1] ?? 0) - START[2])}
+        facing={Math.atan2((first?.stand[0] ?? 0) - START[0], (first?.stand[1] ?? 0) - START[2])}
         onNear={onNear}
         onOpen={onOpen}
       />
     </Canvas>
-  );
-}
-
-/** the arrows you read on arrival: every section, and which way it is */
-const DIRECTIONS: { id: string; label: string; color: string }[] = [
-  { id: "projects", label: "Projects", color: C.neon },
-  { id: "career", label: "Career log", color: C.gold },
-  { id: "factory", label: "Vice Resell", color: C.magenta },
-  { id: "study", label: "Education", color: C.sky },
-  { id: "hobbies", label: "Hobbies", color: C.mint },
-  { id: "bell", label: "Contact", color: C.pink },
-];
-
-/** where the post stands, and the yaw that turns a sign flat towards the camera */
-const SIGN: [number, number] = [-5.4, 7.6];
-const SIGN_YAW = Math.atan2(CAM_OFFSET[2], CAM_OFFSET[0]) + Math.PI / 2;
-
-function Signpost({ onGo }: { onGo: (id: string) => void }) {
-  const arms = useMemo(
-    () =>
-      DIRECTIONS.map((d) => {
-        const s = stations.find((v) => v.id === d.id);
-        const yaw = s ? Math.atan2(s.stand[0] - SIGN[0], s.stand[1] - SIGN[1]) : 0;
-        return { ...d, arrow: yaw - SIGN_YAW };
-      }),
-    []
-  );
-
-  return (
-    <group position={[SIGN[0], 0, SIGN[1]]}>
-      <mesh position={[0, 3.6, 0]} castShadow>
-        <cylinderGeometry args={[0.16, 0.2, 7.2, 12]} />
-        <meshStandardMaterial color={C.woodDark} roughness={0.9} />
-      </mesh>
-      <mesh position={[0, 0.12, 0]} receiveShadow>
-        <cylinderGeometry args={[0.9, 1.1, 0.24, 20]} />
-        <meshStandardMaterial color={C.wood} roughness={0.9} />
-      </mesh>
-      <mesh position={[0, 7.4, 0]} castShadow>
-        <coneGeometry args={[0.45, 0.7, 12]} />
-        <meshStandardMaterial color={C.gold} roughness={0.5} metalness={0.3} />
-      </mesh>
-      {arms.map((a, i) => (
-        <group
-          key={a.id}
-          position={[0, 6.6 - i * 0.82, 0]}
-          rotation={[0, SIGN_YAW, 0]}
-          onClick={(e) => {
-            e.stopPropagation();
-            onGo(a.id);
-          }}
-        >
-          <group position={[0, 0, 1.9]}>
-            <RoundedBox args={[0.32, 0.66, 3.6]} radius={0.06} smoothness={3} castShadow>
-              <meshStandardMaterial color={a.color} roughness={0.75} />
-            </RoundedBox>
-            <group position={[-0.18, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
-              <DoorSign label={a.label} color={a.color} width={3.4} />
-            </group>
-            <group position={[0, 0, 2.1]} rotation={[0, a.arrow, 0]}>
-              <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
-                <coneGeometry args={[0.3, 0.72, 4]} />
-                <meshStandardMaterial color={a.color} roughness={0.7} />
-              </mesh>
-            </group>
-          </group>
-        </group>
-      ))}
-      <Html position={[0, 8.4, 0]} center zIndexRange={[10, 0]} className="pointer-events-none">
-        <div className="whitespace-nowrap rounded-full border-2 border-white bg-white/90 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-brass">
-          this way
-        </div>
-      </Html>
-    </group>
   );
 }
 
@@ -242,7 +160,6 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       <Terminal />
       <PhoneBooth />
       <BellDesk />
-      <ProjectsDoor />
       <FreightDoor />
       <CampusDoor />
       <GalleryDoor />
@@ -539,32 +456,6 @@ function LuggageCart() {
       <RoundedBox args={[0.9, 0.6, 0.8]} radius={0.1} smoothness={3} position={[0.7, 0.95, 0]} castShadow>
         <meshStandardMaterial color={C.pink} roughness={0.9} />
       </RoundedBox>
-    </group>
-  );
-}
-
-/** the wide, unlocked way into the projects wall */
-function ProjectsDoor() {
-  return (
-    <group position={[-5.2, 0, -9.6]}>
-      <RoundedBox args={[6.4, 7.4, 0.4]} radius={0.16} smoothness={4} position={[0, 3.7, 0]} castShadow>
-        <meshStandardMaterial color={C.plum} roughness={0.8} />
-      </RoundedBox>
-      <mesh position={[0, 3.5, 0.24]}>
-        <planeGeometry args={[5.4, 6]} />
-        <meshStandardMaterial color="#181229" roughness={0.9} />
-      </mesh>
-      {/* the three boards, glowing through the doorway */}
-      {[-1, 0, 1].map((i) => (
-        <mesh key={i} position={[i * 1.7, 4.4, 0.26]}>
-          <planeGeometry args={[1.35, 1.7]} />
-          <meshStandardMaterial color={C.neon} emissive={C.neon} emissiveIntensity={0.4} toneMapped={false} />
-        </mesh>
-      ))}
-      <Handle y={3.2} x={2.2} />
-      <group position={[0, 7.9, 0.1]}>
-        <DoorSign label="Projects" color={C.neon} width={6.4} />
-      </group>
     </group>
   );
 }

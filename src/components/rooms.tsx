@@ -7,7 +7,6 @@ import Postcards from "@/components/postcards";
 import { career } from "@/data/career";
 import { education, profile, skills } from "@/data/cv";
 import { hobbies } from "@/data/hobbies";
-import { projects } from "@/data/projects";
 import { viceResell } from "@/data/viceResell";
 
 export function AboutRoom() {
@@ -30,14 +29,6 @@ export function AboutRoom() {
       </div>
 
       <div>
-        <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Mission</h3>
-        <p className="mt-2 text-sm leading-relaxed text-ink/75">
-          Make legacy hotel systems reachable — typed APIs, idempotent jobs and MCP tools an agent
-          can actually <em>use</em>.
-        </p>
-      </div>
-
-      <div>
         <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Toolbox</h3>
         <div className="mt-3 space-y-3">
           {skills.map((g) => (
@@ -56,58 +47,13 @@ export function AboutRoom() {
       </div>
 
       <div>
-        <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Education</h3>
-        <ul className="mt-2 space-y-1 text-sm text-ink/75">
-          {education.map((e) => (
-            <li key={e.school}>
-              <span className="text-brass">{e.school}</span> — {e.degree}{" "}
-              <span className="text-ink/40">({e.place})</span>
-            </li>
-          ))}
-        </ul>
+        <h3 className="font-mono text-xs uppercase tracking-widest text-teal">Systems I&apos;ve wired together</h3>
+        <div className="mt-3">
+          <IntegrationBoard />
+        </div>
       </div>
 
       <Postcards />
-    </div>
-  );
-}
-
-export function ProjectsRoom() {
-  return (
-    <div className="space-y-5">
-      <ul className="space-y-4">
-        {projects.map((p) => (
-          <li key={p.id} className="rounded-2xl border-2 border-white bg-white/60 p-4">
-            <div className="flex flex-wrap items-baseline gap-x-2">
-              <h3 className="text-lg font-bold text-brass">{p.name}</h3>
-              <p className="font-mono text-[11px] text-ink/45">{p.period}</p>
-            </div>
-            <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: p.color }}>
-              {p.role}
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-ink/75">{p.blurb}</p>
-            <ul className="mt-2 space-y-1 text-xs leading-relaxed text-ink/65">
-              {p.bullets.map((b) => (
-                <li key={b}>· {b}</li>
-              ))}
-            </ul>
-            {p.link && (
-              <a
-                href={p.link.href}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-2 inline-block rounded-lg border border-brass/40 bg-brass/10 px-3 py-1.5 text-xs text-brass transition hover:bg-brass/20"
-              >
-                {p.link.label} →
-              </a>
-            )}
-          </li>
-        ))}
-      </ul>
-      <div>
-        <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-teal">Systems I&apos;ve wired together</p>
-        <IntegrationBoard />
-      </div>
     </div>
   );
 }
