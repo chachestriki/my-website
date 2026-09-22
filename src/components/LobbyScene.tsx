@@ -23,6 +23,7 @@ import ProjectsPanel from "@/components/ProjectsPanel";
 import OdynPanel from "@/components/OdynPanel";
 import BotLabPanel from "@/components/BotLabPanel";
 import HatMark from "@/components/HatMark";
+import ArcheryGate from "@/components/ArcheryGate";
 import Intro from "@/components/Intro";
 import LofiToggle from "@/components/LofiToggle";
 import { stations } from "@/data/stations";
@@ -142,6 +143,8 @@ export default function LobbyScene() {
   const [moved, setMoved] = useState(false);
   /** the lobby stays behind the intro card until the visitor chooses to play */
   const [entered, setEntered] = useState(false);
+  /** the archery range between the street and the lobby doors */
+  const [gate, setGate] = useState(false);
   const [stationList, setStationList] = useState(false);
   const [scene, setScene] = useState<SceneId | null>(null);
   /** the scene's own panel, opened from the stand inside the room — not fixed;
@@ -334,8 +337,22 @@ export default function LobbyScene() {
               transition={{ duration: 0.45 }}
               className="absolute inset-0 z-30"
             >
-              <Street3D api={api} onEnter={() => setEntered(true)} />
-              <Intro onEnter={() => setEntered(true)} />
+              <Street3D api={api} onEnter={() => setGate(true)} />
+              <Intro onEnter={() => setGate(true)} />
+              <AnimatePresence>
+                {gate && (
+                  <ArcheryGate
+                    onWin={() => {
+                      setGate(false);
+                      setEntered(true);
+                    }}
+                    onSkip={() => {
+                      setGate(false);
+                      setEntered(true);
+                    }}
+                  />
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
         </AnimatePresence>
