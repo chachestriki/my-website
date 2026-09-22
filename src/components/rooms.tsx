@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import IntegrationBoard from "@/components/IntegrationBoard";
 import Postcards from "@/components/postcards";
@@ -170,40 +170,111 @@ const CONCIERGE_QA: { q: string; a: string }[] = [
   },
 ];
 
+type ChatTurn = { role: "user" | "assistant"; content: string };
+
+const OPENING: ChatTurn = {
+  role: "assistant",
+  content:
+    "I'm the agent Juan wired into this lobby — same idea as the ones he puts on hotel operations, only this one has read his CV. Ask me anything about his work.",
+};
+
+/** answers used when the live model can't be reached */
+function fallbackFor(question: string) {
+  const hit = CONCIERGE_QA.find((qa) => qa.q.toLowerCase() === question.trim().toLowerCase());
+  return (
+    hit?.a ??
+    `The live agent is unreachable right now. Everything it would tell you is in the rooms of this site and in the CV — and Juan answers directly at ${profile.email}.`
+  );
+}
+
 export function ConciergeRoom() {
-  const [log, setLog] = useState<{ role: "guest" | "agent"; text: string }[]>([
-    { role: "agent", text: "Good evening. I'm the voice agent Juan wired into this lobby. Ask me anything from the list." },
-  ]);
-  const asked = new Set(log.filter((l) => l.role === "guest").map((l) => l.text));
+  const [log, setLog] = useState<ChatTurn[]>([OPENING]);
+  const [input, setInput] = useState("");
+  const [pending, setPending] = useState(false);
+  const feed = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    feed.current?.scrollTo({ top: feed.current.scrollHeight, behavior: "smooth" });
+  }, [log, pending]);
+
+  async function ask(question: string) {
+    const text = question.trim();
+    if (!text || pending) return;
+    const next: ChatTurn[] = [...log, { role: "user", content: text }];
+    setLog(next);
+    setInput("");
+    setPending(true);
+    try {
+      const res = await fetch("/api/agent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next.slice(1) }),
+      });
+      const data = (await res.json()) as { reply?: string };
+      setLog((l) => [...l, { role: "assistant", content: data.reply ?? fallbackFor(text) }]);
+    } catch {
+      setLog((l) => [...l, { role: "assistant", content: fallbackFor(text) }]);
+    } finally {
+      setPending(false);
+    }
+  }
+
+  const asked = new Set(log.filter((l) => l.role === "user").map((l) => l.content));
 
   return (
     <div className="space-y-4">
       <p className="text-sm leading-relaxed text-ink/70">
-        A scripted version of the voice agents I put on hotel operations.
+        A live LLM agent grounded in Juan&apos;s CV, projects and career — it only answers from what&apos;s on this site.
       </p>
-      <div className="max-h-80 space-y-3 overflow-y-auto rounded-xl border border-brass/20 bg-[#fff6ea] p-4">
+      <div
+        ref={feed}
+        className="max-h-80 space-y-3 overflow-y-auto rounded-xl border border-brass/20 bg-[#fff6ea] p-4"
+        aria-live="polite"
+      >
         {log.map((l, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            className={l.role === "agent" ? "text-sm text-ink/85" : "text-sm text-brass"}
+            className={l.role === "assistant" ? "text-sm text-ink/85" : "text-sm text-brass"}
           >
             <span className="mr-2 font-mono text-[11px] uppercase text-ink/35">
-              {l.role === "agent" ? "agent" : "you"}
+              {l.role === "assistant" ? "agent" : "you"}
             </span>
-            {l.text}
+            {l.content}
           </motion.div>
         ))}
+        {pending && <p className="font-mono text-[11px] uppercase tracking-widest text-ink/35">agent is typing…</p>}
       </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void ask(input);
+        }}
+        className="flex gap-2"
+      >
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask about his stack, a project, availability…"
+          aria-label="Ask the agent a question"
+          className="min-w-0 flex-1 rounded-full border border-brass/35 bg-white/70 px-4 py-2 text-sm text-ink outline-none placeholder:text-ink/35 focus:border-brass"
+        />
+        <button
+          type="submit"
+          disabled={pending || !input.trim()}
+          className="rounded-full border-2 border-brass bg-brass px-4 py-2 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-40"
+        >
+          Ask
+        </button>
+      </form>
       <div className="flex flex-wrap gap-2">
         {CONCIERGE_QA.filter((qa) => !asked.has(qa.q)).map((qa) => (
           <button
             key={qa.q}
-            onClick={() =>
-              setLog((l) => [...l, { role: "guest", text: qa.q }, { role: "agent", text: qa.a }])
-            }
-            className="rounded-full border border-brass/35 px-3 py-1.5 text-xs text-brass/90 transition hover:bg-brass/15"
+            onClick={() => void ask(qa.q)}
+            disabled={pending}
+            className="rounded-full border border-brass/35 px-3 py-1.5 text-xs text-brass/90 transition hover:bg-brass/15 disabled:opacity-40"
           >
             {qa.q}
           </button>

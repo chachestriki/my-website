@@ -39,3 +39,7 @@ npm run dev     # http://localhost:3000
 npm run lint
 npm run build
 ```
+
+## The lobby agent
+
+"Ask the agent" talks to `/api/agent`, which prompts an OpenAI model with a dossier built from the site's own data (`src/data/agentContext.ts`). Set `OPENAI_API_KEY` in `.env.local` locally and in the hosting provider's environment variables for production; without it the route replies in demo mode and the room falls back to scripted answers.
