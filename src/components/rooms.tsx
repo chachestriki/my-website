@@ -124,6 +124,9 @@ const OPENING: ChatTurn = {
     "I'm the agent Juan wired into this lobby — same idea as the ones he puts on hotel operations, only this one has read his CV. Ask me anything about his work.",
 };
 
+/** questions allowed per visit, mirrored by /api/agent */
+const MAX_QUESTIONS = 5;
+
 /** answers used when the live model can't be reached */
 function fallbackFor(question: string) {
   const hit = CONCIERGE_QA.find((qa) => qa.q.toLowerCase() === question.trim().toLowerCase());
@@ -143,9 +146,12 @@ export function ConciergeRoom() {
     feed.current?.scrollTo({ top: feed.current.scrollHeight, behavior: "smooth" });
   }, [log, pending]);
 
+  const left = MAX_QUESTIONS - log.filter((l) => l.role === "user").length;
+  const spent = left <= 0;
+
   async function ask(question: string) {
     const text = question.trim();
-    if (!text || pending) return;
+    if (!text || pending || spent) return;
     const next: ChatTurn[] = [...log, { role: "user", content: text }];
     setLog(next);
     setInput("");
@@ -202,20 +208,38 @@ export function ConciergeRoom() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about his stack, a project, availability…"
+          disabled={spent}
+          placeholder={spent ? "Question limit reached" : "Ask about his stack, a project, availability…"}
           aria-label="Ask the agent a question"
-          className="min-w-0 flex-1 rounded-full border border-brass/35 bg-white/70 px-4 py-2 text-sm text-ink outline-none placeholder:text-ink/35 focus:border-brass"
+          className="min-w-0 flex-1 rounded-full border border-brass/35 bg-white/70 px-4 py-2 text-sm text-ink outline-none placeholder:text-ink/35 focus:border-brass disabled:opacity-50"
         />
         <button
           type="submit"
-          disabled={pending || !input.trim()}
+          disabled={pending || spent || !input.trim()}
           className="rounded-full border-2 border-brass bg-brass px-4 py-2 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-40"
         >
           Ask
         </button>
       </form>
+      {spent ? (
+        <p className="text-sm text-ink/70">
+          That&apos;s the {MAX_QUESTIONS}-question limit for one visit.{" "}
+          <a href="/cv" className="text-brass underline-offset-4 hover:underline">
+            Read the CV
+          </a>{" "}
+          or write to{" "}
+          <a href={`mailto:${profile.email}`} className="text-brass underline-offset-4 hover:underline">
+            {profile.email}
+          </a>
+          .
+        </p>
+      ) : (
+        <p className="font-mono text-[11px] uppercase tracking-widest text-ink/35">
+          {left} question{left === 1 ? "" : "s"} left
+        </p>
+      )}
       <div className="flex flex-wrap gap-2">
-        {CONCIERGE_QA.filter((qa) => !asked.has(qa.q)).map((qa) => (
+        {(spent ? [] : CONCIERGE_QA.filter((qa) => !asked.has(qa.q))).map((qa) => (
           <button
             key={qa.q}
             onClick={() => void ask(qa.q)}
