@@ -10,6 +10,8 @@ type Body = { messages?: unknown };
 const MODEL = "gpt-4o-mini";
 const MAX_TURNS = 12;
 const MAX_CHARS = 600;
+/** questions allowed per conversation, mirrored by the room's UI */
+const MAX_QUESTIONS = 5;
 
 function parseMessages(body: Body): ChatMessage[] | null {
   if (!Array.isArray(body.messages)) return null;
@@ -34,6 +36,16 @@ export async function POST(request: Request) {
 
   const messages = parseMessages(body);
   if (!messages) return Response.json({ error: "invalid messages" }, { status: 400 });
+
+  if (messages.filter((m) => m.role === "user").length > MAX_QUESTIONS) {
+    return Response.json(
+      {
+        reply: `That's the ${MAX_QUESTIONS}-question limit for one visit. The rest is in the CV — and Juan answers directly at ${profile.email}.`,
+        limited: true,
+      },
+      { status: 429 }
+    );
+  }
 
   const key = process.env.OPENAI_API_KEY;
   if (!key) {
