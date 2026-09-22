@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import IntegrationBoard from "@/components/IntegrationBoard";
+import Postcards from "@/components/postcards";
 import { career } from "@/data/career";
 import { education, profile, skills } from "@/data/cv";
 import { hobbies } from "@/data/hobbies";
@@ -65,6 +66,8 @@ export function AboutRoom() {
           ))}
         </ul>
       </div>
+
+      <Postcards />
     </div>
   );
 }
