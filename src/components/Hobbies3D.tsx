@@ -50,7 +50,12 @@ export default function Hobbies3D({
         <GuitarCorner />
         <FamilyTree />
         {hobbies.memories.map((memory, i) => (
-          <Frame key={memory.id} memory={memory} x={-12 + i * SLOT} index={i} />
+          <Frame
+            key={memory.id}
+            memory={memory}
+            x={(i - (hobbies.memories.length - 1) / 2) * SLOT}
+            index={i}
+          />
         ))}
       </group>
       <InfoStand x={DESK[0]} z={DESK[1]} color={C.pink} onOpen={onDesk} />

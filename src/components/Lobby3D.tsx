@@ -1,9 +1,10 @@
 "use client";
 
 import type { MutableRefObject } from "react";
-import { Canvas, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import { Html, OrthographicCamera, RoundedBox } from "@react-three/drei";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import type * as THREE from "three";
 import { stations } from "@/data/stations";
 import {
   Beacon,
@@ -46,6 +47,8 @@ export default function Lobby3D({
     fit: 1.06,
   });
   const first = stations.find((s) => s.id === "career");
+  /** only the station the penguin is closest to wears its label */
+  const [closest, setClosest] = useState<string | null>(null);
 
   return (
     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true }} style={{ touchAction: "none" }}>
@@ -72,10 +75,12 @@ export default function Lobby3D({
 
       {!moved && first && <Beacon x={first.stand[0]} z={first.stand[1]} color={C.gold} />}
 
+      <ClosestStation posRef={playerRef} onChange={setClosest} />
+
       {stations.map((s) => (
         <group key={s.id}>
           <Pad x={s.stand[0]} z={s.stand[1]} onClick={() => api.current.goTo?.(s.id)} />
-          {(moved || s.id === "career") && (
+          {(closest === s.id || (!moved && s.id === "career")) && (
           <Html position={s.label} center zIndexRange={[10, 0]} className="pointer-events-none">
             <div className="whitespace-nowrap rounded-2xl border-2 border-white bg-white/90 px-3 py-1.5 text-center shadow-[0_6px_0_rgba(107,91,143,0.18)]">
               <span className="block font-mono text-[10px] uppercase tracking-widest text-teal">{s.object}</span>
@@ -97,6 +102,29 @@ export default function Lobby3D({
       />
     </Canvas>
   );
+}
+
+/** reports which station the walker is nearest to, so only that one is labelled */
+function ClosestStation({
+  posRef,
+  onChange,
+}: {
+  posRef: MutableRefObject<THREE.Vector3>;
+  onChange: (id: string | null) => void;
+}) {
+  useFrame(() => {
+    let best = stations[0];
+    let bestDist = Infinity;
+    for (const s of stations) {
+      const d = Math.hypot(s.stand[0] - posRef.current.x, s.stand[1] - posRef.current.z);
+      if (d < bestDist) {
+        bestDist = d;
+        best = s;
+      }
+    }
+    onChange(best.id);
+  });
+  return null;
 }
 
 function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => void }) {

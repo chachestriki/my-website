@@ -274,9 +274,6 @@ export default function LobbyScene() {
             </div>
           </div>
           <nav className="pointer-events-auto flex items-center gap-3 text-xs">
-            <span className="rounded-full border-2 border-white bg-white/85 px-4 py-2 font-mono font-semibold text-teal shadow-[0_4px_0_rgba(107,91,143,0.12)]">
-              Currently 2026
-            </span>
             <a
               href="/cv"
               className="rounded-full border-2 border-white bg-white/85 px-4 py-2 font-mono font-semibold text-brass shadow-[0_4px_0_rgba(107,91,143,0.12)] transition hover:bg-white"

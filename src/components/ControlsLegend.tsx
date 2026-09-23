@@ -14,7 +14,7 @@ const CONTROLS: { keys: string[]; action: string }[] = [
 ];
 
 export default function ControlsLegend() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="pointer-events-auto w-full">

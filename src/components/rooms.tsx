@@ -13,7 +13,6 @@ export function AboutRoom() {
   return (
     <div className="space-y-6">
       <p className="text-lg leading-relaxed text-ink/85">{profile.tagline}</p>
-      <p className="text-sm leading-relaxed text-ink/70">{profile.summary}</p>
 
       <div className="grid gap-4 sm:grid-cols-3">
         {[
@@ -74,12 +73,11 @@ export function CareerRoom() {
               className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-[#fff6ea]"
               style={{ background: s.color }}
             />
-            <div className="flex flex-wrap items-baseline gap-x-3">
+            <div className="flex flex-wrap items-baseline gap-x-2">
               <h3 className="font-semibold text-brass">{s.company}</h3>
-              <p className="font-mono text-xs text-ink/50">{s.period}</p>
+              <p className="text-xs text-ink/55">{s.role}</p>
+              <p className="font-mono text-xs text-ink/50">· {s.period}</p>
             </div>
-            <p className="text-xs text-ink/55">{s.role}</p>
-            <p className="mt-1 text-sm leading-relaxed text-ink/80">{s.note}</p>
           </motion.li>
         ))}
       </ol>
@@ -379,12 +377,7 @@ export function ViceResellRoom() {
           </div>
         ))}
       </div>
-      {viceResell.blocks.map((b) => (
-        <div key={b.heading}>
-          <h3 className="font-mono text-xs uppercase tracking-widest text-teal">{b.heading}</h3>
-          <p className="mt-1 text-sm leading-relaxed text-ink/75">{b.body}</p>
-        </div>
-      ))}
+      <p className="text-sm leading-relaxed text-ink/75">{viceResell.blocks[0].body}</p>
     </div>
   );
 }
