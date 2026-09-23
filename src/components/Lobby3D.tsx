@@ -1,9 +1,10 @@
 "use client";
 
 import type { MutableRefObject } from "react";
-import { Canvas, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import { Html, OrthographicCamera, RoundedBox } from "@react-three/drei";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import type * as THREE from "three";
 import { stations } from "@/data/stations";
 import {
   Beacon,
@@ -46,16 +47,18 @@ export default function Lobby3D({
     fit: 1.06,
   });
   const first = stations.find((s) => s.id === "career");
+  /** only the station the penguin is closest to wears its label */
+  const [closest, setClosest] = useState<string | null>(null);
 
   return (
     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true }} style={{ touchAction: "none" }}>
-      <color attach="background" args={["#ffd9c0"]} />
-      <fog attach="fog" args={["#ffd9c0", 48, 84]} />
+      <color attach="background" args={["#f2f1f0"]} />
+      <fog attach="fog" args={["#f2f1f0", 48, 84]} />
 
       <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom} near={-120} far={220} />
       <CameraRig posRef={playerRef} start={START} />
 
-      <hemisphereLight args={["#ffffff", "#ffb3cf", 0.85]} />
+      <hemisphereLight args={["#ffffff", "#ebe9e7", 0.85]} />
       <ambientLight intensity={0.35} />
       <directionalLight
         position={[12, 20, 8]}
@@ -72,12 +75,14 @@ export default function Lobby3D({
 
       {!moved && first && <Beacon x={first.stand[0]} z={first.stand[1]} color={C.gold} />}
 
+      <ClosestStation posRef={playerRef} onChange={setClosest} />
+
       {stations.map((s) => (
         <group key={s.id}>
           <Pad x={s.stand[0]} z={s.stand[1]} onClick={() => api.current.goTo?.(s.id)} />
-          {(moved || s.id === "career") && (
+          {(closest === s.id || (!moved && s.id === "career")) && (
           <Html position={s.label} center zIndexRange={[10, 0]} className="pointer-events-none">
-            <div className="whitespace-nowrap rounded-2xl border-2 border-white bg-white/90 px-3 py-1.5 text-center shadow-[0_6px_0_rgba(107,91,143,0.18)]">
+            <div className="whitespace-nowrap rounded-2xl border-2 border-white bg-white/90 px-3 py-1.5 text-center shadow-[0_6px_0_rgba(20,23,26,0.18)]">
               <span className="block font-mono text-[10px] uppercase tracking-widest text-teal">{s.object}</span>
               <span className="block text-sm font-bold text-brass">{s.title}</span>
             </div>
@@ -97,6 +102,29 @@ export default function Lobby3D({
       />
     </Canvas>
   );
+}
+
+/** reports which station the walker is nearest to, so only that one is labelled */
+function ClosestStation({
+  posRef,
+  onChange,
+}: {
+  posRef: MutableRefObject<THREE.Vector3>;
+  onChange: (id: string | null) => void;
+}) {
+  useFrame(() => {
+    let best = stations[0];
+    let bestDist = Infinity;
+    for (const s of stations) {
+      const d = Math.hypot(s.stand[0] - posRef.current.x, s.stand[1] - posRef.current.z);
+      if (d < bestDist) {
+        bestDist = d;
+        best = s;
+      }
+    }
+    onChange(best.id);
+  });
+  return null;
 }
 
 function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => void }) {
@@ -141,7 +169,7 @@ function Lobby({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => 
       {/* the camera-side wall is glazed, so it frames the room without hiding it */}
       <mesh position={[16.7, 4, 0]}>
         <boxGeometry args={[0.3, 8, 25]} />
-        <meshStandardMaterial color="#bfe6ff" transparent opacity={0.2} roughness={0.15} />
+        <meshStandardMaterial color="#eff0f1" transparent opacity={0.2} roughness={0.15} />
       </mesh>
       {[-10, -5, 5, 10].map((z) => (
         <mesh key={z} position={[16.7, 4, z]}>
@@ -194,7 +222,7 @@ function Reception() {
       </mesh>
       <mesh position={[3.2, 2.72, 0]} castShadow>
         <coneGeometry args={[0.42, 0.5, 18]} />
-        <meshStandardMaterial color={C.gold} roughness={0.7} emissive="#ffb703" emissiveIntensity={0.25} />
+        <meshStandardMaterial color={C.gold} roughness={0.7} emissive="#ba9449" emissiveIntensity={0.25} />
       </mesh>
       {/* guest book */}
       <RoundedBox args={[1, 0.12, 0.7]} radius={0.04} smoothness={3} position={[-2.6, 2.2, 0.2]} castShadow>
@@ -259,7 +287,7 @@ function PhoneBooth() {
       </RoundedBox>
       <mesh position={[0, 3.2, 1.12]}>
         <planeGeometry args={[1.8, 2.6]} />
-        <meshStandardMaterial color="#eaf4ff" roughness={0.4} />
+        <meshStandardMaterial color="#fbfbfb" roughness={0.4} />
       </mesh>
       <RoundedBox args={[0.6, 0.9, 0.3]} radius={0.08} smoothness={3} position={[0, 2, 1.12]} castShadow>
         <meshStandardMaterial color={C.pink} roughness={0.9} />
@@ -328,7 +356,7 @@ function LoungeDoor() {
       </RoundedBox>
       <mesh position={[0, 3.2, 0.24]}>
         <planeGeometry args={[3.4, 5.4]} />
-        <meshStandardMaterial color="#2c1c3a" roughness={0.9} />
+        <meshStandardMaterial color="#262420" roughness={0.9} />
       </mesh>
       {/* a guitar silhouette on the door: body, neck and headstock */}
       <mesh position={[0, 2.2, 0.28]}>
@@ -383,10 +411,10 @@ function Sofa() {
         <meshStandardMaterial color={C.mint} roughness={0.95} />
       </RoundedBox>
       <RoundedBox args={[0.6, 1.1, 1.9]} radius={0.24} smoothness={4} position={[-2.1, 1, 0]} castShadow>
-        <meshStandardMaterial color="#8ed0b8" roughness={0.95} />
+        <meshStandardMaterial color="#bdb9b2" roughness={0.95} />
       </RoundedBox>
       <RoundedBox args={[0.6, 1.1, 1.9]} radius={0.24} smoothness={4} position={[2.1, 1, 0]} castShadow>
-        <meshStandardMaterial color="#8ed0b8" roughness={0.95} />
+        <meshStandardMaterial color="#bdb9b2" roughness={0.95} />
       </RoundedBox>
     </group>
   );
@@ -487,7 +515,7 @@ function GalleryDoor() {
       </RoundedBox>
       <mesh position={[0, 3.3, 0.24]}>
         <planeGeometry args={[3.4, 5.6]} />
-        <meshStandardMaterial color="#2a1b2e" roughness={0.9} />
+        <meshStandardMaterial color="#201e1c" roughness={0.9} />
       </mesh>
       {/* three little frames hinting at the hall inside */}
       {[-1, 0, 1].map((i) => (
@@ -514,7 +542,7 @@ function CampusDoor() {
       {/* glazed double door showing daylight outside */}
       <mesh position={[0, 3.4, 0.24]}>
         <planeGeometry args={[3.8, 5.8]} />
-        <meshStandardMaterial color="#bfe6ff" emissive="#8fd4ff" emissiveIntensity={0.55} roughness={0.3} />
+        <meshStandardMaterial color="#eff0f1" emissive="#d0d3d7" emissiveIntensity={0.55} roughness={0.3} />
       </mesh>
       <mesh position={[0, 3.4, 0.26]}>
         <planeGeometry args={[0.12, 5.8]} />
@@ -522,7 +550,7 @@ function CampusDoor() {
       </mesh>
       <mesh position={[0, 6.9, 0.16]}>
         <circleGeometry args={[2.3, 24, 0, Math.PI]} />
-        <meshStandardMaterial color="#ffe08a" emissive="#ffb703" emissiveIntensity={0.4} roughness={0.9} />
+        <meshStandardMaterial color="#e6d8bc" emissive="#ba9449" emissiveIntensity={0.4} roughness={0.9} />
       </mesh>
       <Handle y={3.4} x={1.6} />
       <group position={[0, 8.1, 0.16]}>

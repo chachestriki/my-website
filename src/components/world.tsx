@@ -13,39 +13,39 @@ export type LobbyApi = {
 export type Spot = { id: string; stand: [number, number] };
 export type Bounds = { minX: number; maxX: number; minZ: number; maxZ: number };
 
-/** saturated cartoon palette shared by every scene */
+/** neutral hotel palette — whites, blacks and a single brass accent */
 export const C = {
-  floor: "#ffcf9f",
-  floorAlt: "#ffb476",
-  rug: "#9d7bf0",
-  rugEdge: "#6f4ae0",
-  wall: "#ffadc9",
-  wallSide: "#8fc0ff",
-  wood: "#f4862c",
-  woodDark: "#cc5f16",
-  cream: "#ffe7bd",
-  mint: "#2ecf9f",
-  sky: "#4fa4ff",
-  pink: "#ff5f92",
-  gold: "#ffc01f",
-  plant: "#3fbf62",
-  plum: "#6b45cf",
-  skin: "#f7bd8e",
-  hair: "#3a2330",
-  denim: "#3f6fd8",
-  leather: "#a8521f",
-  hat: "#e0a241",
-  tux: "#2a2f4a",
-  belly: "#fff6e6",
-  beak: "#ff9a1f",
-  scarf: "#ff3d6e",
-  maroon: "#a02040",
-  steel: "#5c6a86",
-  steelDark: "#39445c",
-  concrete: "#8e97ad",
-  neon: "#00e5ff",
-  magenta: "#ff2fa0",
-  lime: "#b6ff3d",
+  floor: "#ecebe7",
+  floorAlt: "#dedcd5",
+  rug: "#1b1e22",
+  rugEdge: "#8a6a33",
+  wall: "#f6f5f2",
+  wallSide: "#dfddd6",
+  wood: "#8a6a33",
+  woodDark: "#5b4620",
+  cream: "#faf9f6",
+  mint: "#4f6f66",
+  sky: "#8095aa",
+  pink: "#b08a4f",
+  gold: "#c2a05a",
+  plant: "#4f6b52",
+  plum: "#2b3138",
+  skin: "#e2c8ad",
+  hair: "#17181b",
+  denim: "#39435a",
+  leather: "#6a5236",
+  hat: "#c2a05a",
+  tux: "#15181c",
+  belly: "#ffffff",
+  beak: "#c98b3a",
+  scarf: "#6e2f33",
+  maroon: "#5e2a2e",
+  steel: "#5a6069",
+  steelDark: "#33383f",
+  concrete: "#9aa0a8",
+  neon: "#9ab6cf",
+  magenta: "#c2a05a",
+  lime: "#b7c2a8",
 };
 
 export const CAM_OFFSET: [number, number, number] = [20, 30, 20];
@@ -164,7 +164,7 @@ export function Pad({ x, z, onClick }: { x: number; z: number; onClick: () => vo
       }}
     >
       <circleGeometry args={[1.5, 40]} />
-      <meshStandardMaterial color="#9ce8bd" transparent opacity={0.75} roughness={1} />
+      <meshStandardMaterial color="#a8c6b1" transparent opacity={0.75} roughness={1} />
     </mesh>
   );
 }
@@ -233,7 +233,7 @@ export function DoorSign({
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
 
-    ctx.fillStyle = "#1b1430";
+    ctx.fillStyle = "#1a1c1e";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = color;
     ctx.fillRect(0, 0, canvas.width, 10);
@@ -241,7 +241,7 @@ export function DoorSign({
 
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#fff6ea";
+    ctx.fillStyle = "#fdfcf9";
     ctx.font = "800 104px ui-sans-serif, system-ui, sans-serif";
     ctx.fillText(label.toUpperCase(), canvas.width / 2, extra ? 92 : canvas.height / 2);
     if (extra) {
@@ -432,11 +432,11 @@ export function Penguin({
         </mesh>
         <mesh position={[-0.18, 2.28, 0.42]}>
           <sphereGeometry args={[0.075, 12, 12]} />
-          <meshStandardMaterial color="#1a1626" />
+          <meshStandardMaterial color="#17181b" />
         </mesh>
         <mesh position={[0.18, 2.28, 0.42]}>
           <sphereGeometry args={[0.075, 12, 12]} />
-          <meshStandardMaterial color="#1a1626" />
+          <meshStandardMaterial color="#17181b" />
         </mesh>
         {/* beak */}
         <mesh position={[0, 2.06, 0.5]} rotation={[Math.PI / 2, 0, 0]} castShadow>

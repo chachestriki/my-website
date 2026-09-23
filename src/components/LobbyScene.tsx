@@ -36,7 +36,7 @@ const Lobby3D = dynamic(() => import("@/components/Lobby3D"), {
 const Street3D = dynamic(() => import("@/components/Street3D"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-[#8fd0ff] font-mono text-sm text-white">
+    <div className="flex h-full w-full items-center justify-center bg-[#d0d3d7] font-mono text-sm text-white">
       Arriving…
     </div>
   ),
@@ -45,7 +45,7 @@ const Street3D = dynamic(() => import("@/components/Street3D"), {
 const Factory3D = dynamic(() => import("@/components/Factory3D"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-[#141a2b] font-mono text-sm text-[#00e5ff]">
+    <div className="flex h-full w-full items-center justify-center bg-[#18191c] font-mono text-sm text-[#757e8a]">
       Clocking in…
     </div>
   ),
@@ -54,7 +54,7 @@ const Factory3D = dynamic(() => import("@/components/Factory3D"), {
 const Campus3D = dynamic(() => import("@/components/Campus3D"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-[#7fd0ff] font-mono text-sm text-white">
+    <div className="flex h-full w-full items-center justify-center bg-[#c6cacf] font-mono text-sm text-white">
       Boarding the flight…
     </div>
   ),
@@ -63,7 +63,7 @@ const Campus3D = dynamic(() => import("@/components/Campus3D"), {
 const Gallery3D = dynamic(() => import("@/components/Gallery3D"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-[#2a1b2e] font-mono text-sm text-[#ffc01f]">
+    <div className="flex h-full w-full items-center justify-center bg-[#201e1c] font-mono text-sm text-[#c3a261]">
       Hanging the frames…
     </div>
   ),
@@ -72,7 +72,7 @@ const Gallery3D = dynamic(() => import("@/components/Gallery3D"), {
 const Hobbies3D = dynamic(() => import("@/components/Hobbies3D"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-[#3a2233] font-mono text-sm text-[#ff2fa0]">
+    <div className="flex h-full w-full items-center justify-center bg-[#292623] font-mono text-sm text-[#a39d93]">
       Plugging in…
     </div>
   ),
@@ -204,7 +204,7 @@ export default function LobbyScene() {
               onClick={leaveScene}
               className={`absolute left-6 top-6 z-30 rounded-full border-2 px-4 py-2 font-mono text-xs font-semibold transition ${
                 scene === "factory"
-                  ? "border-[#00e5ff]/60 bg-[#141a2b]/80 text-[#00e5ff] hover:bg-[#00e5ff] hover:text-[#141a2b]"
+                  ? "border-[#757e8a]/60 bg-[#18191c]/80 text-[#757e8a] hover:bg-[#757e8a] hover:text-[#18191c]"
                   : "border-white bg-white/85 text-brass hover:bg-brass hover:text-white"
               }`}
             >
@@ -229,7 +229,7 @@ export default function LobbyScene() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="pointer-events-none absolute left-1/2 top-28 z-20 -translate-x-1/2 rounded-full border-2 border-white bg-white/90 px-5 py-2.5 text-sm font-semibold text-brass shadow-[0_6px_0_rgba(107,91,143,0.15)]"
+            className="pointer-events-none absolute left-1/2 top-28 z-20 -translate-x-1/2 rounded-full border-2 border-white bg-white/90 px-5 py-2.5 text-sm font-semibold text-brass shadow-[0_6px_0_rgba(20,23,26,0.15)]"
           >
             Walk to the glowing ring to open the career log
           </motion.div>
@@ -266,7 +266,7 @@ export default function LobbyScene() {
 
         {!scene && entered && (
         <header className="pointer-events-none absolute left-0 right-0 top-0 z-20 flex items-start justify-between p-6">
-          <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border-2 border-white bg-white/85 px-4 py-2.5 shadow-[0_6px_0_rgba(107,91,143,0.12)]">
+          <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border-2 border-white bg-white/85 px-4 py-2.5 shadow-[0_6px_0_rgba(20,23,26,0.12)]">
             <HatMark className="h-9 w-9 shrink-0" />
             <div>
               <h1 className="text-xl font-extrabold tracking-tight text-brass">{profile.name}</h1>
@@ -274,12 +274,9 @@ export default function LobbyScene() {
             </div>
           </div>
           <nav className="pointer-events-auto flex items-center gap-3 text-xs">
-            <span className="rounded-full border-2 border-white bg-white/85 px-4 py-2 font-mono font-semibold text-teal shadow-[0_4px_0_rgba(107,91,143,0.12)]">
-              Currently 2026
-            </span>
             <a
               href="/cv"
-              className="rounded-full border-2 border-white bg-white/85 px-4 py-2 font-mono font-semibold text-brass shadow-[0_4px_0_rgba(107,91,143,0.12)] transition hover:bg-white"
+              className="rounded-full border-2 border-white bg-white/85 px-4 py-2 font-mono font-semibold text-brass shadow-[0_4px_0_rgba(20,23,26,0.12)] transition hover:bg-white"
             >
               Skip the lobby → CV
             </a>
@@ -290,7 +287,7 @@ export default function LobbyScene() {
         {/* the only HUD column: sections with their number keys, then the controls */}
         {!scene && entered && (
         <aside className="pointer-events-none absolute right-6 top-40 z-20 flex w-60 flex-col gap-2">
-          <div className="pointer-events-auto rounded-2xl border-2 border-white bg-white/85 p-3 shadow-[0_6px_0_rgba(107,91,143,0.12)]">
+          <div className="pointer-events-auto rounded-2xl border-2 border-white bg-white/85 p-3 shadow-[0_6px_0_rgba(20,23,26,0.12)]">
             <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-ink/45">Sections</p>
             <ul className="space-y-1">
               {stations.map((s, i) => (
@@ -332,7 +329,7 @@ export default function LobbyScene() {
             <button
               key={s.id}
               onClick={() => setOpenId(s.id)}
-              className="block w-full rounded-2xl border-2 border-white bg-card p-4 text-left shadow-[0_5px_0_rgba(107,91,143,0.12)] transition active:scale-[0.99]"
+              className="block w-full rounded-2xl border-2 border-white bg-card p-4 text-left shadow-[0_5px_0_rgba(20,23,26,0.12)] transition active:scale-[0.99]"
             >
               <span className="font-mono text-[10px] uppercase tracking-widest text-teal">{s.object}</span>
               <span className="mt-0.5 block text-base font-bold text-brass">{s.title}</span>
@@ -367,7 +364,7 @@ export default function LobbyScene() {
               exit={{ y: 30, opacity: 0, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 260, damping: 28 }}
               onClick={(e) => e.stopPropagation()}
-              className="max-h-[92dvh] w-full max-w-4xl overflow-y-auto rounded-t-3xl border-4 border-white bg-card p-6 shadow-[0_18px_0_rgba(107,91,143,0.18)] md:rounded-3xl md:p-8"
+              className="max-h-[92dvh] w-full max-w-4xl overflow-y-auto rounded-t-3xl border-4 border-white bg-card p-6 shadow-[0_18px_0_rgba(20,23,26,0.18)] md:rounded-3xl md:p-8"
             >
               <div className="mb-5 flex items-start justify-between gap-6">
                 <div>

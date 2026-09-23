@@ -26,19 +26,18 @@ export default function GalleryPanel({ onClose }: { onClose: () => void }) {
         </button>
       </div>
 
-      <ol className="relative space-y-4 border-l border-brass/25 pl-5">
+      <ol className="relative space-y-3 border-l border-brass/25 pl-5">
         {career.map((s) => (
           <li key={s.id} className="relative">
             <span
-              className="absolute -left-[26px] top-1.5 h-3 w-3 rounded-full border-2 border-[#fff6ea]"
+              className="absolute -left-[26px] top-1.5 h-3 w-3 rounded-full border-2 border-[#fdfcf9]"
               style={{ background: s.color }}
             />
             <div className="flex flex-wrap items-baseline gap-x-2">
               <h3 className="font-semibold text-brass">{s.company}</h3>
-              <p className="font-mono text-[11px] text-ink/45">{s.period}</p>
+              <p className="text-xs text-ink/55">{s.role}</p>
+              <p className="font-mono text-[11px] text-ink/45">· {s.period}</p>
             </div>
-            <p className="text-xs text-ink/55">{s.role}</p>
-            <p className="mt-1 text-sm leading-relaxed text-ink/75">{s.note}</p>
           </li>
         ))}
       </ol>

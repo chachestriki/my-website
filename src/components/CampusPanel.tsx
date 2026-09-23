@@ -10,7 +10,7 @@ export default function CampusPanel({ onClose }: { onClose: () => void }) {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: 60, opacity: 0 }}
       transition={{ type: "spring", stiffness: 240, damping: 30 }}
-      className="absolute right-0 top-0 z-30 flex h-full w-full max-w-md flex-col gap-5 overflow-y-auto border-l-4 border-[#e0392b] bg-card/95 p-6 text-ink shadow-[-18px_0_40px_rgba(0,0,0,0.25)] backdrop-blur"
+      className="absolute right-0 top-0 z-30 flex h-full w-full max-w-md flex-col gap-5 overflow-y-auto border-l-4 border-[#90887d] bg-card/95 p-6 text-ink shadow-[-18px_0_40px_rgba(0,0,0,0.25)] backdrop-blur"
     >
       <div className="flex items-start justify-between gap-4">
         <div>

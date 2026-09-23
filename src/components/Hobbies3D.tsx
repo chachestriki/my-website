@@ -12,10 +12,10 @@ const START: [number, number, number] = [-6 * SCALE, 0, 5 * SCALE];
 const BOUNDS = { minX: -13 * SCALE, maxX: 13 * SCALE, minZ: -5 * SCALE, maxZ: 7 * SCALE };
 const DESK: [number, number] = [6 * SCALE, 4.6 * SCALE];
 
-const RUG = "#8d3f5c";
-const WALL = "#ffe0b8";
-const WALL_DARK = "#f0c08f";
-const FLOOR = "#b06a3a";
+const RUG = "#5a554d";
+const WALL = "#f5efe4";
+const WALL_DARK = "#e2d3b4";
+const FLOOR = "#686158";
 /** one memory frame every 5 units along the back wall */
 const SLOT = 4.6;
 
@@ -35,13 +35,13 @@ export default function Hobbies3D({
 
   return (
     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true }} style={{ touchAction: "none" }}>
-      <color attach="background" args={["#3a2233"]} />
-      <fog attach="fog" args={["#3a2233", 48, 92]} />
+      <color attach="background" args={["#292623"]} />
+      <fog attach="fog" args={["#292623", 48, 92]} />
 
       <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom * 1.02} near={-140} far={240} />
       <CameraRig posRef={playerRef} start={START} shift={panelOpen ? 8 : 0} />
 
-      <hemisphereLight args={["#fff0d2", "#3a2233", 0.85]} />
+      <hemisphereLight args={["#fdfcf9", "#292623", 0.85]} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[12, 22, 12]} intensity={1.6} castShadow shadow-mapSize={[2048, 2048]} />
 
@@ -50,7 +50,12 @@ export default function Hobbies3D({
         <GuitarCorner />
         <FamilyTree />
         {hobbies.memories.map((memory, i) => (
-          <Frame key={memory.id} memory={memory} x={-12 + i * SLOT} index={i} />
+          <Frame
+            key={memory.id}
+            memory={memory}
+            x={(i - (hobbies.memories.length - 1) / 2) * SLOT}
+            index={i}
+          />
         ))}
       </group>
       <InfoStand x={DESK[0]} z={DESK[1]} color={C.pink} onOpen={onDesk} />
@@ -78,7 +83,7 @@ function LivingRoom({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>
       {Array.from({ length: 12 }, (_, i) => (
         <mesh key={i} position={[-16.5 + i * 3, 0.01, 2]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[0.12, 22]} />
-          <meshStandardMaterial color="#8c4f28" roughness={1} />
+          <meshStandardMaterial color="#504b44" roughness={1} />
         </mesh>
       ))}
       <mesh position={[0, 0.02, 3.4]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
@@ -97,7 +102,7 @@ function LivingRoom({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>
       {/* the camera-side wall is glass so the room stays open */}
       <mesh position={[17, 6, 0.5]}>
         <boxGeometry args={[0.3, 12, 17]} />
-        <meshStandardMaterial color="#bfe6ff" transparent opacity={0.16} roughness={0.1} />
+        <meshStandardMaterial color="#eff0f1" transparent opacity={0.16} roughness={0.1} />
       </mesh>
       <mesh position={[0, 0.4, -7.6]}>
         <boxGeometry args={[34, 0.8, 0.3]} />
@@ -150,7 +155,7 @@ function GuitarCorner() {
         </mesh>
         <mesh position={[-0.1, -0.8, 0.22]} scale={[0.85, 0.8, 0.1]} castShadow>
           <capsuleGeometry args={[0.8, 0.6, 6, 18]} />
-          <meshStandardMaterial color="#ffe7bd" roughness={0.5} />
+          <meshStandardMaterial color="#f6f1e8" roughness={0.5} />
         </mesh>
         {/* pickups and bridge */}
         {[-0.45, 0, 0.42].map((y) => (
@@ -198,7 +203,7 @@ function GuitarCorner() {
         </RoundedBox>
         <mesh position={[0, 0.9, 0.72]}>
           <circleGeometry args={[0.7, 24]} />
-          <meshStandardMaterial color="#1a1626" roughness={1} />
+          <meshStandardMaterial color="#17181b" roughness={1} />
         </mesh>
         <mesh ref={light} position={[0.9, 1.95, 0.72]}>
           <sphereGeometry args={[0.12, 12, 12]} />
@@ -219,10 +224,10 @@ function useTreeTexture() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
 
-    ctx.fillStyle = "#fdf3e2";
+    ctx.fillStyle = "#fdfcf9";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.strokeStyle = "#7a4a22";
+    ctx.strokeStyle = "#45413b";
     ctx.lineCap = "round";
     ctx.lineWidth = 26;
     ctx.beginPath();
@@ -249,30 +254,30 @@ function useTreeTexture() {
     }
 
     const leaves: Array<[number, number, string]> = [
-      [360, 330, "#2ecf9f"],
-      [180, 250, "#3fbf62"],
-      [540, 250, "#3fbf62"],
-      [110, 150, "#7fd06a"],
-      [300, 150, "#7fd06a"],
-      [430, 150, "#7fd06a"],
-      [620, 150, "#7fd06a"],
+      [360, 330, "#70695f"],
+      [180, 250, "#5c8161"],
+      [540, 250, "#5c8161"],
+      [110, 150, "#8fae90"],
+      [300, 150, "#8fae90"],
+      [430, 150, "#8fae90"],
+      [620, 150, "#8fae90"],
     ];
     for (const [x, y, color] of leaves) {
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.arc(x, y, 52, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = "#fdf3e2";
+      ctx.fillStyle = "#fdfcf9";
       ctx.beginPath();
       ctx.arc(x, y, 34, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    ctx.fillStyle = "#3a2233";
+    ctx.fillStyle = "#292623";
     ctx.font = "bold 40px ui-sans-serif, system-ui, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("Family tree", 360, 70);
-    ctx.fillStyle = "#a0522d";
+    ctx.fillStyle = "#5b554d";
     ctx.font = "500 26px ui-monospace, monospace";
     ctx.fillText("Madrid  ·  Texas", 360, 108);
 
@@ -295,7 +300,7 @@ function FamilyTree() {
         {texture ? (
           <meshStandardMaterial map={texture} roughness={0.9} />
         ) : (
-          <meshStandardMaterial color="#fdf3e2" roughness={0.9} />
+          <meshStandardMaterial color="#fdfcf9" roughness={0.9} />
         )}
       </mesh>
     </group>
@@ -321,7 +326,7 @@ function usePlaceholder(memory: Memory) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
 
-    ctx.fillStyle = "#fdf3e2";
+    ctx.fillStyle = "#fdfcf9";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = memory.color;
     ctx.globalAlpha = 0.16;
@@ -334,14 +339,14 @@ function usePlaceholder(memory: Memory) {
     ctx.strokeRect(26, 26, canvas.width - 52, canvas.height - 52);
     ctx.setLineDash([]);
 
-    ctx.fillStyle = "#3a2233";
+    ctx.fillStyle = "#292623";
     ctx.textAlign = "center";
     ctx.font = "bold 40px ui-sans-serif, system-ui, sans-serif";
     ctx.fillText(memory.title, canvas.width / 2, 190);
     ctx.fillStyle = memory.color;
     ctx.font = "500 26px ui-monospace, monospace";
     ctx.fillText(memory.when, canvas.width / 2, 240);
-    ctx.fillStyle = "#3a2233";
+    ctx.fillStyle = "#292623";
     ctx.globalAlpha = 0.4;
     ctx.font = "500 22px ui-monospace, monospace";
     ctx.fillText("photo coming", canvas.width / 2, 300);
@@ -372,7 +377,7 @@ function Frame({ memory, x, index }: { memory: Memory; x: number; index: number 
             fallback={
               <mesh position={[0, 0, 0.2]}>
                 <planeGeometry args={[3.5, 2.5]} />
-                <meshStandardMaterial color="#fdf3e2" roughness={0.9} />
+                <meshStandardMaterial color="#fdfcf9" roughness={0.9} />
               </mesh>
             }
           >

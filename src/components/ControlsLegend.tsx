@@ -14,7 +14,7 @@ const CONTROLS: { keys: string[]; action: string }[] = [
 ];
 
 export default function ControlsLegend() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="pointer-events-auto w-full">
@@ -25,7 +25,7 @@ export default function ControlsLegend() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
-            className="mb-2 rounded-2xl border-2 border-white bg-white/85 p-3 shadow-[0_6px_0_rgba(107,91,143,0.12)]"
+            className="mb-2 rounded-2xl border-2 border-white bg-white/85 p-3 shadow-[0_6px_0_rgba(20,23,26,0.12)]"
           >
             <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-ink/45">Controls</p>
             <ul className="space-y-1.5">
@@ -51,7 +51,7 @@ export default function ControlsLegend() {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="rounded-full border-2 border-white bg-white/85 px-3 py-1.5 font-mono text-[11px] font-semibold text-brass shadow-[0_4px_0_rgba(107,91,143,0.12)] transition hover:bg-white"
+        className="rounded-full border-2 border-white bg-white/85 px-3 py-1.5 font-mono text-[11px] font-semibold text-brass shadow-[0_4px_0_rgba(20,23,26,0.12)] transition hover:bg-white"
       >
         {open ? "hide controls" : "? controls"}
       </button>

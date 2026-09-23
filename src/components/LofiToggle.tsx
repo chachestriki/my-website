@@ -26,7 +26,7 @@ export default function LofiToggle() {
       onClick={toggle}
       aria-pressed={on}
       title={on ? "mute the lofi loop" : "play a lofi loop"}
-      className="pointer-events-auto flex items-center gap-2 rounded-full border-2 border-white bg-white/85 px-3.5 py-2 font-mono text-[11px] font-semibold text-brass shadow-[0_4px_0_rgba(107,91,143,0.12)] transition hover:bg-white"
+      className="pointer-events-auto flex items-center gap-2 rounded-full border-2 border-white bg-white/85 px-3.5 py-2 font-mono text-[11px] font-semibold text-brass shadow-[0_4px_0_rgba(20,23,26,0.12)] transition hover:bg-white"
     >
       <span className="flex h-3 items-end gap-[2px]" aria-hidden>
         {[0, 1, 2].map((i) => (

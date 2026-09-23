@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { boardEdges, boardNodes, roles, type BoardNode } from "@/data/cv";
 
 const KIND_STYLE: Record<BoardNode["kind"], { fill: string; stroke: string; tag: string }> = {
-  system: { fill: "#d9f2ea", stroke: "#2f9e8f", tag: "SYSTEM" },
-  service: { fill: "#ffe2ea", stroke: "#d3607f", tag: "SERVICE" },
-  agent: { fill: "#e9e2ff", stroke: "#8b7ac2", tag: "AGENT" },
-  store: { fill: "#dfebff", stroke: "#5b8fd6", tag: "MARKET" },
+  system: { fill: "#f8f8f7", stroke: "#4d535b", tag: "SYSTEM" },
+  service: { fill: "#fbfbfb", stroke: "#a69f96", tag: "SERVICE" },
+  agent: { fill: "#fbfbfb", stroke: "#9ca2ab", tag: "AGENT" },
+  store: { fill: "#fbfbfb", stroke: "#959ca5", tag: "MARKET" },
 };
 
 const W = 100;
@@ -43,12 +43,12 @@ export default function IntegrationBoard() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-      <div className="relative overflow-hidden rounded-2xl border-2 border-white bg-[#fff6ea] shadow-[0_6px_0_rgba(107,91,143,0.1)]">
-        <div className="pointer-events-none absolute inset-0 opacity-[0.5] [background-image:linear-gradient(rgba(139,122,194,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(139,122,194,.1)_1px,transparent_1px)] [background-size:28px_28px]" />
+      <div className="relative overflow-hidden rounded-2xl border-2 border-white bg-[#fdfcf9] shadow-[0_6px_0_rgba(20,23,26,0.1)]">
+        <div className="pointer-events-none absolute inset-0 opacity-[0.5] [background-image:linear-gradient(rgba(20,23,26,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(20,23,26,.1)_1px,transparent_1px)] [background-size:28px_28px]" />
         <svg viewBox={`-2 -2 ${W + 4} ${H + 4}`} className="relative block h-full w-full" role="img" aria-label="Integration architecture diagram">
           <defs>
             <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#d3607f" opacity="0.7" />
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#a69f96" opacity="0.7" />
             </marker>
           </defs>
 
@@ -58,8 +58,8 @@ export default function IntegrationBoard() {
             const dim = active !== null && !activeEdges.has(key);
             return (
               <g key={key} opacity={dim ? 0.15 : 1}>
-                <path d={d} fill="none" stroke="#d3607f" strokeWidth={0.28} strokeOpacity={0.55} markerEnd="url(#arrow)" />
-                <circle r={0.75} fill="#2f9e8f">
+                <path d={d} fill="none" stroke="#a69f96" strokeWidth={0.28} strokeOpacity={0.55} markerEnd="url(#arrow)" />
+                <circle r={0.75} fill="#4d535b">
                   <animateMotion dur={`${3 + (e.packet.length % 3)}s`} repeatCount="indefinite" path={d} />
                 </circle>
               </g>
@@ -78,7 +78,7 @@ export default function IntegrationBoard() {
                 y={(a.y + b.y) / 2 - 0.8}
                 textAnchor="middle"
                 fontSize={1.8}
-                fill="#8b7ac2"
+                fill="#9ca2ab"
                 opacity={dim ? 0.12 : 0.85}
                 className="font-mono"
               >
@@ -121,7 +121,7 @@ export default function IntegrationBoard() {
                   strokeWidth={isActive ? 0.6 : 0.3}
                 />
                 <rect width={NODE_W} height={1} rx={0.5} fill={s.stroke} opacity={0.5} />
-                <text x={1.6} y={4.6} fontSize={2.2} fill="#4a3f63" className="font-semibold">
+                <text x={1.6} y={4.6} fontSize={2.2} fill="#3d4248" className="font-semibold">
                   {n.label}
                 </text>
                 <text x={1.6} y={7.3} fontSize={1.7} fill={s.stroke} className="font-mono" opacity={0.9}>
@@ -137,7 +137,7 @@ export default function IntegrationBoard() {
         key={node?.id ?? "empty"}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border-2 border-white bg-[#fff6ea] p-5 shadow-[0_6px_0_rgba(107,91,143,0.1)]"
+        className="rounded-2xl border-2 border-white bg-[#fdfcf9] p-5 shadow-[0_6px_0_rgba(20,23,26,0.1)]"
       >
         {node ? (
           <>

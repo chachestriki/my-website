@@ -18,7 +18,7 @@ export default function Intro() {
         initial={{ y: 18, scale: 0.98 }}
         animate={{ y: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 220, damping: 26 }}
-        className="pointer-events-auto max-w-sm rounded-3xl border-4 border-white bg-card/95 p-5 shadow-[0_14px_0_rgba(107,91,143,0.18)]"
+        className="pointer-events-auto max-w-sm rounded-3xl border-4 border-white bg-card/95 p-5 shadow-[0_14px_0_rgba(20,23,26,0.18)]"
       >
         <HatMark className="h-10 w-10" />
         <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-brass">{profile.name}</h1>
@@ -27,7 +27,7 @@ export default function Intro() {
 
         <a
           href="/cv"
-          className="mt-4 inline-block rounded-full border-2 border-brass bg-brass px-6 py-2.5 text-sm font-bold text-white shadow-[0_5px_0_rgba(107,91,143,0.25)] transition hover:brightness-110"
+          className="mt-4 inline-block rounded-full border-2 border-brass bg-brass px-6 py-2.5 text-sm font-bold text-white shadow-[0_5px_0_rgba(20,23,26,0.25)] transition hover:brightness-110"
         >
           Read the CV
         </a>
