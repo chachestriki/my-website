@@ -36,13 +36,13 @@ export default function Factory3D({
 
   return (
     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true }} style={{ touchAction: "none" }}>
-      <color attach="background" args={["#141a2b"]} />
-      <fog attach="fog" args={["#141a2b", 44, 82]} />
+      <color attach="background" args={["#18191c"]} />
+      <fog attach="fog" args={["#18191c", 44, 82]} />
 
       <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom} near={-120} far={220} />
       <CameraRig posRef={playerRef} start={START} shift={panelOpen ? 7 : 0} />
 
-      <hemisphereLight args={["#9fd4ff", "#2b1d4a", 0.7]} />
+      <hemisphereLight args={["#dbdde0", "#272a2e", 0.7]} />
       <ambientLight intensity={0.35} />
       <directionalLight
         position={[10, 22, 6]}
@@ -127,7 +127,7 @@ function FactoryShell({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEven
       {[-8, 0, 8].map((x) => (
         <mesh key={x} position={[x, 9.4, 0]} rotation={[0, 0, 0]}>
           <boxGeometry args={[1.2, 0.2, 16]} />
-          <meshStandardMaterial color="#ffffff" emissive="#dff6ff" emissiveIntensity={0.9} toneMapped={false} />
+          <meshStandardMaterial color="#ffffff" emissive="#fbfbfb" emissiveIntensity={0.9} toneMapped={false} />
         </mesh>
       ))}
       {/* pallets of boxes */}
@@ -233,7 +233,7 @@ function ShoeConveyor({ x, y, z, speed }: { x: number; y: number; z: number; spe
       </mesh>
       <mesh position={[0, 0.14, 0]} receiveShadow>
         <boxGeometry args={[span, 0.06, 1.5]} />
-        <meshStandardMaterial color="#20263c" roughness={1} />
+        <meshStandardMaterial color="#232529" roughness={1} />
       </mesh>
       {/* legs */}
       {[-7.5, -2.5, 2.5, 7.5].map((lx) => (
@@ -433,7 +433,7 @@ function HangerAisle({ x }: { x: number }) {
       {/* size markers on the floor of the aisle */}
       <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[2.2, span]} />
-        <meshStandardMaterial color="#7a8399" roughness={1} />
+        <meshStandardMaterial color="#828a95" roughness={1} />
       </mesh>
     </group>
   );
@@ -507,15 +507,15 @@ function PhotoStudio() {
       {/* seamless white backdrop curving into the floor */}
       <mesh position={[0, 3.5, -3.4]} receiveShadow>
         <boxGeometry args={[9, 7, 0.3]} />
-        <meshStandardMaterial color="#f4f6fa" roughness={0.95} />
+        <meshStandardMaterial color="#fbfbfb" roughness={0.95} />
       </mesh>
       <mesh position={[0, 0.9, -2.5]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
         <cylinderGeometry args={[1.4, 1.4, 9, 20, 1, true, 0, Math.PI / 2]} />
-        <meshStandardMaterial color="#f4f6fa" roughness={0.95} side={THREE.DoubleSide} />
+        <meshStandardMaterial color="#fbfbfb" roughness={0.95} side={THREE.DoubleSide} />
       </mesh>
       <mesh position={[0, 0.03, 0.2]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[9, 5]} />
-        <meshStandardMaterial color="#eef1f6" roughness={1} />
+        <meshStandardMaterial color="#fbfbfb" roughness={1} />
       </mesh>
 
       {/* softboxes on stands */}
@@ -552,11 +552,11 @@ function PhotoStudio() {
           </mesh>
         ))}
         <RoundedBox args={[1.1, 0.75, 0.7]} radius={0.08} smoothness={3} position={[0, 2, 0]} castShadow>
-          <meshStandardMaterial color="#1c2133" roughness={0.6} />
+          <meshStandardMaterial color="#1e2023" roughness={0.6} />
         </RoundedBox>
         <mesh position={[0, 2, -0.6]} rotation={[Math.PI / 2, 0, 0]} castShadow>
           <cylinderGeometry args={[0.3, 0.34, 0.7, 16]} />
-          <meshStandardMaterial color="#12151f" roughness={0.4} metalness={0.5} />
+          <meshStandardMaterial color="#121416" roughness={0.4} metalness={0.5} />
         </mesh>
         <mesh ref={flash} position={[0, 2.5, 0]}>
           <sphereGeometry args={[0.16, 12, 12]} />

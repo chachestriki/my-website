@@ -20,67 +20,67 @@ function RiverScene({ className }: { className?: string }) {
       role="img"
       aria-label="A man swimming across a river between two mountains"
     >
-      <rect width="320" height="200" fill="#eaf4ff" />
-      <circle cx="252" cy="40" r="17" fill="#ffd98a" />
+      <rect width="320" height="200" fill="#fbfbfb" />
+      <circle cx="252" cy="40" r="17" fill="#e6d8bc" />
       <ellipse cx="70" cy="36" rx="26" ry="8" fill="#ffffff" />
       <ellipse cx="92" cy="30" rx="16" ry="6" fill="#ffffff" />
       <ellipse cx="210" cy="60" rx="18" ry="6" fill="#ffffff" opacity="0.8" />
 
       {/* left canyon wall */}
-      <polygon points="-10,158 78,38 170,158" fill="#b6a4e8" />
-      <polygon points="30,158 92,74 162,158" fill="#cfc2f2" />
-      <polygon points="78,38 96,64 86,59 78,68 68,57 58,63" fill="#fff6ea" />
+      <polygon points="-10,158 78,38 170,158" fill="#cfd2d6" />
+      <polygon points="30,158 92,74 162,158" fill="#e9eaec" />
+      <polygon points="78,38 96,64 86,59 78,68 68,57 58,63" fill="#fdfcf9" />
 
       {/* right canyon wall */}
-      <polygon points="155,158 242,30 330,158" fill="#9fdcc6" />
-      <polygon points="185,158 248,64 322,158" fill="#8ed0b8" />
-      <polygon points="242,30 262,60 250,55 242,64 231,53 220,59" fill="#fff6ea" />
+      <polygon points="155,158 242,30 330,158" fill="#cdc9c4" />
+      <polygon points="185,158 248,64 322,158" fill="#bdb9b2" />
+      <polygon points="242,30 262,60 250,55 242,64 231,53 220,59" fill="#fdfcf9" />
 
       {/* the river between them */}
       <path
         d="M0 152 C 55 142, 110 144, 160 154 C 210 164, 265 160, 320 150 L 320 200 L 0 200 Z"
-        fill="#9cccf0"
+        fill="#cfd2d6"
       />
       <path
         d="M0 170 C 65 162, 125 166, 178 174 C 232 182, 282 178, 320 172 L 320 200 L 0 200 Z"
-        fill="#7fbbe9"
+        fill="#b8bdc3"
       />
       <path
         d="M30 158 C 60 154, 90 155, 115 159"
-        stroke="#eaf6ff"
+        stroke="#fbfbfb"
         strokeWidth="2.5"
         strokeLinecap="round"
         fill="none"
       />
       <path
         d="M215 165 C 245 161, 275 161, 300 165"
-        stroke="#eaf6ff"
+        stroke="#fbfbfb"
         strokeWidth="2.5"
         strokeLinecap="round"
         fill="none"
       />
 
       {/* the swimmer */}
-      <ellipse cx="160" cy="160" rx="20" ry="5" stroke="#eaf6ff" strokeWidth="2" fill="none" />
-      <ellipse cx="160" cy="160" rx="32" ry="7" stroke="#eaf6ff" strokeWidth="1.5" fill="none" opacity="0.6" />
+      <ellipse cx="160" cy="160" rx="20" ry="5" stroke="#fbfbfb" strokeWidth="2" fill="none" />
+      <ellipse cx="160" cy="160" rx="32" ry="7" stroke="#fbfbfb" strokeWidth="1.5" fill="none" opacity="0.6" />
       <path
         d="M138 158 C 144 150, 152 148, 158 151"
-        stroke="#f6cdb0"
+        stroke="#e4e2e0"
         strokeWidth="6"
         strokeLinecap="round"
         fill="none"
       />
       <path
         d="M168 155 C 176 148, 182 144, 186 138"
-        stroke="#f6cdb0"
+        stroke="#e4e2e0"
         strokeWidth="6"
         strokeLinecap="round"
         fill="none"
       />
-      <circle cx="160" cy="147" r="8" fill="#f6cdb0" />
-      <path d="M152 145 A 8 8 0 0 1 168 144 L 167 140 A 9 9 0 0 0 153 141 Z" fill="#4b3a56" />
-      <circle cx="157" cy="148" r="1" fill="#3d3350" />
-      <circle cx="164" cy="148" r="1" fill="#3d3350" />
+      <circle cx="160" cy="147" r="8" fill="#e4e2e0" />
+      <path d="M152 145 A 8 8 0 0 1 168 144 L 167 140 A 9 9 0 0 0 153 141 Z" fill="#403c36" />
+      <circle cx="157" cy="148" r="1" fill="#31353a" />
+      <circle cx="164" cy="148" r="1" fill="#31353a" />
     </svg>
   );
 }
@@ -93,20 +93,20 @@ function BurritoScene({ className }: { className?: string }) {
       role="img"
       aria-label="A man selling burritos in a nightclub"
     >
-      <rect width="320" height="200" fill="#3d3350" />
+      <rect width="320" height="200" fill="#31353a" />
 
       {/* light beams */}
-      <polygon points="160,34 30,200 115,200" fill="#ffaec4" opacity="0.2" />
-      <polygon points="160,34 195,200 300,200" fill="#9fdcc6" opacity="0.2" />
-      <polygon points="160,34 115,200 205,200" fill="#ffd98a" opacity="0.14" />
+      <polygon points="160,34 30,200 115,200" fill="#e8e6e4" opacity="0.2" />
+      <polygon points="160,34 195,200 300,200" fill="#cdc9c4" opacity="0.2" />
+      <polygon points="160,34 115,200 205,200" fill="#e6d8bc" opacity="0.14" />
 
       {/* disco ball */}
-      <line x1="160" y1="0" x2="160" y2="18" stroke="#8b7ac2" strokeWidth="2" />
-      <circle cx="160" cy="30" r="14" fill="#b6a4e8" />
-      <line x1="148" y1="26" x2="172" y2="26" stroke="#cfc2f2" strokeWidth="1.5" />
-      <line x1="147" y1="32" x2="173" y2="32" stroke="#cfc2f2" strokeWidth="1.5" />
-      <line x1="155" y1="18" x2="155" y2="42" stroke="#cfc2f2" strokeWidth="1.5" />
-      <line x1="165" y1="18" x2="165" y2="42" stroke="#cfc2f2" strokeWidth="1.5" />
+      <line x1="160" y1="0" x2="160" y2="18" stroke="#9ca2ab" strokeWidth="2" />
+      <circle cx="160" cy="30" r="14" fill="#cfd2d6" />
+      <line x1="148" y1="26" x2="172" y2="26" stroke="#e9eaec" strokeWidth="1.5" />
+      <line x1="147" y1="32" x2="173" y2="32" stroke="#e9eaec" strokeWidth="1.5" />
+      <line x1="155" y1="18" x2="155" y2="42" stroke="#e9eaec" strokeWidth="1.5" />
+      <line x1="165" y1="18" x2="165" y2="42" stroke="#e9eaec" strokeWidth="1.5" />
 
       {/* neon sign */}
       <text
@@ -115,53 +115,53 @@ function BurritoScene({ className }: { className?: string }) {
         fontFamily="monospace"
         fontSize="13"
         fontWeight="bold"
-        fill="#ffd98a"
+        fill="#e6d8bc"
         transform="rotate(-3 200 56)"
       >
         BURRITOS $3
       </text>
-      <line x1="200" y1="62" x2="288" y2="56" stroke="#ffaec4" strokeWidth="2" opacity="0.8" />
-      <text x="48" y="70" fontSize="15" fill="#9fdcc6" opacity="0.9">♪</text>
-      <text x="68" y="56" fontSize="11" fill="#ffaec4" opacity="0.9">♫</text>
+      <line x1="200" y1="62" x2="288" y2="56" stroke="#e8e6e4" strokeWidth="2" opacity="0.8" />
+      <text x="48" y="70" fontSize="15" fill="#cdc9c4" opacity="0.9">♪</text>
+      <text x="68" y="56" fontSize="11" fill="#e8e6e4" opacity="0.9">♫</text>
 
       {/* dance floor */}
-      <rect y="168" width="320" height="32" fill="#322a44" />
-      <line x1="0" y1="176" x2="320" y2="176" stroke="#3d3350" strokeWidth="1" />
-      <line x1="0" y1="186" x2="320" y2="186" stroke="#3d3350" strokeWidth="1" />
+      <rect y="168" width="320" height="32" fill="#292c31" />
+      <line x1="0" y1="176" x2="320" y2="176" stroke="#31353a" strokeWidth="1" />
+      <line x1="0" y1="186" x2="320" y2="186" stroke="#31353a" strokeWidth="1" />
 
       {/* dancers */}
-      <circle cx="250" cy="112" r="9" fill="#554a75" />
-      <rect x="242" y="122" width="16" height="36" rx="8" fill="#554a75" />
-      <path d="M254 126 C 260 118, 264 110, 266 102" stroke="#554a75" strokeWidth="6" strokeLinecap="round" fill="none" />
-      <circle cx="290" cy="120" r="9" fill="#554a75" />
-      <rect x="282" y="130" width="16" height="32" rx="8" fill="#554a75" />
-      <path d="M286 134 C 278 126, 274 118, 272 110" stroke="#554a75" strokeWidth="6" strokeLinecap="round" fill="none" />
+      <circle cx="250" cy="112" r="9" fill="#484d55" />
+      <rect x="242" y="122" width="16" height="36" rx="8" fill="#484d55" />
+      <path d="M254 126 C 260 118, 264 110, 266 102" stroke="#484d55" strokeWidth="6" strokeLinecap="round" fill="none" />
+      <circle cx="290" cy="120" r="9" fill="#484d55" />
+      <rect x="282" y="130" width="16" height="32" rx="8" fill="#484d55" />
+      <path d="M286 134 C 278 126, 274 118, 272 110" stroke="#484d55" strokeWidth="6" strokeLinecap="round" fill="none" />
 
       {/* me, holding the cooler */}
-      <ellipse cx="128" cy="176" rx="30" ry="5" fill="#2a2338" />
-      <rect x="112" y="152" width="9" height="22" rx="4" fill="#8fa8e8" />
-      <rect x="125" y="152" width="9" height="22" rx="4" fill="#8fa8e8" />
-      <rect x="106" y="110" width="34" height="46" rx="16" fill="#ffaec4" />
-      <circle cx="123" cy="98" r="11" fill="#f6cdb0" />
-      <path d="M112 98 A 11 11 0 0 1 134 98 Z" fill="#4b3a56" />
-      <circle cx="119" cy="99" r="1.3" fill="#3d3350" />
-      <circle cx="127" cy="99" r="1.3" fill="#3d3350" />
+      <ellipse cx="128" cy="176" rx="30" ry="5" fill="#222528" />
+      <rect x="112" y="152" width="9" height="22" rx="4" fill="#c2c6cb" />
+      <rect x="125" y="152" width="9" height="22" rx="4" fill="#c2c6cb" />
+      <rect x="106" y="110" width="34" height="46" rx="16" fill="#e8e6e4" />
+      <circle cx="123" cy="98" r="11" fill="#e4e2e0" />
+      <path d="M112 98 A 11 11 0 0 1 134 98 Z" fill="#403c36" />
+      <circle cx="119" cy="99" r="1.3" fill="#31353a" />
+      <circle cx="127" cy="99" r="1.3" fill="#31353a" />
 
       {/* raised arm holding a burrito like a torch */}
-      <path d="M134 116 C 142 108, 148 100, 152 90" stroke="#ff97b3" strokeWidth="7" strokeLinecap="round" fill="none" />
-      <rect x="146" y="68" width="10" height="22" rx="5" transform="rotate(15 151 79)" fill="#eef1f7" />
-      <rect x="148" y="80" width="10" height="8" rx="4" transform="rotate(15 153 84)" fill="#eaa46e" />
+      <path d="M134 116 C 142 108, 148 100, 152 90" stroke="#dcd9d6" strokeWidth="7" strokeLinecap="round" fill="none" />
+      <rect x="146" y="68" width="10" height="22" rx="5" transform="rotate(15 151 79)" fill="#fbfbfb" />
+      <rect x="148" y="80" width="10" height="8" rx="4" transform="rotate(15 153 84)" fill="#bab5ae" />
 
       {/* arm to the cooler */}
-      <path d="M110 124 C 122 130, 134 134, 144 138" stroke="#ff97b3" strokeWidth="7" strokeLinecap="round" fill="none" />
+      <path d="M110 124 C 122 130, 134 134, 144 138" stroke="#dcd9d6" strokeWidth="7" strokeLinecap="round" fill="none" />
 
       {/* cooler full of foil burritos */}
-      <rect x="148" y="118" width="9" height="20" rx="4.5" fill="#eef1f7" />
-      <rect x="161" y="114" width="9" height="24" rx="4.5" fill="#eef1f7" />
-      <rect x="174" y="118" width="9" height="20" rx="4.5" fill="#eef1f7" />
-      <rect x="142" y="134" width="56" height="30" rx="5" fill="#bcd8ff" />
-      <rect x="142" y="134" width="56" height="9" rx="4" fill="#eaf4ff" />
-      <text x="152" y="157" fontFamily="monospace" fontSize="8" fill="#3d3350">HOT</text>
+      <rect x="148" y="118" width="9" height="20" rx="4.5" fill="#fbfbfb" />
+      <rect x="161" y="114" width="9" height="24" rx="4.5" fill="#fbfbfb" />
+      <rect x="174" y="118" width="9" height="20" rx="4.5" fill="#fbfbfb" />
+      <rect x="142" y="134" width="56" height="30" rx="5" fill="#edeef0" />
+      <rect x="142" y="134" width="56" height="9" rx="4" fill="#fbfbfb" />
+      <text x="152" y="157" fontFamily="monospace" fontSize="8" fill="#31353a">HOT</text>
     </svg>
   );
 }
@@ -214,7 +214,7 @@ function Postcard({ data }: { data: PostcardData }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className={`group block w-48 ${data.tilt} rounded-md border border-ink/10 bg-white p-2 pb-2.5 shadow-[0_8px_0_rgba(107,91,143,0.12)] transition hover:rotate-0 hover:shadow-[0_10px_0_rgba(107,91,143,0.18)]`}
+        className={`group block w-48 ${data.tilt} rounded-md border border-ink/10 bg-white p-2 pb-2.5 shadow-[0_8px_0_rgba(20,23,26,0.12)] transition hover:rotate-0 hover:shadow-[0_10px_0_rgba(20,23,26,0.18)]`}
       >
         {data.scene}
         <span className="mt-2 block font-mono text-[10px] uppercase tracking-wider text-ink/50 transition group-hover:text-brass">
@@ -240,7 +240,7 @@ function Postcard({ data }: { data: PostcardData }) {
               exit={{ y: 30, opacity: 0, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 260, damping: 28 }}
               onClick={(e) => e.stopPropagation()}
-              className="max-h-[92dvh] w-full max-w-2xl overflow-y-auto rounded-t-3xl border-4 border-white bg-card p-6 shadow-[0_18px_0_rgba(107,91,143,0.18)] md:rounded-3xl md:p-8"
+              className="max-h-[92dvh] w-full max-w-2xl overflow-y-auto rounded-t-3xl border-4 border-white bg-card p-6 shadow-[0_18px_0_rgba(20,23,26,0.18)] md:rounded-3xl md:p-8"
             >
               <div className="mb-5 flex items-start justify-between gap-6">
                 <div>
@@ -259,7 +259,7 @@ function Postcard({ data }: { data: PostcardData }) {
                 </button>
               </div>
 
-              <div className="overflow-hidden rounded-2xl border-2 border-white shadow-[0_6px_0_rgba(107,91,143,0.12)]">
+              <div className="overflow-hidden rounded-2xl border-2 border-white shadow-[0_6px_0_rgba(20,23,26,0.12)]">
                 {data.scene}
               </div>
 

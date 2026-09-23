@@ -30,7 +30,7 @@ export default function GalleryPanel({ onClose }: { onClose: () => void }) {
         {career.map((s) => (
           <li key={s.id} className="relative">
             <span
-              className="absolute -left-[26px] top-1.5 h-3 w-3 rounded-full border-2 border-[#fff6ea]"
+              className="absolute -left-[26px] top-1.5 h-3 w-3 rounded-full border-2 border-[#fdfcf9]"
               style={{ background: s.color }}
             />
             <div className="flex flex-wrap items-baseline gap-x-2">

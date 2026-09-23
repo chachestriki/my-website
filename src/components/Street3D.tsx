@@ -40,13 +40,13 @@ export default function Street3D({ onEnter }: { onEnter: () => void }) {
 
   return (
     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true }} style={{ touchAction: "none" }}>
-      <color attach="background" args={["#8fd0ff"]} />
-      <fog attach="fog" args={["#8fd0ff", 46, 90]} />
+      <color attach="background" args={["#d0d3d7"]} />
+      <fog attach="fog" args={["#d0d3d7", 46, 90]} />
 
       <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom} near={-120} far={220} />
       <CameraRig posRef={playerRef} start={START} shift={-3} />
 
-      <hemisphereLight args={["#ffffff", "#ffb3cf", 0.9]} />
+      <hemisphereLight args={["#ffffff", "#ebe9e7", 0.9]} />
       <ambientLight intensity={0.4} />
       <directionalLight
         position={[14, 22, 10]}
@@ -158,16 +158,16 @@ function Range({ onBullseye }: { onBullseye: () => void }) {
 
       <Html position={[0, 7.4, TARGET_Z]} center zIndexRange={[10, 0]} className="pointer-events-none">
         <div className="w-72 space-y-1 text-center">
-          <div className="rounded-full border-2 border-white bg-white/90 px-4 py-1.5 text-sm font-bold text-brass shadow-[0_5px_0_rgba(107,91,143,0.14)]">
+          <div className="rounded-full border-2 border-white bg-white/90 px-4 py-1.5 text-sm font-bold text-brass shadow-[0_5px_0_rgba(20,23,26,0.14)]">
             Hit the bullseye to come in
           </div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-white drop-shadow">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-ink/70">
             {note ?? `space or click the target · ${shots} shot${shots === 1 ? "" : "s"}`}
           </div>
           {shots >= 5 && !won && (
             <button
               onClick={onBullseye}
-              className="pointer-events-auto rounded-full border-2 border-white/70 bg-white/20 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-white transition hover:bg-white hover:text-brass"
+              className="pointer-events-auto rounded-full border-2 border-ink/25 bg-white/80 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:bg-ink hover:text-white"
             >
               or just walk in →
             </button>
@@ -184,11 +184,11 @@ function Block() {
       {/* road and sidewalk */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 6]} receiveShadow>
         <planeGeometry args={[60, 20]} />
-        <meshStandardMaterial color="#ffd9c0" roughness={1} />
+        <meshStandardMaterial color="#f2f1f0" roughness={1} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 17]} receiveShadow>
         <planeGeometry args={[60, 14]} />
-        <meshStandardMaterial color="#6f5f8f" roughness={1} />
+        <meshStandardMaterial color="#5a6069" roughness={1} />
       </mesh>
       {[-18, -10, -2, 6, 14, 22].map((x) => (
         <mesh key={x} rotation={[-Math.PI / 2, 0, 0]} position={[x, -0.01, 17]}>
@@ -235,7 +235,7 @@ function Facade() {
         <group key={x}>
           <mesh position={[x, 3.3, 0.4]}>
             <planeGeometry args={[3.1, 6]} />
-            <meshStandardMaterial color="#2b1c3f" roughness={0.6} metalness={0.1} />
+            <meshStandardMaterial color="#282622" roughness={0.6} metalness={0.1} />
           </mesh>
           <mesh position={[x + (x > 0 ? -1.3 : 1.3), 3.1, 0.5]} rotation={[Math.PI / 2, 0, 0]}>
             <cylinderGeometry args={[0.1, 0.1, 1.6, 10]} />
@@ -258,7 +258,7 @@ function Facade() {
       {/* the marquee */}
       <group position={[0, 11.4, 0.6]}>
         <RoundedBox args={[19, 3.6, 0.5]} radius={0.2} smoothness={4} castShadow>
-          <meshStandardMaterial color="#1b1430" roughness={0.7} />
+          <meshStandardMaterial color="#1a1c1e" roughness={0.7} />
         </RoundedBox>
         <group position={[0, 0, 0.3]}>
           <DoorSign label="JD Portfolio" color={C.gold} width={17.4} />
@@ -335,13 +335,13 @@ function Taxi() {
         <meshStandardMaterial color={C.gold} roughness={0.75} />
       </RoundedBox>
       <RoundedBox args={[3.2, 1.3, 2.3]} radius={0.35} smoothness={4} position={[-0.3, 2.2, 0]} castShadow>
-        <meshStandardMaterial color="#cfe9ff" roughness={0.4} />
+        <meshStandardMaterial color="#f9fafa" roughness={0.4} />
       </RoundedBox>
       {[-2, 2].map((dx) =>
         [-1.2, 1.2].map((dz) => (
           <mesh key={`${dx}${dz}`} position={[dx, 0.6, dz]} rotation={[Math.PI / 2, 0, 0]} castShadow>
             <cylinderGeometry args={[0.6, 0.6, 0.4, 14]} />
-            <meshStandardMaterial color="#2b1c3f" roughness={0.9} />
+            <meshStandardMaterial color="#282622" roughness={0.9} />
           </mesh>
         ))
       )}

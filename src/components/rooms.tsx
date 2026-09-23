@@ -70,7 +70,7 @@ export function CareerRoom() {
             className="relative"
           >
             <span
-              className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-[#fff6ea]"
+              className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-[#fdfcf9]"
               style={{ background: s.color }}
             />
             <div className="flex flex-wrap items-baseline gap-x-2">
@@ -178,7 +178,7 @@ export function ConciergeRoom() {
       </p>
       <div
         ref={feed}
-        className="max-h-80 space-y-3 overflow-y-auto rounded-xl border border-brass/20 bg-[#fff6ea] p-4"
+        className="max-h-80 space-y-3 overflow-y-auto rounded-xl border border-brass/20 bg-[#fdfcf9] p-4"
         aria-live="polite"
       >
         {log.map((l, i) => (
@@ -318,16 +318,16 @@ export function EducationRoom() {
       city: "Madrid",
       flag: "🇪🇸",
       school: education.find((e) => e.place.includes("Madrid")),
-      tint: "from-[#ffb03a]/25",
-      accent: "text-[#c0392b]",
+      tint: "from-[#ccb078]/25",
+      accent: "text-[#686259]",
       notes: ["Finance and strategy next to systems and data."],
     },
     {
       city: "Texas",
       flag: "🤠",
       school: education.find((e) => e.place.includes("TX")),
-      tint: "from-[#3f72d8]/25",
-      accent: "text-[#2f5fbf]",
+      tint: "from-[#858c97]/25",
+      accent: "text-[#5a6069]",
       notes: ["Algorithms, systems and databases, project by project."],
     },
   ];

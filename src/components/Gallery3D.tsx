@@ -15,10 +15,10 @@ const SPOTS = [{ id: "desk", stand: DESK }];
 const SLOT = 6;
 const x0 = -((career.length - 1) * SLOT) / 2;
 
-const WALL = "#f6e4d2";
-const WALL_DARK = "#e3c8b2";
-const FLOOR = "#c98b52";
-const RUNNER = "#8d3f5c";
+const WALL = "#faf7f2";
+const WALL_DARK = "#dbd9d5";
+const FLOOR = "#999187";
+const RUNNER = "#5a554d";
 
 export default function Gallery3D({
   api,
@@ -36,13 +36,13 @@ export default function Gallery3D({
 
   return (
     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true }} style={{ touchAction: "none" }}>
-      <color attach="background" args={["#2a1b2e"]} />
-      <fog attach="fog" args={["#2a1b2e", 52, 96]} />
+      <color attach="background" args={["#201e1c"]} />
+      <fog attach="fog" args={["#201e1c", 52, 96]} />
 
       <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom * 0.88} near={-140} far={240} />
       <CameraRig posRef={playerRef} start={START} shift={panelOpen ? 8 : 0} />
 
-      <hemisphereLight args={["#ffe6c4", "#3a2438", 0.8]} />
+      <hemisphereLight args={["#f8f5ee", "#2a2723", 0.8]} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[14, 24, 12]} intensity={1.5} castShadow shadow-mapSize={[2048, 2048]} />
 
@@ -99,7 +99,7 @@ function Hall({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) => v
       {/* the right end is glass, so the hall doesn't close in on the camera */}
       <mesh position={[width / 2, 5, 0.3]}>
         <boxGeometry args={[0.3, 10, 15]} />
-        <meshStandardMaterial color="#bfe6ff" transparent opacity={0.18} roughness={0.1} metalness={0.1} />
+        <meshStandardMaterial color="#eff0f1" transparent opacity={0.18} roughness={0.1} metalness={0.1} />
       </mesh>
       {[-4.2, 0.3, 4.8].map((z) => (
         <mesh key={z} position={[width / 2, 5, z]}>
@@ -127,7 +127,7 @@ function usePaintedLogo(stop: CareerStop) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
 
-    ctx.fillStyle = "#fdf6ea";
+    ctx.fillStyle = "#fdfcf9";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = stop.color;
     ctx.globalAlpha = 0.14;
@@ -138,13 +138,13 @@ function usePaintedLogo(stop: CareerStop) {
     ctx.beginPath();
     ctx.arc(canvas.width / 2, 150, 76, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#fdf6ea";
+    ctx.fillStyle = "#fdfcf9";
     ctx.font = "bold 86px ui-sans-serif, system-ui, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(stop.company.slice(0, 1).toUpperCase(), canvas.width / 2, 156);
 
-    ctx.fillStyle = "#2b1d33";
+    ctx.fillStyle = "#23211e";
     ctx.font = "bold 54px ui-sans-serif, system-ui, sans-serif";
     ctx.fillText(stop.company, canvas.width / 2, 286);
     ctx.fillStyle = stop.color;
@@ -166,7 +166,7 @@ function LogoCanvas({ src, color }: { src: string; color: string }) {
     <group>
       <mesh>
         <planeGeometry args={[3.9, 2.7]} />
-        <meshStandardMaterial color="#fdf6ea" roughness={0.9} />
+        <meshStandardMaterial color="#fdfcf9" roughness={0.9} />
       </mesh>
       <mesh position={[0, 0, 0.02]}>
         <planeGeometry args={[2.4, 2.4]} />
@@ -203,7 +203,7 @@ function Painting({ stop, x, index, last }: { stop: CareerStop; x: number; index
             fallback={
               <mesh>
                 <planeGeometry args={[3.9, 2.7]} />
-                <meshStandardMaterial color="#fdf6ea" roughness={0.9} />
+                <meshStandardMaterial color="#fdfcf9" roughness={0.9} />
               </mesh>
             }
           >

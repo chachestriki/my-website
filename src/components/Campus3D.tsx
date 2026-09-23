@@ -13,12 +13,12 @@ const BOUNDS = { minX: -21 * SCALE, maxX: 21 * SCALE, minZ: -11 * SCALE, maxZ: 1
 const DESK: [number, number] = [0, 10 * SCALE];
 const SPOTS = [{ id: "desk", stand: DESK }];
 
-const MADRID = "#e0392b";
-const MADRID_SAND = "#f2d49b";
-const MADRID_STONE = "#efe3cc";
-const TEXAS = "#7c1430";
-const TEXAS_SKY = "#2f6fd0";
-const GRASS = "#3fbf62";
+const MADRID = "#90887d";
+const MADRID_SAND = "#e7dac0";
+const MADRID_STONE = "#f6f1e7";
+const TEXAS = "#403c36";
+const TEXAS_SKY = "#757e8a";
+const GRASS = "#5c8161";
 
 export default function Campus3D({
   api,
@@ -42,13 +42,13 @@ export default function Campus3D({
 
   return (
     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true }} style={{ touchAction: "none" }}>
-      <color attach="background" args={["#7fd0ff"]} />
-      <fog attach="fog" args={["#7fd0ff", 70, 120]} />
+      <color attach="background" args={["#c6cacf"]} />
+      <fog attach="fog" args={["#c6cacf", 70, 120]} />
 
       <OrthographicCamera makeDefault position={CAM_OFFSET} zoom={zoom * 0.72} near={-160} far={260} />
       <CameraRig posRef={playerRef} start={START} shift={panelOpen ? 10 : 0} />
 
-      <hemisphereLight args={["#ffffff", "#ffd28a", 1]} />
+      <hemisphereLight args={["#ffffff", "#e6d8bc", 1]} />
       <ambientLight intensity={0.45} />
       <directionalLight
         position={[16, 26, 10]}
@@ -100,13 +100,13 @@ function Ground({ onFloorClick }: { onFloorClick: (e: ThreeEvent<MouseEvent>) =>
           rotation={[-Math.PI / 2, 0, 0]}
         >
           <planeGeometry args={[2.9, 6]} />
-          <meshStandardMaterial color={i % 2 ? "#e8c47e" : MADRID_SAND} roughness={1} />
+          <meshStandardMaterial color={i % 2 ? "#dac69e" : MADRID_SAND} roughness={1} />
         </mesh>
       ))}
       {/* Texas campus concrete */}
       <mesh position={[12, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[22, 26]} />
-        <meshStandardMaterial color="#d9cdb8" roughness={1} />
+        <meshStandardMaterial color="#e2dac9" roughness={1} />
       </mesh>
       {/* the meridian path down the middle, lifted clear of the paving */}
       <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
@@ -147,11 +147,11 @@ function PuertaDeAlcala() {
           <group key={x} position={[x, 0, 0]}>
             <mesh position={[0, big ? 2.7 : 2.1, 0]}>
               <boxGeometry args={[big ? 2.6 : 1.4, big ? 5.4 : 4.2, 2.6]} />
-              <meshStandardMaterial color="#5c4a6b" roughness={1} />
+              <meshStandardMaterial color="#504b44" roughness={1} />
             </mesh>
             <mesh position={[0, big ? 5.4 : 4.2, 0]} rotation={[Math.PI / 2, 0, 0]}>
               <cylinderGeometry args={[big ? 1.3 : 0.7, big ? 1.3 : 0.7, 2.6, 20, 1, false, 0, Math.PI]} />
-              <meshStandardMaterial color="#5c4a6b" roughness={1} side={THREE.DoubleSide} />
+              <meshStandardMaterial color="#504b44" roughness={1} side={THREE.DoubleSide} />
             </mesh>
           </group>
         );
@@ -159,7 +159,7 @@ function PuertaDeAlcala() {
       {/* cornice, attic and finials */}
       <mesh position={[0, 9, 0]} castShadow>
         <boxGeometry args={[13.8, 0.8, 2.8]} />
-        <meshStandardMaterial color="#fff2da" roughness={1} />
+        <meshStandardMaterial color="#fdfcf9" roughness={1} />
       </mesh>
       <mesh position={[0, 10.2, 0]} castShadow>
         <boxGeometry args={[7, 1.8, 2.2]} />
@@ -168,14 +168,14 @@ function PuertaDeAlcala() {
       {[-5.6, 5.6].map((x) => (
         <mesh key={x} position={[x, 9.9, 0]} castShadow>
           <sphereGeometry args={[0.7, 18, 18]} />
-          <meshStandardMaterial color="#fff2da" roughness={0.9} />
+          <meshStandardMaterial color="#fdfcf9" roughness={0.9} />
         </mesh>
       ))}
       {/* half-columns */}
       {[-6.1, -3.5, 3.5, 6.1].map((x) => (
         <mesh key={x} position={[x, 4, 1.2]} castShadow>
           <cylinderGeometry args={[0.55, 0.6, 8, 16]} />
-          <meshStandardMaterial color="#fff2da" roughness={1} />
+          <meshStandardMaterial color="#fdfcf9" roughness={1} />
         </mesh>
       ))}
     </group>
@@ -193,7 +193,7 @@ function OsoYMadrono() {
     <group position={[-5.6, 0, 2.6]}>
       <mesh position={[0, 0.45, 0]} castShadow receiveShadow>
         <cylinderGeometry args={[1.5, 1.7, 0.9, 20]} />
-        <meshStandardMaterial color="#6f6a78" roughness={1} />
+        <meshStandardMaterial color="#585c61" roughness={1} />
       </mesh>
       {/* madroño trunk and canopy */}
       <mesh position={[0.5, 2.4, 0]} castShadow>
@@ -202,7 +202,7 @@ function OsoYMadrono() {
       </mesh>
       <mesh position={[0.5, 4.4, 0]} castShadow>
         <sphereGeometry args={[1.5, 20, 20]} />
-        <meshStandardMaterial color="#2f9e50" roughness={1} />
+        <meshStandardMaterial color="#4c6f52" roughness={1} />
       </mesh>
       {Array.from({ length: 7 }, (_, i) => (
         <mesh
@@ -217,21 +217,21 @@ function OsoYMadrono() {
       <group ref={bear} position={[-0.5, 0.9, 0.2]}>
         <mesh position={[0, 1, 0]} rotation={[0, 0, 0.25]} castShadow>
           <capsuleGeometry args={[0.55, 1.1, 6, 16]} />
-          <meshStandardMaterial color="#4a3128" roughness={0.95} />
+          <meshStandardMaterial color="#322f2b" roughness={0.95} />
         </mesh>
         <mesh position={[0.35, 2.1, 0]} castShadow>
           <sphereGeometry args={[0.45, 18, 18]} />
-          <meshStandardMaterial color="#4a3128" roughness={0.95} />
+          <meshStandardMaterial color="#322f2b" roughness={0.95} />
         </mesh>
         {[-0.28, 0.28].map((z) => (
           <mesh key={z} position={[0.3, 2.5, z]} castShadow>
             <sphereGeometry args={[0.16, 12, 12]} />
-            <meshStandardMaterial color="#4a3128" roughness={0.95} />
+            <meshStandardMaterial color="#322f2b" roughness={0.95} />
           </mesh>
         ))}
         <mesh position={[0.8, 1.7, 0]} rotation={[0, 0, -0.9]} castShadow>
           <capsuleGeometry args={[0.18, 0.9, 4, 12]} />
-          <meshStandardMaterial color="#4a3128" roughness={0.95} />
+          <meshStandardMaterial color="#322f2b" roughness={0.95} />
         </mesh>
       </group>
     </group>
@@ -256,31 +256,31 @@ function Cibeles() {
       </mesh>
       <mesh position={[0, 0.62, 0]} receiveShadow>
         <cylinderGeometry args={[3.7, 3.7, 0.2, 32]} />
-        <meshStandardMaterial color="#3fb6e0" roughness={0.35} metalness={0.1} />
+        <meshStandardMaterial color="#8a919b" roughness={0.35} metalness={0.1} />
       </mesh>
       <mesh position={[0, 1, 0]} castShadow>
         <cylinderGeometry args={[1.4, 1.8, 1.2, 20]} />
-        <meshStandardMaterial color="#cdbfa6" roughness={1} />
+        <meshStandardMaterial color="#c9c5bf" roughness={1} />
       </mesh>
       {/* the goddess on her chariot */}
       <mesh position={[0, 2.5, 0]} castShadow>
         <coneGeometry args={[0.7, 1.9, 14]} />
-        <meshStandardMaterial color="#e6dcc6" roughness={0.95} />
+        <meshStandardMaterial color="#efe9dc" roughness={0.95} />
       </mesh>
       <mesh position={[0, 3.7, 0]} castShadow>
         <sphereGeometry args={[0.34, 16, 16]} />
-        <meshStandardMaterial color="#e6dcc6" roughness={0.95} />
+        <meshStandardMaterial color="#efe9dc" roughness={0.95} />
       </mesh>
       {/* lions */}
       {[-1.9, 1.9].map((x) => (
         <group key={x} position={[x, 1.7, 0.9]} rotation={[0, x > 0 ? -0.3 : 0.3, 0]}>
           <mesh castShadow>
             <capsuleGeometry args={[0.36, 0.8, 4, 12]} />
-            <meshStandardMaterial color="#d8c9a8" roughness={1} />
+            <meshStandardMaterial color="#dfd2b8" roughness={1} />
           </mesh>
           <mesh position={[0, 0.2, 0.55]} castShadow>
             <sphereGeometry args={[0.36, 14, 14]} />
-            <meshStandardMaterial color="#d8c9a8" roughness={1} />
+            <meshStandardMaterial color="#dfd2b8" roughness={1} />
           </mesh>
         </group>
       ))}
@@ -292,7 +292,7 @@ function Cibeles() {
             castShadow
           >
             <cylinderGeometry args={[0.08, 0.14, 1.6, 8]} />
-            <meshStandardMaterial color="#9fe4ff" transparent opacity={0.8} roughness={0.2} />
+            <meshStandardMaterial color="#dbdde0" transparent opacity={0.8} roughness={0.2} />
           </mesh>
         ))}
       </group>
@@ -351,7 +351,7 @@ function Awning({ x, z }: { x: number; z: number }) {
       {Array.from({ length: 6 }, (_, i) => (
         <mesh key={i} position={[-1.85 + i * 0.75, 3.3, 0]} castShadow>
           <boxGeometry args={[0.72, 0.16, 3]} />
-          <meshStandardMaterial color={i % 2 ? MADRID : "#fff2da"} roughness={0.95} />
+          <meshStandardMaterial color={i % 2 ? MADRID : "#fdfcf9"} roughness={0.95} />
         </mesh>
       ))}
     </group>
@@ -372,7 +372,7 @@ function SpanishFlag({ x, z }: { x: number; z: number }) {
     <group position={[x, 0, z]}>
       <mesh position={[0, 4, 0]} castShadow>
         <cylinderGeometry args={[0.12, 0.14, 8, 12]} />
-        <meshStandardMaterial color="#f0ece2" roughness={0.8} />
+        <meshStandardMaterial color="#fcfcfa" roughness={0.8} />
       </mesh>
       <group ref={flag} position={[0, 7, 0]}>
         {Array.from({ length: 6 }, (_, i) => (
@@ -408,39 +408,39 @@ function Capitol() {
     <group position={[13, 0, -8.5]}>
       <mesh position={[0, 2.2, 0]} castShadow receiveShadow>
         <boxGeometry args={[14, 4.4, 5]} />
-        <meshStandardMaterial color="#e8a48c" roughness={1} />
+        <meshStandardMaterial color="#c9c5c0" roughness={1} />
       </mesh>
       <mesh position={[0, 5, 0]} castShadow>
         <boxGeometry args={[6.4, 1.6, 5.4]} />
-        <meshStandardMaterial color="#efb69f" roughness={1} />
+        <meshStandardMaterial color="#d7d4d0" roughness={1} />
       </mesh>
       {/* portico */}
       {[-2.4, -0.8, 0.8, 2.4].map((x) => (
         <mesh key={x} position={[x, 2.2, 2.9]} castShadow>
           <cylinderGeometry args={[0.32, 0.36, 4.4, 14]} />
-          <meshStandardMaterial color="#ffe7d6" roughness={1} />
+          <meshStandardMaterial color="#fbfbfb" roughness={1} />
         </mesh>
       ))}
       <mesh position={[0, 4.9, 2.9]} rotation={[0, 0, 0]} castShadow>
         <coneGeometry args={[3.4, 1.4, 4]} />
-        <meshStandardMaterial color="#ffe7d6" roughness={1} />
+        <meshStandardMaterial color="#fbfbfb" roughness={1} />
       </mesh>
       {/* drum, dome, lantern, star */}
       <mesh position={[0, 6.5, 0]} castShadow>
         <cylinderGeometry args={[2.2, 2.4, 1.8, 24]} />
-        <meshStandardMaterial color="#efb69f" roughness={1} />
+        <meshStandardMaterial color="#d7d4d0" roughness={1} />
       </mesh>
       <mesh position={[0, 8.4, 0]} castShadow>
         <sphereGeometry args={[2.2, 26, 18, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshStandardMaterial color="#e07a5f" roughness={0.9} />
+        <meshStandardMaterial color="#aca69e" roughness={0.9} />
       </mesh>
       <mesh position={[0, 10.6, 0]} castShadow>
         <cylinderGeometry args={[0.5, 0.6, 1.2, 14]} />
-        <meshStandardMaterial color="#ffe7d6" roughness={0.9} />
+        <meshStandardMaterial color="#fbfbfb" roughness={0.9} />
       </mesh>
       <mesh position={[0, 11.9, 0]} rotation={[0, 0, 0]} castShadow>
         <coneGeometry args={[0.9, 1.4, 5]} />
-        <meshStandardMaterial color={C.gold} emissive="#ffb703" emissiveIntensity={0.4} roughness={0.6} />
+        <meshStandardMaterial color={C.gold} emissive="#ba9449" emissiveIntensity={0.4} roughness={0.6} />
       </mesh>
       {/* Aggie maroon banner across the front */}
       <mesh position={[0, 3.4, 2.56]}>
@@ -466,7 +466,7 @@ function Pumpjack() {
     <group position={[19, 0, 3]} rotation={[0, -0.5, 0]}>
       <mesh position={[0, 0.25, 0]} receiveShadow>
         <boxGeometry args={[5.4, 0.5, 2.6]} />
-        <meshStandardMaterial color="#6d6552" roughness={1} />
+        <meshStandardMaterial color="#554f48" roughness={1} />
       </mesh>
       {[-0.7, 0.7].map((z) => (
         <mesh key={z} position={[0, 2, z]} rotation={[0, 0, 0]} castShadow>
@@ -509,7 +509,7 @@ function WaterTower() {
       ))}
       <mesh position={[0, 7, 0]} castShadow>
         <cylinderGeometry args={[2.2, 2.2, 2.6, 22]} />
-        <meshStandardMaterial color="#f2f5f7" roughness={0.9} />
+        <meshStandardMaterial color="#fbfbfb" roughness={0.9} />
       </mesh>
       <mesh position={[0, 8.7, 0]} castShadow>
         <coneGeometry args={[2.3, 1.2, 22]} />
@@ -517,7 +517,7 @@ function WaterTower() {
       </mesh>
       <mesh position={[0, 5.5, 0]} castShadow>
         <coneGeometry args={[2.2, 1.4, 22]} />
-        <meshStandardMaterial color="#f2f5f7" roughness={0.9} />
+        <meshStandardMaterial color="#fbfbfb" roughness={0.9} />
       </mesh>
       <mesh position={[0, 7, 2.22]}>
         <circleGeometry args={[1.2, 5]} />
@@ -537,16 +537,16 @@ function Longhorn() {
       </mesh>
       <mesh position={[0, 3.2, 0.1]} castShadow>
         <boxGeometry args={[1, 1.2, 0.6]} />
-        <meshStandardMaterial color="#f4efe2" roughness={0.9} />
+        <meshStandardMaterial color="#fdfcf9" roughness={0.9} />
       </mesh>
       <mesh position={[0, 2.5, 0.1]} castShadow>
         <coneGeometry args={[0.45, 0.9, 10]} />
-        <meshStandardMaterial color="#f4efe2" roughness={0.9} />
+        <meshStandardMaterial color="#fdfcf9" roughness={0.9} />
       </mesh>
       {[-1, 1].map((s) => (
         <mesh key={s} position={[s * 1.1, 3.7, 0.1]} rotation={[0, 0, s * -0.8]} castShadow>
           <torusGeometry args={[0.7, 0.12, 8, 18, Math.PI]} />
-          <meshStandardMaterial color="#efe6d2" roughness={0.9} />
+          <meshStandardMaterial color="#f8f4ec" roughness={0.9} />
         </mesh>
       ))}
     </group>
@@ -579,11 +579,11 @@ function CsBench() {
         <group key={sx} position={[sx, 1.62, -0.3]}>
           <mesh position={[0, 0.72, 0]} rotation={[-0.12, 0, 0]} castShadow>
             <boxGeometry args={[1.8, 1.15, 0.12]} />
-            <meshStandardMaterial color="#1f2547" roughness={0.6} />
+            <meshStandardMaterial color="#26292d" roughness={0.6} />
           </mesh>
           <mesh position={[0, 0.2, 0]} castShadow>
             <cylinderGeometry args={[0.1, 0.26, 0.36, 12]} />
-            <meshStandardMaterial color="#1f2547" roughness={0.7} />
+            <meshStandardMaterial color="#26292d" roughness={0.7} />
           </mesh>
         </group>
       ))}
@@ -607,17 +607,17 @@ function Cactus({ x, z }: { x: number; z: number }) {
     <group position={[x, 0, z]}>
       <mesh position={[0, 1.8, 0]} castShadow>
         <capsuleGeometry args={[0.5, 2.4, 6, 14]} />
-        <meshStandardMaterial color="#2f9e50" roughness={1} />
+        <meshStandardMaterial color="#4c6f52" roughness={1} />
       </mesh>
       {[-1, 1].map((s) => (
         <group key={s}>
           <mesh position={[s * 0.85, 2.1, 0]} rotation={[0, 0, (s * Math.PI) / 2]} castShadow>
             <capsuleGeometry args={[0.3, 0.7, 4, 12]} />
-            <meshStandardMaterial color="#38b35c" roughness={1} />
+            <meshStandardMaterial color="#55795c" roughness={1} />
           </mesh>
           <mesh position={[s * 1.2, 2.9, 0]} castShadow>
             <capsuleGeometry args={[0.3, 1.1, 4, 12]} />
-            <meshStandardMaterial color="#38b35c" roughness={1} />
+            <meshStandardMaterial color="#55795c" roughness={1} />
           </mesh>
         </group>
       ))}
