@@ -50,19 +50,7 @@ html {
   }
 }
 
-/* landing hero: the monument turns on its vertical axis and drifts */
-@keyframes monument-spin {
-  0% {
-    transform: rotateY(-15deg) rotateX(3deg) translateY(0);
-  }
-  50% {
-    transform: rotateY(15deg) rotateX(-3deg) translateY(-18px);
-  }
-  100% {
-    transform: rotateY(-15deg) rotateX(3deg) translateY(0);
-  }
-}
-
+/* landing hero: the halo ring behind the monument */
 @keyframes halo-spin {
   from {
     transform: rotate(0deg);
@@ -76,18 +64,11 @@ html {
   perspective: 1400px;
 }
 
-.monument-art {
-  animation: monument-spin 18s ease-in-out infinite;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
 .monument-halo {
   animation: halo-spin 40s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .monument-art,
   .monument-halo {
     animation: none;
   }

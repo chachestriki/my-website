@@ -2,14 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import Image from "next/image";
-import monument from "@/../public/monument.webp";
 import SiteNav from "@/components/SiteNav";
 import AgentChat from "@/components/AgentChat";
 import { education, profile, roles, skills } from "@/data/cv";
 import type { FigureId } from "@/components/StoryFigures";
 
 const StoryFigures = dynamic(() => import("@/components/StoryFigures"), { ssr: false });
+const HeroMonument = dynamic(() => import("@/components/HeroMonument"), { ssr: false });
 
 type Theme = { bg: string; fg: string; accent: string; dark: boolean };
 
@@ -203,14 +202,19 @@ export default function ScrollStory() {
                   "radial-gradient(circle, transparent 54%, #000 56%, #000 60%, transparent 62%)",
               }}
             />
-            <Image
-              src={monument}
-              alt=""
-              aria-hidden
-              priority
-              className="monument-art h-[78vh] max-h-[860px] w-auto object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,0.55)]"
-            />
+            <div className="absolute inset-0">
+              <HeroMonument p={progress} />
+            </div>
           </div>
+
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 60% 34% at 50% 48%, rgba(8,9,11,0.82), rgba(8,9,11,0.35) 60%, transparent 78%)",
+            }}
+          />
 
           <div className="relative z-10 px-6 text-center">
             <h1 className="text-[clamp(3rem,13vw,9rem)] font-semibold leading-[0.9] tracking-tight drop-shadow-[0_8px_30px_rgba(0,0,0,0.6)]">
