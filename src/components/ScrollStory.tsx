@@ -325,6 +325,14 @@ export default function ScrollStory() {
                   >
                     {profile.github}
                   </a>
+                  <a
+                    className="block hover:text-[color:var(--chapter-accent)]"
+                    href={profile.linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {profile.linkedin}
+                  </a>
                   <a className="block hover:text-[color:var(--chapter-accent)]" href="/cv">
                     /cv
                   </a>
