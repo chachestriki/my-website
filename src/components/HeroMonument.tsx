@@ -420,11 +420,17 @@ function Monument({ p }: { p: RefObject<number> }) {
   );
 }
 
-/** the monument spans ~8 units, so narrow screens pull the camera back */
+const FOV = 38;
+/** the debris belt reaches ~4.4 units out from the axis; everything inside must stay framed */
+const REACH = 4.4;
+
+/** tall, narrow viewports run out of horizontal room first, so the camera pulls back until the orbit fits */
 function FitCamera() {
   const { size } = useThree();
-  const z = MathUtils.clamp(12 / Math.min(1, size.width / 900), 12, 21);
-  return <PerspectiveCamera makeDefault fov={38} position={[0, 1.4, z]} onUpdate={(c) => c.lookAt(0, 0.3, 0)} />;
+  const aspect = size.width / Math.max(1, size.height);
+  const tan = Math.tan(MathUtils.degToRad(FOV / 2));
+  const z = MathUtils.clamp(Math.max(REACH / tan, REACH / (tan * aspect)), 12, 30);
+  return <PerspectiveCamera makeDefault fov={FOV} position={[0, 1.4, z]} onUpdate={(c) => c.lookAt(0, 0.3, 0)} />;
 }
 
 export default function HeroMonument({ p }: { p: RefObject<number> }) {
