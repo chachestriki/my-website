@@ -1,6 +1,15 @@
 "use client";
 
-import { createContext, useContext, useMemo, useRef, type RefObject } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, OrthographicCamera } from "@react-three/drei";
 import { Group, MathUtils, Mesh } from "three";
@@ -31,16 +40,37 @@ function rand(seed: number) {
   return x - Math.floor(x);
 }
 
-/** the one canvas for the whole page: the active chapter decides which figure is mounted */
+type Layer = { key: number; figure: FigureId; out: boolean };
+
+/** the one canvas for the whole page: figures fly off into depth and the next one arrives from it */
 export default function StoryFigures({
   figure,
   p,
   onDark = false,
 }: {
-  figure: FigureId;
+  figure: FigureId | null;
   p: RefObject<number>;
   onDark?: boolean;
 }) {
+  const [layers, setLayers] = useState<Layer[]>(() =>
+    figure ? [{ key: 0, figure, out: false }] : [],
+  );
+  const nextKey = useRef(1);
+
+  useEffect(() => {
+    setLayers((prev) => {
+      const current = prev.find((l) => !l.out);
+      if (current?.figure === figure) return prev;
+      const leaving = prev.map((l) => (l.out ? l : { ...l, out: true }));
+      if (!figure) return leaving;
+      return [...leaving, { key: nextKey.current++, figure, out: false }];
+    });
+  }, [figure]);
+
+  const drop = useCallback((key: number) => {
+    setLayers((prev) => prev.filter((l) => l.key !== key));
+  }, []);
+
   return (
     <Canvas dpr={[1, 1.75]} gl={{ antialias: true, alpha: true }}>
       <FitCamera />
@@ -48,11 +78,52 @@ export default function StoryFigures({
       <directionalLight position={[4, 6, 5]} intensity={1.5} />
       <directionalLight position={[-5, 2, -3]} intensity={0.5} color={BRASS} />
       <OnDark.Provider value={onDark}>
-        <Float speed={1.1} rotationIntensity={0.14} floatIntensity={0.3}>
-          <Figure figure={figure} p={p} />
-        </Float>
+        {layers.map((l) => (
+          <FigureLayer key={l.key} figure={l.figure} out={l.out} p={p} onGone={() => drop(l.key)} />
+        ))}
       </OnDark.Provider>
     </Canvas>
+  );
+}
+
+/** presence animation: 0 is far away in the distance, 1 is in front of the reader */
+function FigureLayer({
+  figure,
+  out,
+  p,
+  onGone,
+}: {
+  figure: FigureId;
+  out: boolean;
+  p: RefObject<number>;
+  onGone: () => void;
+}) {
+  const g = useRef<Group>(null);
+  const presence = useRef(0.02);
+  const gone = useRef(false);
+
+  useFrame((_, delta) => {
+    const step = Math.min(delta, 0.05);
+    presence.current = MathUtils.damp(presence.current, out ? 0 : 1, 3.6, step);
+    const k = presence.current;
+    if (g.current) {
+      g.current.scale.setScalar(Math.max(0.001, k));
+      g.current.position.z = (1 - k) * -30;
+      g.current.position.y = (1 - k) * 1.6;
+      g.current.rotation.y = (1 - k) * 1.1;
+    }
+    if (out && k < 0.03 && !gone.current) {
+      gone.current = true;
+      onGone();
+    }
+  });
+
+  return (
+    <Float speed={1.1} rotationIntensity={0.14} floatIntensity={0.3}>
+      <group ref={g} scale={0.02}>
+        <Figure figure={figure} p={p} />
+      </group>
+    </Float>
   );
 }
 

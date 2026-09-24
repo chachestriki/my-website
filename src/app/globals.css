@@ -68,8 +68,26 @@ html {
   animation: halo-spin 40s linear infinite;
 }
 
+/* landing: the arrow nudging the reader down the page */
+@keyframes scroll-arrow-drift {
+  0%,
+  100% {
+    transform: translateY(-3px);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(5px);
+    opacity: 1;
+  }
+}
+
+.scroll-arrow {
+  animation: scroll-arrow-drift 1.8s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .monument-halo {
+  .monument-halo,
+  .scroll-arrow {
     animation: none;
   }
 }
