@@ -9,6 +9,8 @@ export const profile = {
   summary:
     "Backend-leaning full-stack engineer working on hospitality integrations, payment automation and LLM tooling. I connect Opera Cloud (OHIP), Salesforce and FreedomPay with idempotent Python services on Kubernetes, and expose them to AI agents through MCP. Before that I founded and sold Vice Resell, a resale automation platform with 6,000+ users.",
   github: "https://github.com/chachestriki",
+  /** empty until the profile URL is confirmed; the nav hides the link while it is */
+  linkedin: "",
   site: "https://jdlabajos.com",
 };
 
