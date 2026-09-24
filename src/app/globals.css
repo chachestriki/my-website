@@ -74,3 +74,14 @@ body {
   background: var(--brass);
   color: #fff;
 }
+
+@media print {
+  section,
+  article {
+    break-inside: avoid;
+  }
+
+  h2 {
+    break-after: avoid;
+  }
+}
