@@ -69,6 +69,15 @@ const Gallery3D = dynamic(() => import("@/components/Gallery3D"), {
   ),
 });
 
+const Elevator3D = dynamic(() => import("@/components/Elevator3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center bg-[#14171a] font-mono text-sm text-[#c2a05a]">
+      Calling the lift…
+    </div>
+  ),
+});
+
 const Hobbies3D = dynamic(() => import("@/components/Hobbies3D"), {
   ssr: false,
   loading: () => (
@@ -87,6 +96,9 @@ const SCENES: Record<string, SceneId> = {
   career: "gallery",
   hobbies: "hobbies",
 };
+
+/** the mobile building, ground floor first: the lift plate shows the floor you scrolled to */
+const FLOORS = ["G · Lobby", ...stations.map((s, i) => `${i + 1} · ${s.title}`)];
 
 /** rooms whose panel is already open when you walk in */
 const GREETS: SceneId[] = ["factory", "campus"];
@@ -111,6 +123,9 @@ export default function LobbyScene() {
   /** the scene's own panel, opened from the stand inside the room — not fixed;
    *  these two rooms greet you with it open instead */
   const [panel, setPanel] = useState(false);
+  /** which floor the mobile lift is showing, driven by how far you scrolled */
+  const [floor, setFloor] = useState(0);
+  const floors = useRef<HTMLDivElement>(null);
   const api = useRef<LobbyApi>({});
   const open = stations.find((s) => s.id === openId) ?? null;
   const close = useCallback(() => setOpenId(null), []);
@@ -166,6 +181,22 @@ export default function LobbyScene() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [close, closePanel, entered, leaveScene, openId, panel, scene]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const list = floors.current;
+      if (!list) return;
+      const line = window.innerHeight * 0.58;
+      let current = 0;
+      Array.from(list.children).forEach((child, i) => {
+        if (child.getBoundingClientRect().top <= line) current = i;
+      });
+      setFloor((f) => (f === current ? f : current));
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <div className="relative min-h-dvh lobby-vignette">
@@ -321,32 +352,45 @@ export default function LobbyScene() {
         )}
       </div>
 
-      {/* ---------------- mobile: linear mode ---------------- */}
+      {/* ---------------- mobile: ride the lift, one floor per section ---------------- */}
       <div className="md:hidden">
-        <div className="space-y-2 px-5 pb-4 pt-8">
-          <HatMark className="h-10 w-10" />
-          <h1 className="text-2xl font-extrabold text-brass">{profile.name}</h1>
-          <p className="font-mono text-xs uppercase tracking-widest text-ink/50">{profile.title}</p>
-          <p className="pt-2 text-sm leading-relaxed text-ink/75">{profile.tagline}</p>
-        </div>
-        <div className="space-y-3 px-5 pb-10">
-          {stations.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => setOpenId(s.id)}
-              className="block w-full rounded-2xl border-2 border-white bg-card p-4 text-left shadow-[0_5px_0_rgba(20,23,26,0.12)] transition active:scale-[0.99]"
-            >
-              <span className="font-mono text-[10px] uppercase tracking-widest text-teal">{s.object}</span>
-              <span className="mt-0.5 block text-base font-bold text-brass">{s.title}</span>
-              <span className="block text-xs text-ink/60">{s.subtitle}</span>
-            </button>
-          ))}
+        <div className="sticky top-0 z-10 h-[42dvh] w-full overflow-hidden border-b-4 border-white bg-[#14171a]">
+          <Elevator3D floor={floor} label={FLOORS[floor]} />
+          <div className="pointer-events-none absolute left-4 top-4 rounded-xl border-2 border-brass/40 bg-black/55 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-widest text-brass">
+            Floor {floor === 0 ? "G" : floor}
+          </div>
           <a
             href="/cv"
-            className="block rounded-2xl border-2 border-white bg-white/70 p-4 text-center font-mono text-xs text-ink/60"
+            className="absolute right-4 top-4 rounded-xl border-2 border-white/70 bg-white/85 px-3 py-1.5 font-mono text-[11px] font-semibold text-brass"
           >
             Plain CV →
           </a>
+        </div>
+
+        <div ref={floors}>
+          <section className="flex min-h-[46dvh] flex-col justify-center space-y-2 px-5 py-10">
+            <HatMark className="h-10 w-10" />
+            <h1 className="text-2xl font-extrabold text-brass">{profile.name}</h1>
+            <p className="font-mono text-xs uppercase tracking-widest text-ink/50">{profile.title}</p>
+            <p className="pt-2 text-sm leading-relaxed text-ink/75">{profile.tagline}</p>
+            <p className="pt-3 font-mono text-[11px] text-teal">scroll to ride the lift ↓</p>
+          </section>
+
+          {stations.map((s, i) => (
+            <section key={s.id} className="flex min-h-[46dvh] flex-col justify-center px-5 py-6">
+              <button
+                onClick={() => setOpenId(s.id)}
+                className="block w-full rounded-2xl border-2 border-white bg-card p-5 text-left shadow-[0_5px_0_rgba(20,23,26,0.12)] transition active:scale-[0.99]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-widest text-teal">
+                  Floor {i + 1} · {s.object}
+                </span>
+                <span className="mt-0.5 block text-xl font-bold text-brass">{s.title}</span>
+                <span className="block text-xs text-ink/60">{s.subtitle}</span>
+                <span className="mt-3 block font-mono text-[11px] font-semibold text-brass">step out →</span>
+              </button>
+            </section>
+          ))}
         </div>
       </div>
 

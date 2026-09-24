@@ -242,8 +242,14 @@ export function DoorSign({
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#fdfcf9";
-    ctx.font = "800 104px ui-sans-serif, system-ui, sans-serif";
-    ctx.fillText(label.toUpperCase(), canvas.width / 2, extra ? 92 : canvas.height / 2);
+    const text = label.toUpperCase();
+    /* shrink long labels until they fit between the frame's margins */
+    let size = 104;
+    do {
+      ctx.font = `800 ${size}px ui-sans-serif, system-ui, sans-serif`;
+      size -= 4;
+    } while (size > 48 && ctx.measureText(text).width > canvas.width - 120);
+    ctx.fillText(text, canvas.width / 2, extra ? 92 : canvas.height / 2);
     if (extra) {
       ctx.fillStyle = color;
       ctx.font = "600 44px ui-monospace, monospace";
