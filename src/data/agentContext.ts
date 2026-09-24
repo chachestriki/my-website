@@ -14,6 +14,7 @@ export function buildKnowledgeBase(): string {
     `Tagline: ${profile.tagline}`,
     `Summary: ${profile.summary}`,
     `GitHub: ${profile.github}`,
+    `LinkedIn: ${profile.linkedin}`,
     `Site: ${profile.site}`,
     `Languages: ${languages.map((l) => `${l.name} (${l.level})`).join(", ")}`,
   ].join("\n");

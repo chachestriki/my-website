@@ -31,6 +31,15 @@ export default function CvPage() {
           ·{" "}
           <a href={profile.site} className="underline-offset-4 hover:underline">
             jdlabajos.com
+          </a>{" "}
+          ·{" "}
+          <a
+            href={profile.linkedin}
+            target="_blank"
+            rel="noreferrer"
+            className="underline-offset-4 hover:underline"
+          >
+            linkedin.com/in/jdlabajos
           </a>
         </p>
         <p className="mt-4 text-sm leading-relaxed text-ink/80">{profile.summary}</p>
