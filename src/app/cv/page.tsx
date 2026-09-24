@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { education, profile, roles, skills } from "@/data/cv";
-import { projects } from "@/data/projects";
+import { education, languages, profile, roles, skills } from "@/data/cv";
+import { engineering, projects } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: `CV — ${profile.name}`,
@@ -22,6 +22,15 @@ export default function CvPage() {
           {profile.location} · <a href={`tel:${profile.phone.replace(/\s/g, "")}`}>{profile.phone}</a> ·{" "}
           <a href={`mailto:${profile.email}`} className="underline-offset-4 hover:underline">
             {profile.email}
+          </a>
+        </p>
+        <p className="mt-2 font-mono text-xs text-ink/55">
+          <a href={profile.github} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
+            github.com/chachestriki
+          </a>{" "}
+          ·{" "}
+          <a href={profile.site} className="underline-offset-4 hover:underline">
+            jdlabajos.com
           </a>
         </p>
         <p className="mt-4 text-sm leading-relaxed text-ink/80">{profile.summary}</p>
@@ -94,11 +103,48 @@ export default function CvPage() {
       </section>
 
       <section className="mt-10">
+        <h2 className="font-mono text-xs uppercase tracking-widest text-teal">Selected engineering</h2>
+        <div className="mt-4 space-y-4">
+          {engineering.map((e) => (
+            <article key={e.id}>
+              <div className="flex flex-wrap items-baseline gap-x-2">
+                <h3 className="font-semibold text-brass">{e.name}</h3>
+                <p className="text-xs text-ink/55">{e.tag}</p>
+              </div>
+              <p className="mt-1 text-sm leading-relaxed text-ink/75">{e.body}</p>
+              <p className="mt-1 font-mono text-xs text-ink/45">{e.stack.join(" · ")}</p>
+              {e.href && (
+                <a
+                  href={e.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-xs text-teal underline-offset-4 hover:underline"
+                >
+                  repository →
+                </a>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-10">
         <h2 className="font-mono text-xs uppercase tracking-widest text-teal">Education</h2>
         <ul className="mt-3 space-y-1 text-sm text-ink/80">
           {education.map((e) => (
             <li key={e.school}>
               <span className="text-brass">{e.school}</span>, {e.place} — {e.degree}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="font-mono text-xs uppercase tracking-widest text-teal">Languages</h2>
+        <ul className="mt-3 space-y-1 text-sm text-ink/80">
+          {languages.map((l) => (
+            <li key={l.name}>
+              <span className="text-brass">{l.name}</span> — {l.level}
             </li>
           ))}
         </ul>

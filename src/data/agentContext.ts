@@ -1,7 +1,7 @@
 import { career } from "@/data/career";
-import { education, profile, roles, skills } from "@/data/cv";
+import { education, languages, profile, roles, skills } from "@/data/cv";
 import { hobbies } from "@/data/hobbies";
-import { projects } from "@/data/projects";
+import { engineering, projects } from "@/data/projects";
 
 /** everything the agent is allowed to know, flattened out of the site's own data */
 export function buildKnowledgeBase(): string {
@@ -13,6 +13,9 @@ export function buildKnowledgeBase(): string {
     `Phone: ${profile.phone}`,
     `Tagline: ${profile.tagline}`,
     `Summary: ${profile.summary}`,
+    `GitHub: ${profile.github}`,
+    `Site: ${profile.site}`,
+    `Languages: ${languages.map((l) => `${l.name} (${l.level})`).join(", ")}`,
   ].join("\n");
 
   const experience = roles
@@ -42,6 +45,10 @@ export function buildKnowledgeBase(): string {
     )
     .join("\n\n");
 
+  const repos = engineering
+    .map((e) => [`${e.name} — ${e.tag}`, e.body, `Stack: ${e.stack.join(", ")}`].join("\n"))
+    .join("\n\n");
+
   const studies = education.map((e) => `${e.degree} — ${e.school}, ${e.place}`).join("\n");
 
   const abilities = skills.map((s) => `${s.group}: ${s.items.join(", ")}`).join("\n");
@@ -57,6 +64,7 @@ export function buildKnowledgeBase(): string {
     `## Experience\n${experience}`,
     `## Career timeline\n${timeline}`,
     `## Flagship projects\n${flagship}`,
+    `## Selected engineering\n${repos}`,
     `## Education\n${studies}`,
     `## Skills\n${abilities}`,
     `## Off the clock\n${offClock}`,

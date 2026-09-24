@@ -10,11 +10,11 @@ export const viceResell = {
   blocks: [
     {
       heading: "What the software did",
-      body: "Marketplace automation for 10,000+ resellers: listings from photos, pricing off live comparables, negotiation messaging that closed deals — LLM output always behind deterministic price and inventory checks.",
+      body: "Marketplace automation for 6,000+ resellers: listings from photos, pricing off live comparables, negotiation messaging that closed deals — LLM output always behind deterministic price and inventory checks.",
     },
   ],
   stats: [
-    { value: "10,000+", label: "resellers on the platform" },
+    { value: "6,000+", label: "resellers on the platform" },
     { value: "5.0 ★", label: "426 Whop reviews" },
     { value: "Acquired", label: "exit in 2026" },
   ],

@@ -16,7 +16,7 @@ export function AboutRoom() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         {[
-          { k: "10,000+", v: "users on the automation platform I founded and sold" },
+          { k: "6,000+", v: "users on the automation platform I founded and sold" },
           { k: "4", v: "hotel groups running on integrations I designed" },
           { k: "2", v: "degrees: CS & Business (Texas A&M), Management & Tech (UC3M)" },
         ].map((s) => (
@@ -102,7 +102,7 @@ const CONCIERGE_QA: { q: string; a: string }[] = [
   },
   {
     q: "Tell me about Vice Resell.",
-    a: "I founded and was CTO of an AI-driven marketplace automation platform that reached 10,000+ users before it was acquired. LLM-powered pricing recommendations, listing generation and negotiation messaging — always paired with rule-based systems, because pure LLM output isn't reliable enough to touch money.",
+    a: "I founded and was CTO of an AI-driven marketplace automation platform that reached 6,000+ users before it was acquired. LLM-powered pricing recommendations, listing generation and negotiation messaging — always paired with rule-based systems, because pure LLM output isn't reliable enough to touch money.",
   },
   {
     q: "Hardest problem you've shipped?",
