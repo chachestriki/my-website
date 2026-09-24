@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { profile } from "@/data/cv";
-import { LOBBY_LINES, TAKEOVER, llmsText } from "@/data/agentLobby";
+import { GREETING_FACT, LOBBY_LINES, TAKEOVER, llmsText } from "@/data/agentLobby";
 
 export const metadata: Metadata = {
-  title: `Agent lobby — ${profile.name}`,
-  description: TAKEOVER,
+  title: `${TAKEOVER} — ${profile.name}`,
+  description: `${GREETING_FACT} ${profile.name}, ${profile.title} in ${profile.location}.`,
 };
 
 /** the wing crawlers and assistants land on: the same facts as the site, in a shape a model can swallow whole */
