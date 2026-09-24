@@ -51,7 +51,7 @@ export default function Elevator3D({ floor, label }: { floor: number; label: str
 function Cabin({ floor, label }: { floor: number; label: string }) {
   const left = useRef<Group>(null);
   const right = useRef<Group>(null);
-  const landing = useRef<Mesh>(null);
+  const strip = useRef<Mesh>(null);
   const previous = useRef(floor);
   /** 1 right after a floor change, decaying to 0 once the cabin has arrived */
   const travel = useRef(0);
@@ -66,20 +66,14 @@ function Cabin({ floor, label }: { floor: number; label: string }) {
     const slide = DOOR_W * 0.94 * (1 - shut);
     if (left.current) left.current.position.x = MathUtils.damp(left.current.position.x, -DOOR_W / 2 - slide, 9, delta);
     if (right.current) right.current.position.x = MathUtils.damp(right.current.position.x, DOOR_W / 2 + slide, 9, delta);
-    if (landing.current) {
-      const mat = landing.current.material as MeshStandardMaterial;
-      mat.emissiveIntensity = 0.5 + Math.sin(state.clock.elapsedTime * 1.8) * 0.12;
+    if (strip.current) {
+      const mat = strip.current.material as MeshStandardMaterial;
+      mat.emissiveIntensity = 0.55 + Math.sin(state.clock.elapsedTime * 1.8) * 0.15;
     }
   });
 
   return (
     <group>
-      {/* the lit landing you see once the doors part */}
-      <mesh ref={landing} position={[0, CABIN_H / 2 - 0.4, 3.4]}>
-        <planeGeometry args={[CABIN_W, CABIN_H]} />
-        <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.5} toneMapped={false} />
-      </mesh>
-
       {/* floor, ceiling and the three walls of the cabin */}
       <mesh position={[0, -0.1, 0]} receiveShadow>
         <boxGeometry args={[CABIN_W, 0.2, 5.4]} />
@@ -108,6 +102,12 @@ function Cabin({ floor, label }: { floor: number; label: string }) {
       <mesh position={[0, CABIN_H - 0.16, 0.2]} rotation={[Math.PI / 2, 0, 0]}>
         <planeGeometry args={[3.4, 2.4]} />
         <meshStandardMaterial color="#fffaf0" emissive="#fffaf0" emissiveIntensity={0.8} toneMapped={false} />
+      </mesh>
+
+      {/* the brass strip that breathes on the back wall */}
+      <mesh ref={strip} position={[0, 3.4, -2.48]}>
+        <planeGeometry args={[CABIN_W - 1.2, 0.18]} />
+        <meshStandardMaterial color={C.gold} emissive={C.gold} emissiveIntensity={0.55} toneMapped={false} />
       </mesh>
 
       {/* brass handrail along the back wall */}
