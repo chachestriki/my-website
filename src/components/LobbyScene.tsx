@@ -133,6 +133,11 @@ export default function LobbyScene() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!entered && !scene) return;
+      const t = e.target;
+      const typing =
+        t instanceof HTMLElement &&
+        (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t.isContentEditable);
+      if (typing && e.key !== "Escape") return;
       if (e.key === "Escape") {
         if (openId) return close();
         if (panel) return closePanel();
