@@ -36,7 +36,7 @@ export const roles: Role[] = [
     role: "Full Stack Software Engineer",
     period: "2026 – Present",
     summary:
-      "Own the integration architecture between Oracle Opera Cloud (OHIP) and Salesforce CRM for the group's hotels, and the AI tooling layer on top of it.",
+      "Own the integration architecture between Oracle Opera Cloud (OHIP) and Salesforce CRM across 100+ hotels and roughly 4.5M guest profiles, plus the AI tooling layer on top of it.",
     highlights: [
       "Own the Opera Cloud (OHIP) ↔ Salesforce integration: guest profiles, reservations and loyalty data synced in real time instead of by hand.",
       "Built an MCP server that turns Oracle's official OpenAPI specs into 3,000+ permissioned tools, so LLM agents can run booking and guest operations without ever seeing the OAuth credentials.",
@@ -80,12 +80,12 @@ export const roles: Role[] = [
     role: "Sales Engineer (Remote)",
     period: "2022 – 2023",
     summary:
-      "Technical side of a Silicon Valley call-intelligence product: speech-to-text and meeting analysis across Zoom, Google Meet and Microsoft Teams.",
+      "Technical side of a Silicon Valley call-intelligence product: speech-to-text, text-to-speech and meeting analysis across Zoom, Google Meet and Microsoft Teams.",
     highlights: [
       "Ran deployments and integration work for customers on three meeting platforms.",
-      "Turned what customers asked for in demos into requirements for the STT and sentiment pipelines.",
+      "Turned what customers asked for in demos into requirements for the speech and sentiment pipelines.",
     ],
-    stack: ["Speech-to-text", "Zoom API", "Teams API"],
+    stack: ["Speech-to-text", "Text-to-speech", "Zoom API", "Teams API"],
   },
   {
     id: "lenovo",
