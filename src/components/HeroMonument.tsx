@@ -218,16 +218,142 @@ function Burst() {
   );
 }
 
-/** cubes, laptops, wifi fans and burst marks drifting around the monument */
+/** a ringed planet */
+function Planet() {
+  return (
+    <group rotation={[0.3, 0, 0.42]}>
+      <mesh>
+        <sphereGeometry args={[0.3, 24, 18]} />
+        <Matte color={GLASS} rough={0.75} />
+      </mesh>
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.52, 0.03, 8, 48]} />
+        <Brass />
+      </mesh>
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.62, 0.018, 8, 48]} />
+        <Brass rough={0.4} />
+      </mesh>
+    </group>
+  );
+}
+
+/** the most underrated invention of them all */
+function Toilet() {
+  return (
+    <group rotation={[0, -0.4, 0]}>
+      {/* bowl */}
+      <mesh position={[0, 0.06, 0.12]}>
+        <cylinderGeometry args={[0.2, 0.13, 0.26, 20]} />
+        <Matte color={PAPER} rough={0.25} />
+      </mesh>
+      <mesh position={[0, 0.2, 0.12]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.2, 0.035, 10, 28]} />
+        <Matte color={PAPER} rough={0.25} />
+      </mesh>
+      {/* lid, half open */}
+      <mesh position={[0, 0.22, -0.06]} rotation={[-0.9, 0, 0]}>
+        <cylinderGeometry args={[0.19, 0.19, 0.035, 20]} />
+        <Matte color={PAPER} rough={0.3} />
+      </mesh>
+      {/* cistern and flush button */}
+      <mesh position={[0, 0.26, -0.18]}>
+        <boxGeometry args={[0.34, 0.42, 0.16]} />
+        <Matte color={PAPER} rough={0.3} />
+      </mesh>
+      <mesh position={[0, 0.49, -0.18]}>
+        <cylinderGeometry args={[0.05, 0.05, 0.03, 16]} />
+        <Brass />
+      </mesh>
+      {/* pedestal */}
+      <mesh position={[0, -0.12, 0.12]}>
+        <boxGeometry args={[0.16, 0.14, 0.24]} />
+        <Matte color={PAPER} rough={0.4} />
+      </mesh>
+    </group>
+  );
+}
+
+/** the wheel: where every other invention started */
+function Wheel() {
+  return (
+    <group>
+      <mesh>
+        <torusGeometry args={[0.34, 0.05, 10, 36]} />
+        <Matte color={INK} rough={0.8} />
+      </mesh>
+      {Array.from({ length: 8 }, (_, i) => (
+        <mesh key={i} rotation={[0, 0, (i / 8) * Math.PI]}>
+          <boxGeometry args={[0.66, 0.035, 0.035]} />
+          <Brass />
+        </mesh>
+      ))}
+      <mesh>
+        <cylinderGeometry args={[0.07, 0.07, 0.1, 14]} />
+        <Brass />
+      </mesh>
+    </group>
+  );
+}
+
+/** a lit filament bulb */
+function Bulb() {
+  return (
+    <group>
+      <mesh position={[0, 0.1, 0]}>
+        <sphereGeometry args={[0.26, 22, 16]} />
+        <Matte color={GLASS} emissive="#6b5416" rough={0.15} />
+      </mesh>
+      <mesh position={[0, -0.18, 0]}>
+        <cylinderGeometry args={[0.1, 0.12, 0.2, 16]} />
+        <Brass />
+      </mesh>
+      <mesh position={[0, 0.1, 0]}>
+        <torusGeometry args={[0.09, 0.012, 6, 18]} />
+        <Matte color={BRASS} emissive="#8a6a1a" rough={0.3} />
+      </mesh>
+    </group>
+  );
+}
+
+/** a rocket, for the part of human history that left the ground */
+function Rocket() {
+  return (
+    <group rotation={[0.25, 0, 0.3]}>
+      <mesh>
+        <cylinderGeometry args={[0.13, 0.13, 0.55, 18]} />
+        <Matte color={PAPER} rough={0.4} />
+      </mesh>
+      <mesh position={[0, 0.4, 0]}>
+        <coneGeometry args={[0.13, 0.28, 18]} />
+        <Brass />
+      </mesh>
+      {[0, 1, 2].map((i) => (
+        <mesh key={i} position={[0, -0.26, 0]} rotation={[0, (i / 3) * Math.PI * 2, 0]}>
+          <boxGeometry args={[0.32, 0.18, 0.03]} />
+          <Matte color={INK} rough={0.6} />
+        </mesh>
+      ))}
+      <mesh position={[0, -0.34, 0]}>
+        <coneGeometry args={[0.1, 0.22, 12]} />
+        <Matte color={BRASS} emissive="#7a4a10" rough={0.4} />
+      </mesh>
+    </group>
+  );
+}
+
+const KINDS = 9;
+
+/** cubes, laptops, wifi fans, planets, wheels, bulbs, rockets and toilets drifting around the monument */
 function Debris() {
   const group = useRef<Group>(null);
   const items = useMemo(
     () =>
-      Array.from({ length: 18 }, (_, i) => {
-        const a = (i / 18) * Math.PI * 2 + rand(i) * 0.5;
+      Array.from({ length: 27 }, (_, i) => {
+        const a = (i / 27) * Math.PI * 2 + rand(i) * 0.5;
         const radius = 2.6 + rand(i + 3) * 1.9;
         return {
-          kind: i % 4,
+          kind: i % KINDS,
           pos: [Math.cos(a) * radius, -1.6 + rand(i + 9) * 4.2, Math.sin(a) * radius] as const,
           scale: 0.7 + rand(i + 21) * 0.7,
           spin: 0.15 + rand(i + 33) * 0.35,
@@ -257,6 +383,11 @@ function Debris() {
           {it.kind === 1 && <Laptop />}
           {it.kind === 2 && <Wifi />}
           {it.kind === 3 && <Burst />}
+          {it.kind === 4 && <Planet />}
+          {it.kind === 5 && <Wheel />}
+          {it.kind === 6 && <Bulb />}
+          {it.kind === 7 && <Rocket />}
+          {it.kind === 8 && <Toilet />}
         </group>
       ))}
     </group>
