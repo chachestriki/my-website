@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Juan Diego's Portfolio",
+  title: "JD Portfolio — Juan Diego Gómez",
   description:
-    "An interactive portfolio: the CV of a full-stack engineer who wires hospitality systems, payments and LLM agents together.",
+    "The portfolio of Juan Diego Gómez, a full-stack engineer who wires hospitality systems, payments and LLM agents together.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -50,7 +50,7 @@ export async function POST(request: Request) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) {
     return Response.json({
-      reply: `The live agent is off right now (no API key configured), so this is the scripted lobby line. Everything it would tell you is on this site, and Juan answers directly at ${profile.email}.`,
+      reply: `The live agent is off right now (no API key configured), so this is the scripted fallback. Everything it would tell you is on this site, and Juan answers directly at ${profile.email}.`,
       demo: true,
     });
   }

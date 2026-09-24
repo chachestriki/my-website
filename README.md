@@ -1,31 +1,21 @@
-# Juan Diego Gómez — interactive CV
+# JD Portfolio — Juan Diego Gómez
 
-A game-like personal site: a saturated cartoon hotel lobby rendered in 3D (top-down isometric) where a penguin in a stetson walks to whatever you click. Getting close to a station opens the matching room:
+A scroll-driven personal site. Each chapter pins its copy on one side and an abstract 3D figure on the other; how far you have scrolled into the chapter drives the figure's animation.
 
-| Station | Room |
+| Chapter | Figure |
 | --- | --- |
-| Recepción | About + mission |
-| Projects wall | Swaps the lobby for the PROJECTS showroom |
-| Gallery door | Swaps the lobby for the career hall |
-| Voice line | Scripted AI agent Q&A |
-| Service bell | Contact + CV |
-| Education door | Swaps the lobby for the Madrid/Texas campus |
-| Freight door | Swaps the lobby for the Vice Resell clothing factory |
-| Lounge door | Swaps the lobby for the hobbies and personal goals room |
+| Landing | A floating monument: a hotel on a torn slab, ringed by rails of hangers and clothes, turning on its vertical axis |
+| Room Mate Hospitality Group | Two systems joined by a wire carrying packets |
+| Mastel Hospitality | A card tilting over a folio that stacks under it |
+| Vice Resell | Scattered points assembling into a sphere |
+| Odyn AI | A speech waveform building into bars |
+| Lenovo | Rack slabs sliding home |
+| Education | Two points on the same arc around a globe |
+| Stack | A 3×3×3 lattice assembling |
+| Ask the agent | Two rings locking into one mark |
+| Contact | A sheet folding into a send |
 
-Only the side rooms are locked behind a multiple-choice programming question (`src/data/doorQuiz.ts` — education and the hobbies lounge): pick the right answer once and that room stays unlocked for the session. Everything a recruiter needs — projects, Vice Resell, ODYN AI, bot detection, the career hall, contact and `/cv` — opens without a quiz. A door replaces the whole scene with another walkable world; `Esc` or the back button returns to where you came from. Inside a scene the side panel is not fixed: walk onto the stand or press `1` to open it, `Esc` or `✕` closes it without leaving the room.
-
-- **Projects showroom** — a wall reading `PROJECTS` with three boards (`src/data/projects.ts`): Vice Resell, ODYN AI and the Instagram bot-detection bachelor thesis. Walking into a board's doorway enters that project's own room, and `Esc` goes back to the wall.
-- **ODYN AI room** — a meeting room with a live audio waveform, an attitude gauge and the Zoom / Meet / Teams platform markers.
-- **Bot lab** — a wall of classified accounts (green human, red bot) and the collect → features → label → classify bench.
-- **Career hall** — framed company logos on a timeline: Lenovo, a marketing agency, Mastel Hospitality, Vice Resell, ODYN AI, Room Mate Hotels (`src/data/career.ts`).
-- **Campus** — Puerta de Alcalá, Cibeles, the bear and the madroño and a café desk on the Madrid side; the Capitol dome, a water tower, a pumpjack, a longhorn and a CS lab bench on the Texas side, with a globe on the meridian between them.
-- **Factory floor** — moving garment rails, shoe conveyors, stockroom shelving, dense hanger aisles, a packing bench and a photo studio, plus a side panel about the fashion-industry software. Panel photos live in `public/vice-resell/` and are wired up in `src/data/viceResell.ts`.
-- **Hobbies lounge** — an electric guitar on its stand with an amp, a family tree painted on the wall and one framed memory per story. Drop photos in `public/hobbies/` and set each memory's `src` in `src/data/hobbies.ts`; a frame paints a placeholder until then.
-
-The `lofi` button (bottom right) plays a lofi loop synthesised in the browser with the Web Audio API (`src/lib/lofi.ts`) — seventh chords, a soft kick/hat and vinyl crackle, no audio file and nothing to license. It starts muted and keeps playing across rooms.
-
-Keyboard: `1`–`8` jump to a station, `1` toggles the panel inside a scene, `WASD`/arrows walk relative to the camera, `Esc` closes a panel or leaves a scene. Mobile falls back to a linear list, and `/cv` is a plain recruiter-friendly résumé.
+All chapters share a single WebGL canvas: only the active chapter's figure is mounted, and the scroll progress reaches it through a ref, so scrolling never re-renders React. The header is fixed, with everything else — sections, GitHub, LinkedIn, CV and email — behind the hamburger. `/cv` is a plain, printable recruiter-facing résumé.
 
 ## Stack
 
@@ -40,6 +30,6 @@ npm run lint
 npm run build
 ```
 
-## The lobby agent
+## The CV agent
 
-"Ask the agent" talks to `/api/agent`, which prompts an OpenAI model with a dossier built from the site's own data (`src/data/agentContext.ts`). Set `OPENAI_API_KEY` in `.env.local` locally and in the hosting provider's environment variables for production; without it the route replies in demo mode and the room falls back to scripted answers.
+The "Ask the agent" chapter talks to `/api/agent`, which prompts an OpenAI model with a dossier built from the site's own data (`src/data/agentContext.ts`), capped at five questions per visit. Set `OPENAI_API_KEY` in `.env.local` locally and in the hosting provider's environment variables for production; without it the route replies in demo mode and the chapter falls back to scripted answers.

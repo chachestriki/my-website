@@ -12,7 +12,7 @@ export default function CvPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-14 print:py-0">
       <Link href="/" className="font-mono text-xs text-teal hover:underline print:hidden">
-        ← back to the lobby
+        ← back to JD Portfolio
       </Link>
 
       <header className="mt-6 border-b border-brass/25 pb-5">
