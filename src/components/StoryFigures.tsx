@@ -1,16 +1,15 @@
 "use client";
 
-import { useMemo, useRef, type RefObject } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { createContext, useContext, useMemo, useRef, type RefObject } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, OrthographicCamera } from "@react-three/drei";
-import { Group, InstancedMesh, MathUtils, Mesh, Object3D } from "three";
+import { Group, MathUtils, Mesh } from "three";
 
 export type FigureId =
-  | "monument"
+  | "garments"
   | "rings"
   | "bridge"
   | "ledger"
-  | "crowd"
   | "wave"
   | "rack"
   | "arc"
@@ -23,6 +22,9 @@ const PAPER = "#f7f5f1";
 
 type P = { p: RefObject<number> };
 
+/** on a dark chapter the ink parts would vanish, so they are painted in paper instead */
+const OnDark = createContext(false);
+
 /** deterministic pseudo-random, so the geometry is identical on every render */
 function rand(seed: number) {
   const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
@@ -30,32 +32,56 @@ function rand(seed: number) {
 }
 
 /** the one canvas for the whole page: the active chapter decides which figure is mounted */
-export default function StoryFigures({ figure, p }: { figure: FigureId; p: RefObject<number> }) {
+export default function StoryFigures({
+  figure,
+  p,
+  onDark = false,
+}: {
+  figure: FigureId;
+  p: RefObject<number>;
+  onDark?: boolean;
+}) {
   return (
     <Canvas dpr={[1, 1.75]} gl={{ antialias: true, alpha: true }}>
-      <OrthographicCamera makeDefault position={[3.4, 3.2, 6]} zoom={78} near={-50} far={80} />
+      <FitCamera />
       <hemisphereLight args={["#ffffff", "#c9c4bb", 1.1]} />
       <directionalLight position={[4, 6, 5]} intensity={1.5} />
       <directionalLight position={[-5, 2, -3]} intensity={0.5} color={BRASS} />
-      <Float speed={1.1} rotationIntensity={0.14} floatIntensity={0.3}>
-        <Figure figure={figure} p={p} />
-      </Float>
+      <OnDark.Provider value={onDark}>
+        <Float speed={1.1} rotationIntensity={0.14} floatIntensity={0.3}>
+          <Figure figure={figure} p={p} />
+        </Float>
+      </OnDark.Provider>
     </Canvas>
+  );
+}
+
+/** the figures span roughly 8 world units, so the zoom follows the smaller canvas side */
+function FitCamera() {
+  const { size } = useThree();
+  const zoom = MathUtils.clamp(Math.min(size.width, size.height) / 8.5, 22, 92);
+  return (
+    <OrthographicCamera
+      makeDefault
+      position={[3.4, 3.2, 6]}
+      zoom={zoom}
+      near={-50}
+      far={80}
+      onUpdate={(c) => c.lookAt(0, 0, 0)}
+    />
   );
 }
 
 function Figure({ figure, p }: { figure: FigureId; p: RefObject<number> }) {
   switch (figure) {
-    case "monument":
-      return <Monument p={p} />;
+    case "garments":
+      return <Garments p={p} />;
     case "rings":
       return <Rings p={p} />;
     case "bridge":
       return <Bridge p={p} />;
     case "ledger":
       return <Ledger p={p} />;
-    case "crowd":
-      return <Crowd p={p} />;
     case "wave":
       return <Wave p={p} />;
     case "rack":
@@ -67,35 +93,23 @@ function Figure({ figure, p }: { figure: FigureId; p: RefObject<number> }) {
     case "send":
       return <Send p={p} />;
     default:
-      return <Monument p={p} />;
+      return <Rings p={p} />;
   }
 }
 
-/* ---------------- hero: the whole career as one floating object ----------------
-   a hotel on a torn slab, ringed by rails of hangers and clothes, turning on its
-   vertical axis; scrolling lifts the rails and opens the rings out                */
-function Monument({ p }: P) {
+/* ---------------- vice resell: rails of hangers and clothes turning in the air ----------------
+   scrolling pulls the two rails apart and opens them out                                        */
+function Garments({ p }: P) {
   const spin = useRef<Group>(null);
   const rails = useRef<Group>(null);
   const ease = useEased(p);
 
-  const windows = useMemo(
+  const pieces = useMemo(
     () =>
-      Array.from({ length: 5 * 4 * 2 }, (_, i) => {
-        const floor = Math.floor(i / 8);
-        const col = i % 4;
-        const side = i % 8 < 4 ? 1 : -1;
-        return { floor, col, side, lit: rand(i) > 0.35 };
-      }),
-    [],
-  );
-
-  const garments = useMemo(
-    () =>
-      Array.from({ length: 22 }, (_, i) => ({
+      Array.from({ length: 24 }, (_, i) => ({
         ring: i % 2,
-        angle: (i / 11) * Math.PI * 2 + (i % 2) * 0.28,
-        drop: 0.55 + rand(i + 40) * 0.5,
+        angle: (i / 12) * Math.PI * 2 + (i % 2) * 0.26,
+        drop: 0.6 + rand(i + 40) * 0.55,
         brass: i % 5 === 0,
       })),
     [],
@@ -103,70 +117,42 @@ function Monument({ p }: P) {
 
   useFrame((state, delta) => {
     const v = ease(delta);
-    if (spin.current) spin.current.rotation.y = state.clock.elapsedTime * 0.28;
+    if (spin.current) spin.current.rotation.y = state.clock.elapsedTime * 0.26;
     if (rails.current) {
       rails.current.children.forEach((c, i) => {
         const dir = i === 0 ? 1 : -1;
-        c.position.y = dir * (0.6 + v * 0.9);
+        c.position.y = dir * (0.5 + v * 1.1);
         c.rotation.y = state.clock.elapsedTime * 0.5 * dir;
-        c.scale.setScalar(1 + v * 0.18);
+        c.scale.setScalar(1 + v * 0.2);
       });
     }
   });
 
   return (
-    <group ref={spin} position={[0, -0.2, 0]}>
-      {/* torn slab the whole thing floats on */}
-      <mesh position={[0, -1.5, 0]}>
-        <cylinderGeometry args={[2.3, 1.1, 0.7, 7]} />
-        <Metal color={INK} rough={0.85} />
+    <group ref={spin}>
+      {/* the pole the rails hang from */}
+      <mesh>
+        <cylinderGeometry args={[0.05, 0.05, 4.4, 16]} />
+        <Metal color={BRASS} />
       </mesh>
-
-      {/* the hotel */}
-      <group position={[0, 0.35, 0]}>
-        <mesh>
-          <boxGeometry args={[1.5, 2.6, 1.5]} />
-          <Metal color={PAPER} rough={0.65} />
-        </mesh>
-        <mesh position={[0, 1.55, 0]}>
-          <coneGeometry args={[1.25, 0.6, 4]} />
+      {[1, -1].map((s) => (
+        <mesh key={s} position={[0, s * 2.25, 0]}>
+          <sphereGeometry args={[0.16, 24, 16]} />
           <Metal color={BRASS} />
         </mesh>
-        <mesh position={[0, -1.15, 0.78]}>
-          <boxGeometry args={[0.55, 0.9, 0.08]} />
-          <Metal color={BRASS} />
-        </mesh>
-        {windows.map((w, i) => (
-          <mesh
-            key={i}
-            position={[-0.5 + w.col * 0.33, -0.85 + w.floor * 0.5, w.side * 0.77]}
-          >
-            <boxGeometry args={[0.2, 0.26, 0.04]} />
-            <meshStandardMaterial
-              color={w.lit ? BRASS : INK}
-              emissive={w.lit ? BRASS : "#000000"}
-              emissiveIntensity={w.lit ? 0.5 : 0}
-              roughness={0.4}
-            />
-          </mesh>
-        ))}
-      </group>
+      ))}
 
-      {/* rails of hangers orbiting the building */}
       <group ref={rails}>
-        {[2.6, 3.3].map((radius, r) => (
+        {[2.1, 2.8].map((radius, r) => (
           <group key={radius}>
             <mesh rotation={[Math.PI / 2, 0, 0]}>
               <torusGeometry args={[radius, 0.035, 12, 96]} />
               <Metal color={BRASS} />
             </mesh>
-            {garments
+            {pieces
               .filter((g) => g.ring === r)
               .map((g, i) => (
-                <group
-                  key={i}
-                  position={[Math.cos(g.angle) * radius, 0, Math.sin(g.angle) * radius]}
-                >
+                <group key={i} position={[Math.cos(g.angle) * radius, 0, Math.sin(g.angle) * radius]}>
                   <mesh position={[0, -0.18, 0]} rotation={[Math.PI / 2, 0, 0]}>
                     <torusGeometry args={[0.12, 0.018, 8, 24]} />
                     <Metal color={BRASS} />
@@ -194,7 +180,9 @@ function useEased(p: RefObject<number>) {
 }
 
 function Metal({ color = INK, rough = 0.32 }: { color?: string; rough?: number }) {
-  return <meshStandardMaterial color={color} roughness={rough} metalness={color === BRASS ? 0.75 : 0.25} />;
+  const onDark = useContext(OnDark);
+  const c = onDark && color === INK ? "#cfd3d8" : color;
+  return <meshStandardMaterial color={c} roughness={rough} metalness={c === BRASS ? 0.75 : 0.25} />;
 }
 
 /* ---------------- hero: two rings locking into one mark ---------------- */
@@ -316,66 +304,6 @@ function Ledger({ p }: P) {
   );
 }
 
-/* ---------------- one seller becomes a community ---------------- */
-function Crowd({ p }: P) {
-  const mesh = useRef<InstancedMesh>(null);
-  const dummy = useMemo(() => new Object3D(), []);
-  const count = 160;
-  const seeds = useMemo(
-    () =>
-      Array.from({ length: count }, (_, i) => {
-        const golden = Math.acos(1 - (2 * (i + 0.5)) / count);
-        const theta = Math.PI * (1 + Math.sqrt(5)) * i;
-        return {
-          target: [
-            Math.sin(golden) * Math.cos(theta) * 2,
-            Math.sin(golden) * Math.sin(theta) * 2,
-            Math.cos(golden) * 2,
-          ] as const,
-          scatter: [
-            (rand(i) - 0.5) * 9,
-            (rand(i + 101) - 0.5) * 7,
-            (rand(i + 211) - 0.5) * 9,
-          ] as const,
-        };
-      }),
-    [],
-  );
-  const ease = useEased(p);
-
-  useFrame((state, delta) => {
-    const v = ease(delta);
-    if (!mesh.current) return;
-    mesh.current.rotation.y = state.clock.elapsedTime * 0.12;
-    seeds.forEach((s, i) => {
-      const k = MathUtils.clamp(v * 1.5 - (i / count) * 0.5, 0, 1);
-      dummy.position.set(
-        MathUtils.lerp(s.scatter[0], s.target[0], k),
-        MathUtils.lerp(s.scatter[1], s.target[1], k),
-        MathUtils.lerp(s.scatter[2], s.target[2], k),
-      );
-      dummy.scale.setScalar(0.05 + k * 0.055);
-      dummy.updateMatrix();
-      mesh.current?.setMatrixAt(i, dummy.matrix);
-    });
-    mesh.current.instanceMatrix.needsUpdate = true;
-  });
-
-  return (
-    <group>
-      <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-        <icosahedronGeometry args={[1, 0]} />
-        <Metal color={BRASS} rough={0.4} />
-      </instancedMesh>
-      <mesh>
-        <sphereGeometry args={[1.25, 40, 40]} />
-        <Metal color={INK} rough={0.5} />
-      </mesh>
-    </group>
-  );
-}
-
-/* ---------------- speech turning into structure ---------------- */
 function Wave({ p }: P) {
   const bars = useRef<Group>(null);
   const ease = useEased(p);
