@@ -25,6 +25,7 @@ type Chapter = {
   metrics?: { value: string; label: string }[];
   bullets?: string[];
   tags?: string[];
+  link?: { label: string; href: string };
 };
 
 const BLACK: Theme = { bg: "#0a0b0d", fg: "#f4f2ee", accent: "#c9a260", dark: true };
@@ -42,6 +43,7 @@ const roleChapter = (
   figure: FigureId,
   theme: Theme,
   metrics?: Chapter["metrics"],
+  link?: Chapter["link"],
 ): Chapter => {
   const r = roles.find((role) => role.id === id);
   if (!r) throw new Error(`unknown role ${id}`);
@@ -56,14 +58,21 @@ const roleChapter = (
     metrics,
     bullets: r.highlights,
     tags: r.stack,
+    link,
   };
 };
 
 function buildChapters(
   t: Copy,
-  data: { roles: Role[]; skills: { group: string; items: string[] }[]; education: { school: string; place: string; degree: string }[]; profile: { location: string } },
+  data: {
+    roles: Role[];
+    skills: { group: string; items: string[] }[];
+    education: { school: string; place: string; degree: string }[];
+    profile: { location: string };
+    projects: { id: string; link?: { label: string; href: string } }[];
+  },
 ): Chapter[] {
-  const { roles, skills, education, profile } = data;
+  const { roles, skills, education, profile, projects } = data;
   return [
     roleChapter(roles, "room-mate", "bridge", PURPLE, [
       { value: "4.5M", label: t.guestsReached },
@@ -71,11 +80,18 @@ function buildChapters(
       { value: "3 yrs", label: t.yearsIntegrations },
     ]),
     roleChapter(roles, "mastel", "ledger", DEEP_PURPLE),
-    roleChapter(roles, "vice-resell", "garments", YELLOW, [
-      { value: "6,000+", label: t.users },
-      { value: "5.0 ★", label: t.reviews },
-      { value: "3", label: t.marketplaces },
-    ]),
+    roleChapter(
+      roles,
+      "vice-resell",
+      "garments",
+      YELLOW,
+      [
+        { value: "6,000+", label: t.users },
+        { value: "5.0 ★", label: t.reviews },
+        { value: "3", label: t.marketplaces },
+      ],
+      projects.find((p) => p.id === "vice-resell")?.link,
+    ),
     roleChapter(roles, "odyn", "wave", TEAL),
     roleChapter(roles, "lenovo", "rack", SLATE),
     {
@@ -333,6 +349,17 @@ export default function ScrollStory() {
                     </li>
                   ))}
                 </ul>
+              )}
+
+              {c.link && (
+                <a
+                  href={c.link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 inline-flex items-center gap-2 rounded-full border border-current/30 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] transition hover:text-[color:var(--chapter-accent)]"
+                >
+                  {c.link.label} <span aria-hidden>↗</span>
+                </a>
               )}
 
               {c.id === "agent" && (
