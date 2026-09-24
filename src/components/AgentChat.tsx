@@ -84,22 +84,25 @@ export default function AgentChat() {
   const asked = new Set(log.filter((l) => l.role === "user").map((l) => l.content));
 
   return (
-    <div className="space-y-3 rounded-2xl border border-ink/10 bg-card/80 p-4 backdrop-blur">
+    <div className="space-y-3 rounded-2xl border border-current/15 bg-current/5 p-4 backdrop-blur">
       <div
         ref={feed}
         className="max-h-56 space-y-3 overflow-y-auto pr-1"
         aria-live="polite"
       >
         {log.map((l, i) => (
-          <p key={i} className={l.role === "assistant" ? "text-sm text-ink/85" : "text-sm text-brass"}>
-            <span className="mr-2 font-mono text-[10px] uppercase tracking-widest text-ink/35">
+          <p
+            key={i}
+            className={l.role === "assistant" ? "text-sm opacity-85" : "text-sm text-[color:var(--chapter-accent)]"}
+          >
+            <span className="mr-2 font-mono text-[10px] uppercase tracking-widest opacity-50">
               {l.role === "assistant" ? "agent" : "you"}
             </span>
             {l.content}
           </p>
         ))}
         {pending && (
-          <p className="font-mono text-[10px] uppercase tracking-widest text-ink/35">agent is typing…</p>
+          <p className="font-mono text-[10px] uppercase tracking-widest opacity-50">agent is typing…</p>
         )}
       </div>
 
@@ -116,32 +119,35 @@ export default function AgentChat() {
           disabled={spent}
           placeholder={spent ? "Question limit reached" : "Ask about his stack, a project…"}
           aria-label="Ask the agent a question"
-          className="min-w-0 flex-1 rounded-full border border-ink/15 bg-background px-4 py-2 text-sm outline-none placeholder:text-ink/35 focus:border-brass disabled:opacity-50"
+          className="min-w-0 flex-1 rounded-full border border-current/20 bg-transparent px-4 py-2 text-sm outline-none placeholder:opacity-50 focus:border-[color:var(--chapter-accent)] disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={pending || spent || !input.trim()}
-          className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-background transition hover:bg-brass disabled:opacity-40"
+          className="rounded-full bg-[color:var(--chapter-fg)] px-4 py-2 text-sm font-semibold text-[color:var(--chapter-bg)] transition hover:opacity-80 disabled:opacity-40"
         >
           Ask
         </button>
       </form>
 
       {spent ? (
-        <p className="text-sm text-ink/70">
+        <p className="text-sm opacity-80">
           That&apos;s the {MAX_QUESTIONS}-question limit for one visit.{" "}
-          <a href="/cv" className="text-brass underline-offset-4 hover:underline">
+          <a href="/cv" className="text-[color:var(--chapter-accent)] underline-offset-4 hover:underline">
             Read the CV
           </a>{" "}
           or write to{" "}
-          <a href={`mailto:${profile.email}`} className="text-brass underline-offset-4 hover:underline">
+          <a
+            href={`mailto:${profile.email}`}
+            className="text-[color:var(--chapter-accent)] underline-offset-4 hover:underline"
+          >
             {profile.email}
           </a>
           .
         </p>
       ) : (
         <>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-ink/35">
+          <p className="font-mono text-[10px] uppercase tracking-widest opacity-50">
             {left} question{left === 1 ? "" : "s"} left
           </p>
           <div className="flex flex-wrap gap-2">
@@ -152,7 +158,7 @@ export default function AgentChat() {
                   key={qa.q}
                   onClick={() => void ask(qa.q)}
                   disabled={pending}
-                  className="rounded-full border border-ink/15 px-3 py-1.5 text-xs text-ink/70 transition hover:border-brass hover:text-brass disabled:opacity-40"
+                  className="rounded-full border border-current/20 px-3 py-1.5 text-xs opacity-80 transition hover:border-[color:var(--chapter-accent)] hover:text-[color:var(--chapter-accent)] disabled:opacity-40"
                 >
                   {qa.q}
                 </button>
