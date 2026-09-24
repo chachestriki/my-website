@@ -7,8 +7,17 @@ export const profile = {
   tagline:
     "I build the plumbing between systems that were never meant to talk to each other.",
   summary:
-    "Full-stack software engineer specializing in backend systems, hospitality integrations, and payment automation. I design scalable APIs and distributed services with Python, Docker, Kubernetes, PostgreSQL and cloud infrastructure — and increasingly, I put LLM agents on top of them.",
+    "Backend-leaning full-stack engineer working on hospitality integrations, payment automation and LLM tooling. I connect Opera Cloud (OHIP), Salesforce and FreedomPay with idempotent Python services on Kubernetes, and expose them to AI agents through MCP. Before that I founded and sold Vice Resell, a resale automation platform with 6,000+ users.",
+  github: "https://github.com/chachestriki",
+  /** empty until the profile URL is confirmed; the nav hides the link while it is */
+  linkedin: "",
+  site: "https://jdlabajos.com",
 };
+
+export const languages = [
+  { name: "Spanish", level: "native" },
+  { name: "English", level: "bilingual — B.S. completed at Texas A&M" },
+];
 
 export type Role = {
   id: string;
@@ -27,11 +36,12 @@ export const roles: Role[] = [
     role: "Full Stack Software Engineer",
     period: "2026 – Present",
     summary:
-      "Enterprise hospitality integrations across the Oracle Opera Cloud ecosystem (OHIP) and Salesforce CRM, owning the architecture that connects PMS and CRM platforms.",
+      "Own the integration architecture between Oracle Opera Cloud (OHIP) and Salesforce CRM for the group's hotels, and the AI tooling layer on top of it.",
     highlights: [
-      "Designed and owned the integration architecture between Oracle Opera Cloud PMS (OHIP) and Salesforce CRM: real-time sync of guest profiles, reservations, loyalty data and customer lifecycle information.",
-      "Built an MCP tool layer exposing hotel operational systems to LLM agents via structured APIs, enabling agent-driven booking, guest and service operations.",
-      "Integrated ElevenLabs voice agents into hotel operations for real-time conversational staff-facing and guest-facing interfaces.",
+      "Own the Opera Cloud (OHIP) ↔ Salesforce integration: guest profiles, reservations and loyalty data synced in real time instead of by hand.",
+      "Built an MCP server that turns Oracle's official OpenAPI specs into 3,000+ permissioned tools, so LLM agents can run booking and guest operations without ever seeing the OAuth credentials.",
+      "Shipped ElevenLabs voice agents on top of that tool layer for staff- and guest-facing conversational flows.",
+      "Built streaming consumers for OTA reservation flows (Booking, Expedia, Hotelbeds, Mirai, Keytel) into Opera, with hashing and offset tracking so replays never double-book.",
     ],
     stack: ["Python", "OHIP", "Salesforce", "MCP", "ElevenLabs", "OCI"],
   },
@@ -41,11 +51,11 @@ export const roles: Role[] = [
     role: "Full Stack Software Engineer",
     period: "2023 – 2026",
     summary:
-      "Automation and payment systems for international hotel chains including Marriott, Atlantis and Pestana, focused on reservations and guest profile workflows.",
+      "Payment and reservation automation for international hotel chains including Marriott, Atlantis and Pestana.",
     highlights: [
-      "Designed Python services for credit-card check-in and deposit capture between FreedomPay and Opera Cloud PMS.",
-      "Built idempotent REST APIs and event-driven jobs (Docker + Kubernetes on OCI) for real-time reconciliation.",
-      "Created invoice and tax automation pipelines for hospitality groups including Homa Apartments and Pestana Hotels.",
+      "Automated credit-card check-in and deposit capture between FreedomPay and Opera Cloud, removing manual card handling at the front desk.",
+      "Built idempotent REST APIs and event-driven jobs (Docker + Kubernetes on OCI) that reconcile payments against folios in real time.",
+      "Shipped invoicing and tax pipelines for Homa Apartments and Pestana Hotels, replacing spreadsheet-based month-end work.",
     ],
     stack: ["Python", "FastAPI", "Kubernetes", "FreedomPay", "Opera Cloud", "PostgreSQL"],
   },
@@ -55,13 +65,14 @@ export const roles: Role[] = [
     role: "Founder / CTO",
     period: "2023 – 2026",
     summary:
-      "An AI-driven marketplace automation platform serving 10,000+ users — pricing recommendations, listing generation and negotiation messaging.",
+      "Founded, built and sold the resale automation platform behind Spain's largest reselling community: 6,000+ users, listing generation, pricing and negotiation messaging.",
     highlights: [
-      "Shipped LLM-powered systems combining OpenAI APIs with rule-based guardrails for reliability and controllability in production.",
-      "Engineered automation pipelines for listing generation, pricing optimization and messaging workflows.",
-      "Grew to 10,000+ users before acquisition.",
+      "Grew it to 6,000+ paying users and the biggest reselling community in Spain (5.0 ★ over 426 public reviews) before the 2026 acquisition.",
+      "Automated the marketplaces end to end — Vinted, Wallapop and Vestiaire — with a Chrome extension and crosslisting backend that publish, reprice and message from one inventory.",
+      "Built a RAG pipeline (FAISS over cleaned marketplace data + GPT-4 vision) that fills title, description, brand, category, colours and price from a photo.",
+      "Kept LLM output behind deterministic price and inventory checks, because generated text should never be the last thing between a user and their money.",
     ],
-    stack: ["Python", "OpenAI API", "Marketplace APIs", "Automation"],
+    stack: ["Python", "FastAPI", "FAISS", "OpenAI API", "Next.js", "Supabase", "Chrome MV3"],
   },
   {
     id: "odyn",
@@ -69,18 +80,31 @@ export const roles: Role[] = [
     role: "Sales Engineer (Remote)",
     period: "2022 – 2023",
     summary:
-      "Supported development and deployment of a speech-to-text and meeting summarisation product with Zoom and Teams integrations.",
+      "Technical side of a Silicon Valley call-intelligence product: speech-to-text and meeting analysis across Zoom, Google Meet and Microsoft Teams.",
     highlights: [
-      "Ran technical deployments and integration work for Zoom/Teams customers.",
-      "Bridged customer requirements and the engineering roadmap for STT pipelines.",
+      "Ran deployments and integration work for customers on three meeting platforms.",
+      "Turned what customers asked for in demos into requirements for the STT and sentiment pipelines.",
     ],
     stack: ["Speech-to-text", "Zoom API", "Teams API"],
+  },
+  {
+    id: "lenovo",
+    company: "Lenovo",
+    role: "Infrastructure Sales",
+    period: "2021",
+    summary:
+      "Data-centre infrastructure sales: servers, storage and networking for enterprise customers.",
+    highlights: [
+      "Sized and quoted server, storage and networking configurations against customer workloads.",
+      "First exposure to enterprise IT and to the buyers I now build integrations for.",
+    ],
+    stack: ["Data-centre infrastructure", "Enterprise IT"],
   },
 ];
 
 export const skills: { group: string; items: string[] }[] = [
   { group: "Backend", items: ["Python", "FastAPI", ".NET", "Flask", "REST APIs", "OAuth2"] },
-  { group: "Frontend", items: ["Angular", "JavaScript", "TypeScript"] },
+  { group: "Frontend", items: ["Angular", "Next.js", "JavaScript", "TypeScript"] },
   {
     group: "Infrastructure",
     items: ["Docker", "Kubernetes", "CI/CD", "Microservices", "Kafka"],
@@ -98,7 +122,7 @@ export const skills: { group: string; items: string[] }[] = [
       "MCP tool systems",
       "LLM agent workflows",
       "ElevenLabs speech pipelines",
-      "Retrieval pipelines",
+      "RAG / FAISS vector search",
     ],
   },
 ];
@@ -112,7 +136,7 @@ export const education = [
   {
     school: "Universidad Carlos III",
     place: "Madrid, ESP",
-    degree: "B.S. Management & Technology",
+    degree: "B.S. Management & Technology — thesis on Instagram bot detection",
   },
 ];
 
@@ -225,7 +249,7 @@ export const boardNodes: BoardNode[] = [
     y: 38,
     roleId: "vice-resell",
     blurb:
-      "Where it started: resale marketplaces automated end-to-end — listing generation, pricing optimization and negotiation messaging for 10,000+ users.",
+      "Where it started: resale marketplaces automated end-to-end — listing generation, pricing optimization and negotiation messaging for 6,000+ users.",
   },
 ];
 

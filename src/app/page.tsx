@@ -1,5 +1,5 @@
-import LobbyScene from "@/components/LobbyScene";
+import ScrollStory from "@/components/ScrollStory";
 
 export default function Home() {
-  return <LobbyScene />;
+  return <ScrollStory />;
 }

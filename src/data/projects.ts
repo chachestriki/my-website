@@ -23,13 +23,13 @@ export const projects: Project[] = [
     period: "2023 – 2026 · acquired",
     tag: "Resale automation + Spain's biggest reselling community",
     blurb:
-      "Marketplace automation for 10,000+ resellers: listings from photos, pricing off live comparables and negotiation messaging, sold as a €20/month community on Whop.",
+      "Marketplace automation for 6,000+ resellers: listings from photos, pricing off live comparables and negotiation messaging, sold as a €20/month community on Whop.",
     bullets: [
       "Python around OpenAI APIs with deterministic price and inventory guardrails.",
       "Apparel data: sizing and colourway normalisation, condition grading, counterfeit signals.",
       "5.0 ★ over 426 public reviews; acquired in 2026.",
     ],
-    stat: { value: "10,000+", label: "resellers on the platform" },
+    stat: { value: "6,000+", label: "resellers on the platform" },
     link: { label: "Whop listing", href: "https://whop.com/vice-resell/products/vice-resell/" },
     color: "#ff2fa0",
     scene: "factory",
@@ -67,6 +67,48 @@ export const projects: Project[] = [
     stat: { value: "2", label: "classes: bot or human" },
     color: "#2ecf9f",
     scene: "botlab",
+  },
+];
+
+export type SideProject = {
+  id: string;
+  name: string;
+  tag: string;
+  body: string;
+  stack: string[];
+  /** only set when the repository is public */
+  href?: string;
+};
+
+/** the engineering work that lives in repos rather than in the 3D world */
+export const engineering: SideProject[] = [
+  {
+    id: "opera-mcp",
+    name: "OperaMCP",
+    tag: "MCP server for Oracle Hospitality",
+    body: "Generates 3,000+ LLM-callable tools straight from Oracle's official OHIP / Opera Cloud OpenAPI specs — semantic tool names, OAuth2 and required headers handled server-side, so the AI client never touches a credential.",
+    stack: ["Python", "MCP", "OpenAPI", "OAuth2", "Docker"],
+  },
+  {
+    id: "ohip-streaming",
+    name: "OTA streaming ingestion",
+    tag: "Booking, Expedia, Hotelbeds, Mirai, Keytel → Opera Cloud",
+    body: "Streaming consumers that take reservation events from five OTAs into Opera Cloud: one router per channel, payload minimisation, hashing and offset tracking so a replayed event never creates a duplicate booking.",
+    stack: ["Python", "Streaming APIs", "Opera Cloud", "Docker"],
+  },
+  {
+    id: "rag-listing",
+    name: "RAG listing pipeline",
+    tag: "Photo in, marketplace listing out",
+    body: "Cleans marketplace product data into a FAISS index plus a SQLite lookup, and serves it as a FastAPI vector-search service that grounds GPT-4 when it writes title, description, brand, category, colours and price for a garment.",
+    stack: ["Python", "FastAPI", "FAISS", "SQLite", "GPT-4 vision"],
+  },
+  {
+    id: "crosslister",
+    name: "Vinted crosslister + Chrome extension",
+    tag: "One inventory, three marketplaces",
+    body: "Next.js workspace (Supabase auth, R2 photo storage, job queue) plus an MV3 extension with per-marketplace workflows that publishes and syncs the same item across Vinted, Wallapop and Vestiaire.",
+    stack: ["TypeScript", "Next.js", "Supabase", "Chrome MV3", "R2"],
   },
 ];
 
