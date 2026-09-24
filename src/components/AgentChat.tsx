@@ -2,67 +2,40 @@
 
 import { useEffect, useRef, useState } from "react";
 import { profile } from "@/data/cv";
+import { useLanguage } from "@/components/LanguageProvider";
 
 /** questions allowed per visit, mirrored by /api/agent */
 const MAX_QUESTIONS = 5;
 
-const SUGGESTED: { q: string; a: string }[] = [
-  {
-    q: "What do you actually do all day?",
-    a: "I design and own integrations between hospitality systems: Opera Cloud PMS via OHIP, Salesforce CRM, FreedomPay. Concretely: schema mapping, OAuth2 plumbing, idempotency keys, event-driven reconciliation jobs on Kubernetes, and lately an MCP tool layer so LLM agents can execute those workflows.",
-  },
-  {
-    q: "What's the MCP tool layer about?",
-    a: "Hotel operations are locked behind clunky enterprise APIs. I expose them as structured, permissioned MCP tools, so an agent can look up a reservation, modify a profile, or trigger a service request through the same validated path a staff member would use — with guardrails and audit instead of free-form API access.",
-  },
-  {
-    q: "Tell me about Vice Resell.",
-    a: "I founded and was CTO of an AI-driven marketplace automation platform that reached 6,000+ users before it was acquired. LLM-powered pricing recommendations, listing generation and negotiation messaging — always paired with rule-based systems, because pure LLM output isn't reliable enough to touch money.",
-  },
-  {
-    q: "Hardest problem you've shipped?",
-    a: "Credit-card check-in and deposit capture between FreedomPay and Opera Cloud. Payments and PMS folios disagree constantly, retries are unavoidable, and double-charging a guest is unacceptable — so everything had to be idempotent and reconcilable in real time.",
-  },
-  {
-    q: "Are you available?",
-    a: `Based in Madrid, open to the right conversation. Email ${profile.email} and I'll reply.`,
-  },
-];
-
 type ChatTurn = { role: "user" | "assistant"; content: string };
 
-const OPENING: ChatTurn = {
-  role: "assistant",
-  content:
-    "I'm an agent Juan wired into this page — same idea as the ones he builds for hotel operations, only this one has read his CV. Ask me anything about his work.",
-};
-
-/** answers used when the live model can't be reached */
-function fallbackFor(question: string) {
-  const hit = SUGGESTED.find((qa) => qa.q.toLowerCase() === question.trim().toLowerCase());
-  return (
-    hit?.a ??
-    `The live agent is unreachable right now. Everything it would tell you is on this page and in the CV — and Juan answers directly at ${profile.email}.`
-  );
-}
-
 export default function AgentChat() {
-  const [log, setLog] = useState<ChatTurn[]>([OPENING]);
+  const { lang, t } = useLanguage();
+  const [log, setLog] = useState<ChatTurn[]>([]);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
   const feed = useRef<HTMLDivElement>(null);
+
+  const opening: ChatTurn = { role: "assistant", content: t.agentOpening };
+  const thread = log.length ? log : [opening];
+
+  /** answers used when the live model can't be reached */
+  const fallbackFor = (question: string) => {
+    const hit = t.suggested.find((qa) => qa.q.toLowerCase() === question.trim().toLowerCase());
+    return hit?.a ?? t.agentUnreachable(profile.email);
+  };
 
   useEffect(() => {
     feed.current?.scrollTo({ top: feed.current.scrollHeight, behavior: "smooth" });
   }, [log, pending]);
 
-  const left = MAX_QUESTIONS - log.filter((l) => l.role === "user").length;
+  const left = MAX_QUESTIONS - thread.filter((l) => l.role === "user").length;
   const spent = left <= 0;
 
   async function ask(question: string) {
     const text = question.trim();
     if (!text || pending || spent) return;
-    const next: ChatTurn[] = [...log, { role: "user", content: text }];
+    const next: ChatTurn[] = [...thread, { role: "user", content: text }];
     setLog(next);
     setInput("");
     setPending(true);
@@ -70,7 +43,7 @@ export default function AgentChat() {
       const res = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next.slice(1) }),
+        body: JSON.stringify({ messages: next.slice(1), lang }),
       });
       const data = (await res.json()) as { reply?: string };
       setLog((l) => [...l, { role: "assistant", content: data.reply ?? fallbackFor(text) }]);
@@ -81,7 +54,7 @@ export default function AgentChat() {
     }
   }
 
-  const asked = new Set(log.filter((l) => l.role === "user").map((l) => l.content));
+  const asked = new Set(thread.filter((l) => l.role === "user").map((l) => l.content));
 
   return (
     <div className="space-y-3 rounded-2xl border border-current/15 bg-current/5 p-4 backdrop-blur">
@@ -90,19 +63,19 @@ export default function AgentChat() {
         className="max-h-56 space-y-3 overflow-y-auto pr-1"
         aria-live="polite"
       >
-        {log.map((l, i) => (
+        {thread.map((l, i) => (
           <p
             key={i}
             className={l.role === "assistant" ? "text-sm opacity-85" : "text-sm text-[color:var(--chapter-accent)]"}
           >
             <span className="mr-2 font-mono text-[10px] uppercase tracking-widest opacity-50">
-              {l.role === "assistant" ? "agent" : "you"}
+              {l.role === "assistant" ? t.agentAgent : t.agentYou}
             </span>
             {l.content}
           </p>
         ))}
         {pending && (
-          <p className="font-mono text-[10px] uppercase tracking-widest opacity-50">agent is typing…</p>
+          <p className="font-mono text-[10px] uppercase tracking-widest opacity-50">{t.agentTyping}</p>
         )}
       </div>
 
@@ -117,8 +90,8 @@ export default function AgentChat() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={spent}
-          placeholder={spent ? "Question limit reached" : "Ask about his stack, a project…"}
-          aria-label="Ask the agent a question"
+          placeholder={spent ? t.agentPlaceholderSpent : t.agentPlaceholder}
+          aria-label={t.agentInputLabel}
           className="min-w-0 flex-1 rounded-full border border-current/20 bg-transparent px-4 py-2 text-sm outline-none placeholder:opacity-50 focus:border-[color:var(--chapter-accent)] disabled:opacity-50"
         />
         <button
@@ -126,17 +99,17 @@ export default function AgentChat() {
           disabled={pending || spent || !input.trim()}
           className="rounded-full bg-[color:var(--chapter-fg)] px-4 py-2 text-sm font-semibold text-[color:var(--chapter-bg)] transition hover:opacity-80 disabled:opacity-40"
         >
-          Ask
+          {t.agentAsk}
         </button>
       </form>
 
       {spent ? (
         <p className="text-sm opacity-80">
-          That&apos;s the {MAX_QUESTIONS}-question limit for one visit.{" "}
+          {t.agentSpent(MAX_QUESTIONS)}{" "}
           <a href="/cv" className="text-[color:var(--chapter-accent)] underline-offset-4 hover:underline">
-            Read the CV
+            {t.readCv}
           </a>{" "}
-          or write to{" "}
+          {t.agentOr}{" "}
           <a
             href={`mailto:${profile.email}`}
             className="text-[color:var(--chapter-accent)] underline-offset-4 hover:underline"
@@ -148,10 +121,10 @@ export default function AgentChat() {
       ) : (
         <>
           <p className="font-mono text-[10px] uppercase tracking-widest opacity-50">
-            {left} question{left === 1 ? "" : "s"} left
+            {t.agentLeft(left)}
           </p>
           <div className="flex flex-wrap gap-2">
-            {SUGGESTED.filter((qa) => !asked.has(qa.q))
+            {t.suggested.filter((qa) => !asked.has(qa.q))
               .slice(0, 3)
               .map((qa) => (
                 <button

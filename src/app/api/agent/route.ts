@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
-type Body = { messages?: unknown };
+type Body = { messages?: unknown; lang?: unknown };
 
 const MODEL = "gpt-4o-mini";
 const MAX_TURNS = 12;
@@ -37,10 +37,14 @@ export async function POST(request: Request) {
   const messages = parseMessages(body);
   if (!messages) return Response.json({ error: "invalid messages" }, { status: 400 });
 
+  const spanish = body.lang === "es";
+
   if (messages.filter((m) => m.role === "user").length > MAX_QUESTIONS) {
     return Response.json(
       {
-        reply: `That's the ${MAX_QUESTIONS}-question limit for one visit. The rest is in the CV — and Juan answers directly at ${profile.email}.`,
+        reply: spanish
+          ? `Ese es el límite de ${MAX_QUESTIONS} preguntas por visita. El resto está en el CV — y Juan responde directamente en ${profile.email}.`
+          : `That's the ${MAX_QUESTIONS}-question limit for one visit. The rest is in the CV — and Juan answers directly at ${profile.email}.`,
         limited: true,
       },
       { status: 429 }
@@ -50,7 +54,9 @@ export async function POST(request: Request) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) {
     return Response.json({
-      reply: `The live agent is off right now (no API key configured), so this is the scripted fallback. Everything it would tell you is on this site, and Juan answers directly at ${profile.email}.`,
+      reply: spanish
+        ? `El agente en vivo está apagado ahora mismo (no hay API key configurada), así que esta es la respuesta de reserva. Todo lo que te contaría está en esta web, y Juan responde directamente en ${profile.email}.`
+        : `The live agent is off right now (no API key configured), so this is the scripted fallback. Everything it would tell you is on this site, and Juan answers directly at ${profile.email}.`,
       demo: true,
     });
   }
@@ -62,7 +68,13 @@ export async function POST(request: Request) {
       model: MODEL,
       temperature: 0.4,
       max_tokens: 320,
-      messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+      messages: [
+        {
+          role: "system",
+          content: spanish ? `${SYSTEM_PROMPT}\n\nAlways answer in Spanish.` : SYSTEM_PROMPT,
+        },
+        ...messages,
+      ],
     }),
   });
 

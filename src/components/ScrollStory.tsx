@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import SiteNav from "@/components/SiteNav";
 import AgentChat from "@/components/AgentChat";
-import { education, profile, roles, skills } from "@/data/cv";
+import { useLanguage } from "@/components/LanguageProvider";
+import { contentFor, copy, type Copy } from "@/data/i18n";
+import type { Role } from "@/data/cv";
 import type { FigureId } from "@/components/StoryFigures";
 
 const StoryFigures = dynamic(() => import("@/components/StoryFigures"), { ssr: false });
@@ -34,19 +36,15 @@ const SLATE: Theme = { bg: "#1b1f25", fg: "#eceff3", accent: "#9fb4cc", dark: tr
 const BONE: Theme = { bg: "#efece5", fg: "#14171a", accent: "#8a6a33", dark: false };
 const INK: Theme = { bg: "#111316", fg: "#f2f1ef", accent: "#c9a260", dark: true };
 
-const byId = (id: string) => {
-  const role = roles.find((r) => r.id === id);
-  if (!role) throw new Error(`unknown role ${id}`);
-  return role;
-};
-
 const roleChapter = (
+  roles: Role[],
   id: string,
   figure: FigureId,
   theme: Theme,
   metrics?: Chapter["metrics"],
 ): Chapter => {
-  const r = byId(id);
+  const r = roles.find((role) => role.id === id);
+  if (!r) throw new Error(`unknown role ${id}`);
   return {
     id: r.id,
     nav: r.company,
@@ -61,73 +59,92 @@ const roleChapter = (
   };
 };
 
-const chapters: Chapter[] = [
-  roleChapter("room-mate", "bridge", PURPLE, [
-    { value: "4.5M", label: "guests reached" },
-    { value: "100+", label: "hotels" },
-    { value: "3 yrs", label: "of hospitality integrations" },
-  ]),
-  roleChapter("mastel", "ledger", DEEP_PURPLE),
-  roleChapter("vice-resell", "garments", YELLOW, [
-    { value: "6,000+", label: "users" },
-    { value: "5.0 ★", label: "over 426 reviews" },
-    { value: "3", label: "marketplaces automated" },
-  ]),
-  roleChapter("odyn", "wave", TEAL),
-  roleChapter("lenovo", "rack", SLATE),
-  {
-    id: "education",
-    nav: "Education",
-    figure: "arc",
-    theme: BONE,
-    eyebrow: "Education",
-    title: "Madrid and Texas, same arc",
-    lead: education.map((e) => `${e.degree} — ${e.school}, ${e.place}.`).join(" "),
-  },
-  {
-    id: "stack",
-    nav: "Stack",
-    figure: "lattice",
-    theme: INK,
-    eyebrow: "Toolkit",
-    title: "What I build with",
-    lead: "Backend-leaning, infrastructure-comfortable, and increasingly agent-shaped.",
-    tags: skills.flatMap((s) => s.items),
-  },
-  {
-    id: "agent",
-    nav: "Ask the agent",
-    figure: "rings",
-    theme: SLATE,
-    eyebrow: "Live demo",
-    title: "Ask an agent that read the CV",
-    lead: "An LLM grounded only in this site's data. Five questions per visit.",
-  },
-  {
-    id: "contact",
-    nav: "Contact",
-    figure: "send",
-    theme: BLACK,
-    eyebrow: "Contact",
-    title: "Let's talk",
-    lead: `${profile.location} · open to the right conversation.`,
-  },
-];
+function buildChapters(
+  t: Copy,
+  data: { roles: Role[]; skills: { group: string; items: string[] }[]; education: { school: string; place: string; degree: string }[]; profile: { location: string } },
+): Chapter[] {
+  const { roles, skills, education, profile } = data;
+  return [
+    roleChapter(roles, "room-mate", "bridge", PURPLE, [
+      { value: "4.5M", label: t.guestsReached },
+      { value: "100+", label: t.hotels },
+      { value: "3 yrs", label: t.yearsIntegrations },
+    ]),
+    roleChapter(roles, "mastel", "ledger", DEEP_PURPLE),
+    roleChapter(roles, "vice-resell", "garments", YELLOW, [
+      { value: "6,000+", label: t.users },
+      { value: "5.0 ★", label: t.reviews },
+      { value: "3", label: t.marketplaces },
+    ]),
+    roleChapter(roles, "odyn", "wave", TEAL),
+    roleChapter(roles, "lenovo", "rack", SLATE),
+    {
+      id: "education",
+      nav: t.educationNav,
+      figure: "arc",
+      theme: BONE,
+      eyebrow: t.educationEyebrow,
+      title: t.educationTitle,
+      lead: education.map((e) => `${e.degree} — ${e.school}, ${e.place}.`).join(" "),
+    },
+    {
+      id: "stack",
+      nav: t.stackNav,
+      figure: "lattice",
+      theme: INK,
+      eyebrow: t.stackEyebrow,
+      title: t.stackTitle,
+      lead: t.stackLead,
+      tags: skills.flatMap((s) => s.items),
+    },
+    {
+      id: "agent",
+      nav: t.agentNav,
+      figure: "rings",
+      theme: SLATE,
+      eyebrow: t.agentEyebrow,
+      title: t.agentTitle,
+      lead: t.agentLead,
+    },
+    {
+      id: "contact",
+      nav: t.contactNav,
+      figure: "send",
+      theme: BLACK,
+      eyebrow: t.contactEyebrow,
+      title: t.contactTitle,
+      lead: t.contactLead(profile.location),
+    },
+  ];
+}
 
-const navLinks = [{ id: "top", label: "Top" }, ...chapters.map((c) => ({ id: c.id, label: c.nav }))];
+/** ids, figures and themes never change with the language, so the scroll listener can read them once */
+const LAYOUT = buildChapters(copy.en, contentFor("en")).map((c) => ({
+  id: c.id,
+  figure: c.figure,
+  theme: c.theme,
+}));
 
 /** scroll-driven portfolio: the page repaints and the pinned figure animates as each chapter scrubs by */
 export default function ScrollStory() {
+  const { t, content } = useLanguage();
+  const profile = content.profile;
+  const chapters = useMemo(() => buildChapters(t, content), [t, content]);
+  const navLinks = useMemo(
+    () => [{ id: "top", label: t.navTop }, ...chapters.map((c) => ({ id: c.id, label: c.nav }))],
+    [t, chapters],
+  );
   const [figure, setFigure] = useState<FigureId | null>(null);
+  const [started, setStarted] = useState(false);
   const [onDark, setOnDark] = useState(true);
   const progress = useRef(0);
   const hero = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const ids = ["top", ...chapters.map((c) => c.id)];
-    const figures: (FigureId | null)[] = [null, ...chapters.map((c) => c.figure)];
-    const themes = [BLACK, ...chapters.map((c) => c.theme)];
+    const ids = ["top", ...LAYOUT.map((c) => c.id)];
+    const figures: (FigureId | null)[] = [null, ...LAYOUT.map((c) => c.figure)];
+    const themes = [BLACK, ...LAYOUT.map((c) => c.theme)];
     const root = document.documentElement;
     let frame = 0;
 
@@ -149,6 +166,7 @@ export default function ScrollStory() {
 
       progress.current = local;
       setFigure((f) => (f === figures[active] ? f : figures[active]));
+      if (figures[active]) setStarted(true);
       setScrolled(window.scrollY > 40);
 
       const t = themes[active];
@@ -228,26 +246,39 @@ export default function ScrollStory() {
                 href="/cv"
                 className="rounded-full bg-[color:var(--chapter-fg)] px-5 py-2.5 text-sm font-semibold text-[color:var(--chapter-bg)] transition hover:opacity-80"
               >
-                Read the CV
+                {t.readCv}
               </a>
               <a
                 href="#room-mate"
                 className="rounded-full border border-current/30 px-5 py-2.5 text-sm font-semibold transition hover:text-[color:var(--chapter-accent)]"
               >
-                Start the story
+                {t.startStory}
               </a>
             </div>
-            <p
-              className={`mt-12 font-mono text-[11px] uppercase tracking-[0.3em] opacity-50 transition-opacity duration-500 ${scrolled ? "opacity-0" : ""}`}
+            <div
+              className={`mt-12 flex flex-col items-center gap-2 transition-opacity duration-500 ${scrolled ? "opacity-0" : "opacity-50"}`}
             >
-              scroll
-            </p>
+              <p className="font-mono text-[11px] uppercase tracking-[0.3em]">{t.scroll}</p>
+              <svg
+                aria-hidden
+                viewBox="0 0 24 34"
+                className="scroll-arrow h-7 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 2v27" />
+                <path d="M4 21l8 8 8-8" />
+              </svg>
+            </div>
           </div>
         </div>
       </section>
 
       {/* the single canvas every chapter after the landing draws into */}
-      {figure && (
+      {started && (
         <div className="pointer-events-none fixed left-0 right-0 top-14 z-0 h-[30dvh] md:left-1/2 md:top-0 md:h-dvh md:w-1/2">
           <StoryFigures figure={figure} p={progress} onDark={onDark} />
         </div>

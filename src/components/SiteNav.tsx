@@ -3,19 +3,21 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { profile } from "@/data/cv";
+import { LanguageToggle, useLanguage } from "@/components/LanguageProvider";
 
 export type NavLink = { id: string; label: string };
 
-const EXTERNAL = [
-  { href: profile.github, label: "GitHub" },
-  { href: profile.linkedin, label: "LinkedIn" },
-  { href: "/cv", label: "CV" },
-  { href: `mailto:${profile.email}`, label: "Email" },
-].filter((l) => l.href.length > 0);
-
-/** fixed bar: the wordmark on the left, everything else behind the burger */
+/** fixed bar: the wordmark on the left, the language flag and the burger on the right */
 export default function SiteNav({ links }: { links: NavLink[] }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
+
+  const external = [
+    { href: profile.github, label: "GitHub" },
+    { href: profile.linkedin, label: "LinkedIn" },
+    { href: "/cv", label: t.cv },
+    { href: `mailto:${profile.email}`, label: t.email },
+  ].filter((l) => l.href.length > 0);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -31,20 +33,25 @@ export default function SiteNav({ links }: { links: NavLink[] }) {
           <a href="#top" className="font-semibold tracking-tight">
             JD <span className="text-[color:var(--chapter-accent)]">Portfolio</span>
           </a>
-          <button
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-            className="flex h-9 w-9 flex-col items-center justify-center gap-[5px] rounded-lg border border-current/20 transition hover:border-current/50"
-          >
-            <span
-              className={`h-[1.5px] w-4 bg-current transition-transform duration-300 ${open ? "translate-y-[6.5px] rotate-45" : ""}`}
-            />
-            <span className={`h-[1.5px] w-4 bg-current transition-opacity duration-200 ${open ? "opacity-0" : ""}`} />
-            <span
-              className={`h-[1.5px] w-4 bg-current transition-transform duration-300 ${open ? "-translate-y-[6.5px] -rotate-45" : ""}`}
-            />
-          </button>
+          <div className="flex items-center gap-2">
+            <LanguageToggle />
+            <button
+              aria-label={open ? t.closeMenu : t.openMenu}
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+              className="flex h-9 w-9 flex-col items-center justify-center gap-[5px] rounded-lg border border-current/20 transition hover:border-current/50"
+            >
+              <span
+                className={`h-[1.5px] w-4 bg-current transition-transform duration-300 ${open ? "translate-y-[6.5px] rotate-45" : ""}`}
+              />
+              <span
+                className={`h-[1.5px] w-4 bg-current transition-opacity duration-200 ${open ? "opacity-0" : ""}`}
+              />
+              <span
+                className={`h-[1.5px] w-4 bg-current transition-transform duration-300 ${open ? "-translate-y-[6.5px] -rotate-45" : ""}`}
+              />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -77,7 +84,7 @@ export default function SiteNav({ links }: { links: NavLink[] }) {
             </ul>
 
             <div className="mx-auto mt-10 flex w-full max-w-6xl flex-wrap gap-x-6 gap-y-2 border-t border-current/15 pt-6 font-mono text-xs uppercase tracking-widest opacity-70">
-              {EXTERNAL.map((e) => (
+              {external.map((e) => (
                 <a
                   key={e.label}
                   href={e.href}
