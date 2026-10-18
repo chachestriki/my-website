@@ -1,75 +1,99 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SchoolLogo } from "@/components/SchoolLogo";
 import { education, profile, roles, skills } from "@/data/cv";
+import { es } from "@/i18n/es";
+import { getLang } from "@/i18n/lang";
+import { ui } from "@/i18n/ui";
 
-export const metadata: Metadata = {
-  title: `CV — ${profile.name}`,
-  description: profile.summary,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  const person = lang === "es" ? es.profile : profile;
+  return { title: ui[lang].cv.title, description: person.summary };
+}
 
-export default function CvPage() {
+export default async function CvPage() {
+  const lang = await getLang();
+  const t = ui[lang].cv;
+  const person = lang === "es" ? es.profile : profile;
+
   return (
-    <main className="mx-auto max-w-3xl px-6 py-14 print:py-0">
-      <Link href="/" className="font-mono text-xs text-teal hover:underline print:hidden">
-        ← back to the lobby
-      </Link>
+    <>
+      <h1 className="page-title">{profile.name}</h1>
+      <p className="where">{person.title}</p>
+      <p>
+        {person.location}
+        {" · "}
+        <a href={`tel:${profile.phone.replace(/\s/g, "")}`}>{profile.phone}</a>
+        {" · "}
+        <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        {" · "}
+        <a href={profile.linkedin} target="_blank" rel="noreferrer">
+          LinkedIn
+        </a>
+        {" · "}
+        <a href={profile.github} target="_blank" rel="noreferrer">
+          GitHub
+        </a>
+      </p>
+      <p>{person.summary}</p>
+      <p className="hint">{t.print}</p>
 
-      <header className="mt-6 border-b border-brass/25 pb-5">
-        <h1 className="text-3xl font-semibold text-brass">{profile.name}</h1>
-        <p className="mt-1 text-sm uppercase tracking-widest text-ink/60">{profile.title}</p>
-        <p className="mt-3 font-mono text-xs text-ink/55">
-          {profile.location} · <a href={`tel:${profile.phone.replace(/\s/g, "")}`}>{profile.phone}</a> ·{" "}
-          <a href={`mailto:${profile.email}`} className="underline-offset-4 hover:underline">
-            {profile.email}
-          </a>
-        </p>
-        <p className="mt-4 text-sm leading-relaxed text-ink/80">{profile.summary}</p>
-      </header>
-
-      <section className="mt-8">
-        <h2 className="font-mono text-xs uppercase tracking-widest text-teal">Skills</h2>
-        <dl className="mt-3 space-y-2">
-          {skills.map((g) => (
-            <div key={g.group} className="flex flex-col gap-1 sm:flex-row sm:gap-4">
-              <dt className="w-40 shrink-0 font-mono text-xs uppercase text-ink/45">{g.group}</dt>
-              <dd className="text-sm text-ink/80">{g.items.join(" · ")}</dd>
+      <h2>{t.experience}</h2>
+      {roles.map((role) => {
+        const copy = lang === "es" ? es.roles[role.id as keyof typeof es.roles] : null;
+        return (
+          <article key={role.id}>
+            <div className="job-head">
+              <h3>
+                {role.company} — {copy?.role ?? role.role}
+              </h3>
+              <p className="when">{copy?.period ?? role.period}</p>
             </div>
-          ))}
-        </dl>
-      </section>
+            <ul>
+              {(copy?.highlights ?? role.highlights).map((highlight) => (
+                <li key={highlight}>{highlight}</li>
+              ))}
+            </ul>
+          </article>
+        );
+      })}
 
-      <section className="mt-10">
-        <h2 className="font-mono text-xs uppercase tracking-widest text-teal">Experience</h2>
-        <div className="mt-4 space-y-7">
-          {roles.map((r) => (
-            <article key={r.id}>
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h3 className="text-lg font-semibold text-brass">
-                  {r.company} <span className="text-ink/60">— {r.role}</span>
-                </h3>
-                <p className="font-mono text-xs text-ink/50">{r.period}</p>
-              </div>
-              <p className="mt-1 text-sm leading-relaxed text-ink/75">{r.summary}</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink/75 marker:text-brass/60">
-                {r.highlights.map((h) => (
-                  <li key={h}>{h}</li>
-                ))}
-              </ul>
-            </article>
+      <h2>{t.skills}</h2>
+      <table className="facts">
+        <tbody>
+          {skills.map((group) => (
+            <tr key={group.group}>
+              <th scope="row">{lang === "es" ? (es.skillGroups[group.group] ?? group.group) : group.group}</th>
+              <td>
+                {group.items
+                  .map((item) => (lang === "es" ? (es.skillItems[item] ?? item) : item))
+                  .join(" · ")}
+              </td>
+            </tr>
           ))}
-        </div>
-      </section>
+        </tbody>
+      </table>
 
-      <section className="mt-10">
-        <h2 className="font-mono text-xs uppercase tracking-widest text-teal">Education</h2>
-        <ul className="mt-3 space-y-1 text-sm text-ink/80">
-          {education.map((e) => (
-            <li key={e.school}>
-              <span className="text-brass">{e.school}</span>, {e.place} — {e.degree}
+      <h2>{t.education}</h2>
+      <ul className="school-list">
+        {education.map((item) => {
+          const copy = lang === "es" ? es.education[item.id as keyof typeof es.education] : null;
+          const school = copy?.school ?? item.school;
+          return (
+            <li key={item.id} className="school-line">
+              <SchoolLogo id={item.id} label={school} />
+              <span>
+                <b>{school}</b>, {copy?.place ?? item.place} — {copy?.degree ?? item.degree}
+              </span>
             </li>
-          ))}
-        </ul>
-      </section>
-    </main>
+          );
+        })}
+      </ul>
+
+      <p>
+        <Link href="/">{t.back}</Link>
+      </p>
+    </>
   );
 }
