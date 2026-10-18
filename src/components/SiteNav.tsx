@@ -40,3 +40,5 @@ export function SiteNav({ labels }: { labels: Ui["nav"] }) {
     </nav>
   );
 }
+
+export { default } from "./PortfolioNav";

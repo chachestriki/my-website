@@ -6,11 +6,17 @@ export const profile = {
   phone: "+34 608 253 656",
   linkedin: "https://www.linkedin.com/in/jdlabajos",
   github: "https://github.com/chachestriki",
+  site: "https://jdlabajos.com",
   tagline:
     "I build the plumbing between systems that were never meant to talk to each other.",
   summary:
     "Full-stack software engineer specializing in backend systems, hospitality integrations, and payment automation. I design scalable APIs and distributed services with Python, Docker, Kubernetes, PostgreSQL and cloud infrastructure — and increasingly, I put LLM agents on top of them.",
 };
+
+export const languages = [
+  { name: "Spanish", level: "native" },
+  { name: "English", level: "bilingual — B.S. completed at Texas A&M" },
+];
 
 export type Role = {
   id: string;

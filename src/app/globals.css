@@ -14,6 +14,9 @@
   --visited: #551a8b;
   --welcome: #c41212;
   --sidebar: #101018;
+  --chapter-bg: #f1efeb;
+  --chapter-fg: #14171a;
+  --chapter-accent: #8a6a33;
 }
 
 @theme inline {
