@@ -1,16 +1,16 @@
 export const profile = {
   name: "Juan Diego Gómez",
   title: "Full-Stack / Python Software Engineer",
-  location: "Madrid, España",
+  location: "Madrid, Spain",
   email: "jd.oficial111@gmail.com",
   phone: "+34 608 253 656",
+  linkedin: "https://www.linkedin.com/in/jdlabajos",
+  github: "https://github.com/chachestriki",
+  site: "https://jdlabajos.com",
   tagline:
     "I build the plumbing between systems that were never meant to talk to each other.",
   summary:
-    "Backend-leaning full-stack engineer working on hospitality integrations, payment automation and LLM tooling. I connect Opera Cloud (OHIP), Salesforce and FreedomPay with idempotent Python services on Kubernetes, and expose them to AI agents through MCP. Before that I founded and sold Vice Resell, a resale automation platform with 6,000+ users.",
-  github: "https://github.com/chachestriki",
-  linkedin: "https://www.linkedin.com/in/jdlabajos/",
-  site: "https://jdlabajos.com",
+    "Full-stack software engineer specializing in backend systems, hospitality integrations, and payment automation. I design scalable APIs and distributed services with Python, Docker, Kubernetes, PostgreSQL and cloud infrastructure — and increasingly, I put LLM agents on top of them.",
 };
 
 export const languages = [
@@ -35,12 +35,11 @@ export const roles: Role[] = [
     role: "Full Stack Software Engineer",
     period: "2026 – Present",
     summary:
-      "Own the integration architecture between Oracle Opera Cloud (OHIP) and Salesforce CRM across 100+ hotels and roughly 4.5M guest profiles, plus the AI tooling layer on top of it.",
+      "Enterprise hospitality integrations across the Oracle Opera Cloud ecosystem (OHIP) and Salesforce CRM, owning the architecture that connects PMS and CRM platforms.",
     highlights: [
-      "Own the Opera Cloud (OHIP) ↔ Salesforce integration: guest profiles, reservations and loyalty data synced in real time instead of by hand.",
-      "Built an MCP server that turns Oracle's official OpenAPI specs into 3,000+ permissioned tools, so LLM agents can run booking and guest operations without ever seeing the OAuth credentials.",
-      "Shipped ElevenLabs voice agents on top of that tool layer for staff- and guest-facing conversational flows.",
-      "Built streaming consumers for OTA reservation flows (Booking, Expedia, Hotelbeds, Mirai, Keytel) into Opera, with hashing and offset tracking so replays never double-book.",
+      "Designed and owned the integration architecture between Oracle Opera Cloud PMS (OHIP) and Salesforce CRM: real-time sync of guest profiles, reservations, loyalty data and customer lifecycle information.",
+      "Built an MCP tool layer exposing hotel operational systems to LLM agents via structured APIs, enabling agent-driven booking, guest and service operations.",
+      "Integrated ElevenLabs voice agents into hotel operations for real-time conversational staff-facing and guest-facing interfaces.",
     ],
     stack: ["Python", "OHIP", "Salesforce", "MCP", "ElevenLabs", "OCI"],
   },
@@ -50,11 +49,11 @@ export const roles: Role[] = [
     role: "Full Stack Software Engineer",
     period: "2023 – 2026",
     summary:
-      "Payment and reservation automation for international hotel chains including Marriott, Atlantis and Pestana.",
+      "Automation and payment systems for international hotel chains including Marriott, Atlantis and Pestana, focused on reservations and guest profile workflows.",
     highlights: [
-      "Automated credit-card check-in and deposit capture between FreedomPay and Opera Cloud, removing manual card handling at the front desk.",
-      "Built idempotent REST APIs and event-driven jobs (Docker + Kubernetes on OCI) that reconcile payments against folios in real time.",
-      "Shipped invoicing and tax pipelines for Homa Apartments and Pestana Hotels, replacing spreadsheet-based month-end work.",
+      "Designed Python services for credit-card check-in and deposit capture between FreedomPay and Opera Cloud PMS.",
+      "Built idempotent REST APIs and event-driven jobs (Docker + Kubernetes on OCI) for real-time reconciliation.",
+      "Created invoice and tax automation pipelines for hospitality groups including Homa Apartments and Pestana Hotels.",
     ],
     stack: ["Python", "FastAPI", "Kubernetes", "FreedomPay", "Opera Cloud", "PostgreSQL"],
   },
@@ -64,14 +63,14 @@ export const roles: Role[] = [
     role: "Founder / CTO",
     period: "2023 – 2026",
     summary:
-      "Founded, built and sold the resale automation platform behind Spain's largest reselling community: 6,000+ users, listing generation, pricing and negotiation messaging.",
+      "An AI-driven marketplace for second-hand clothes, with a warehouse, a shop, and software for pricing, listings, and buyer messages. It reached more than 10,000 users, and was acquired.",
     highlights: [
-      "Grew it to 6,000+ paying users and the biggest reselling community in Spain (5.0 ★ over 426 public reviews) before the 2026 acquisition.",
-      "Automated the marketplaces end to end — Vinted, Wallapop and Vestiaire — with a Chrome extension and crosslisting backend that publish, reprice and message from one inventory.",
-      "Built a RAG pipeline (FAISS over cleaned marketplace data + GPT-4 vision) that fills title, description, brand, category, colours and price from a photo.",
-      "Kept LLM output behind deterministic price and inventory checks, because generated text should never be the last thing between a user and their money.",
+      "Shipped LLM-powered systems combining OpenAI APIs with rule-based guardrails for reliability and controllability in production.",
+      "Engineered automation pipelines for listing generation, pricing optimization and messaging workflows.",
+      "Ran the warehouse, where the clothes were sorted, and the shop, where they hung on the racks. Both rooms are in the project pictures.",
+      "Grew to 10,000+ users before acquisition.",
     ],
-    stack: ["Python", "FastAPI", "FAISS", "OpenAI API", "Next.js", "Supabase", "Chrome MV3"],
+    stack: ["Python", "OpenAI API", "Marketplace APIs", "Automation"],
   },
   {
     id: "odyn",
@@ -79,31 +78,32 @@ export const roles: Role[] = [
     role: "Sales Engineer (Remote)",
     period: "2022 – 2023",
     summary:
-      "Technical side of a Silicon Valley call-intelligence product: speech-to-text, text-to-speech and meeting analysis across Zoom, Google Meet and Microsoft Teams.",
+      "Supported development and deployment of a speech-to-text and meeting summarisation product with Zoom and Teams integrations.",
     highlights: [
-      "Ran deployments and integration work for customers on three meeting platforms.",
-      "Turned what customers asked for in demos into requirements for the speech and sentiment pipelines.",
+      "Ran technical deployments and integration work for Zoom/Teams customers.",
+      "Bridged customer requirements and the engineering roadmap for STT pipelines.",
     ],
-    stack: ["Speech-to-text", "Text-to-speech", "Zoom API", "Teams API"],
+    stack: ["Speech-to-text", "Zoom API", "Teams API"],
   },
   {
     id: "lenovo",
     company: "Lenovo",
-    role: "Infrastructure Sales",
-    period: "2021",
+    role: "Student / Intern, Infrastructure and Solutions Group (Sales)",
+    period: "Jul 2022 – Aug 2022",
     summary:
-      "Data-centre infrastructure sales: servers, storage and networking for enterprise customers.",
+      "First internship, in Madrid. A month with the datacenter and infrastructure sales group, next to the people who sell servers, storage, and the rest of that stack.",
     highlights: [
-      "Sized and quoted server, storage and networking configurations against customer workloads.",
-      "First exposure to enterprise IT and to the buyers I now build integrations for.",
+      "Supported client managers and overlay teams as they lined up infrastructure opportunities in enterprise and public-sector accounts.",
+      "Watched a deal go through review: the product set, the pipeline, and the numbers the team was measured on.",
+      "Kept notes and the reporting tools tidy so the sales effort stayed coordinated.",
     ],
-    stack: ["Data-centre infrastructure", "Enterprise IT"],
+    stack: ["Infrastructure sales", "Datacenter", "Pipeline reporting"],
   },
 ];
 
 export const skills: { group: string; items: string[] }[] = [
   { group: "Backend", items: ["Python", "FastAPI", ".NET", "Flask", "REST APIs", "OAuth2"] },
-  { group: "Frontend", items: ["Angular", "Next.js", "JavaScript", "TypeScript"] },
+  { group: "Frontend", items: ["Angular", "JavaScript", "TypeScript"] },
   {
     group: "Infrastructure",
     items: ["Docker", "Kubernetes", "CI/CD", "Microservices", "Kafka"],
@@ -121,21 +121,120 @@ export const skills: { group: string; items: string[] }[] = [
       "MCP tool systems",
       "LLM agent workflows",
       "ElevenLabs speech pipelines",
-      "RAG / FAISS vector search",
+      "Retrieval pipelines",
     ],
   },
 ];
 
 export const education = [
   {
+    id: "tamu",
     school: "Texas A&M University",
     place: "College Station, TX",
     degree: "B.S. Computer Science and Business",
   },
   {
+    id: "uc3m",
     school: "Universidad Carlos III",
-    place: "Madrid, ESP",
-    degree: "B.S. Management & Technology — thesis on Instagram bot detection",
+    place: "Madrid, Spain",
+    degree: "B.S. Management & Technology",
+  },
+];
+
+export type Project = {
+  id: string;
+  name: string;
+  period: string;
+  where: string;
+  status: "Live" | "Shipped" | "Acquired";
+  summary: string;
+  points: string[];
+  stack: string[];
+  images?: { src: string; alt: string }[];
+  link?: { href: string; label: string };
+  keywords: string[];
+};
+
+export const projects: Project[] = [
+  {
+    id: "opera-salesforce",
+    name: "Opera Cloud ↔ Salesforce",
+    period: "2026 – Present",
+    where: "Room Mate Hospitality Group",
+    status: "Live",
+    summary:
+      "The integration architecture between Oracle Opera Cloud PMS (OHIP) and Salesforce CRM. Opera stays the source of truth for reservations, guest profiles, and folios. Salesforce gets that data, and sends lifecycle updates back.",
+    points: [
+      "Real-time sync of guest profiles, reservations, loyalty data, and customer lifecycle information, in both directions.",
+      "An OAuth2 and app-key gateway in front of Opera that normalizes payloads and lives with its rate limits.",
+    ],
+    stack: ["Python", "OHIP", "Salesforce", "OAuth2", "OCI"],
+    keywords: ["Opera Cloud", "OHIP", "Salesforce", "OAuth2", "Python", "OCI", "PMS", "CRM"],
+  },
+  {
+    id: "mcp-tools",
+    name: "Hotel MCP Tool Layer",
+    period: "2026 – Present",
+    where: "Room Mate Hospitality Group",
+    status: "Live",
+    summary:
+      "Hotel operations exposed to language-model agents as structured, permissioned tools, so an agent can book, look up a guest, or run a service request instead of handing it to a person.",
+    points: [
+      "Built the MCP tool layer on top of the same operational systems the PMS integration uses.",
+      "Tools stay narrow and explicit: the agent calls a function, it does not get a raw database.",
+    ],
+    stack: ["Python", "MCP", "OHIP", "Salesforce"],
+    keywords: ["MCP", "OHIP", "Salesforce", "Python", "PMS"],
+  },
+  {
+    id: "vice-resell",
+    name: "Vice Resell",
+    period: "2023 – 2026",
+    where: "Founder / CTO",
+    status: "Acquired",
+    summary:
+      "An AI assistant for a second-hand clothing business: pricing, listing generation, and negotiation messages. The pictures are the warehouse, where the clothes were sorted, and the shop, where they hung on the racks. More than 10,000 users, then acquired.",
+    points: [
+      "LLM features on the OpenAI API, with rule-based guardrails so production behavior stayed controllable.",
+      "Automation for listing copy, price updates, and buyer messages across resale marketplaces.",
+    ],
+    stack: ["Python", "OpenAI API", "Marketplace APIs"],
+    keywords: ["OpenAI API", "OpenAI", "LLM", "Python", "warehouse", "shop"],
+    images: [
+      {
+        src: "/projects/vice-resell-warehouse.jpg",
+        alt: "The Vice Resell warehouse: bags of second-hand clothes on the floor, with people sorting them.",
+      },
+      {
+        src: "/projects/vice-resell-racks.jpg",
+        alt: "The Vice Resell shop: racks packed with second-hand jackets and sweatshirts.",
+      },
+    ],
+    link: {
+      href: "https://whop.com/vice-resell/",
+      label: "Vice Resell on Whop",
+    },
+  },
+  {
+    id: "odyn",
+    name: "Meeting Notes for Zoom & Teams",
+    period: "2022 – 2023",
+    where: "Odyn AI",
+    status: "Shipped",
+    summary:
+      "Sales engineering for a speech-to-text and meeting-summary product. I ran deployments and kept customer requests tied to the engineering roadmap.",
+    points: [
+      "Technical deployments and integration work for Zoom and Microsoft Teams customers.",
+      "Translated what buyers needed into work the speech-to-text pipeline could actually do.",
+    ],
+    stack: ["Speech-to-text", "Zoom API", "Teams API"],
+    keywords: ["Speech-to-text", "speech-to-text", "Zoom", "Microsoft Teams", "Teams"],
+    images: [
+      {
+        src: "/projects/odyn-discord.png",
+        alt: "A Discord chat where Demo OdynAI summarizes Drew's sales call in English.",
+      },
+    ],
   },
 ];
 
@@ -248,7 +347,7 @@ export const boardNodes: BoardNode[] = [
     y: 38,
     roleId: "vice-resell",
     blurb:
-      "Where it started: resale marketplaces automated end-to-end — listing generation, pricing optimization and negotiation messaging for 6,000+ users.",
+      "Where it started: resale marketplaces automated end-to-end — listing generation, pricing optimization and negotiation messaging for 10,000+ users.",
   },
 ];
 
