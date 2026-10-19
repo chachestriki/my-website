@@ -376,26 +376,37 @@ body {
 }
 
 .shot {
-  margin: 0;
-  background: #dcdcdc;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #5a5a5a;
-  border-bottom: 2px solid #5a5a5a;
-  padding: 8px 8px 2px;
+  margin: 18px auto 6px;
+  width: min(100%, 280px);
+  justify-self: center;
+  background: #f4f1ea;
+  padding: 12px 12px 8px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 12px 18px rgba(0, 0, 0, 0.28),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+  transform: rotate(2.4deg);
 }
 
-.shot svg {
-  width: 100%;
-  height: auto;
+.shot img {
   display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: center 18%;
+  background: #111;
 }
 
 .shot figcaption {
-  margin-top: 4px;
+  margin: 10px 6px 6px;
+  min-height: 2.6em;
   text-align: center;
-  font-size: 13px;
-  font-style: italic;
+  font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.25;
+  color: #2c2c2c;
 }
 
 .about-hero {
