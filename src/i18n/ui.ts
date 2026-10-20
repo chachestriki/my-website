@@ -161,7 +161,7 @@ const en: Ui = {
     welcome: "Welcome",
     reached: "You have reached the personal web site of",
     engineer: "a full-stack software engineer in",
-    caption: "PMS, CRM, and payments, on one wire.",
+    caption: "Me, as God, playing the guitar.",
     features: "Features",
     news: "What's New",
     items: [
@@ -348,7 +348,7 @@ const es: Ui = {
     welcome: "Bienvenido",
     reached: "Has llegado a la página personal de",
     engineer: "ingeniero de software full stack en",
-    caption: "PMS, CRM y pagos, en un solo cable.",
+    caption: "Yo, de Dios, tocando la guitarra.",
     features: "Secciones",
     news: "Novedades",
     items: [

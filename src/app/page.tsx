@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ScreenShot } from "@/components/ScreenShot";
 import { profile } from "@/data/cv";
 import { es } from "@/i18n/es";
 import { getLang } from "@/i18n/lang";
@@ -28,7 +27,10 @@ export default async function Home() {
           <p>{tagline}</p>
         </div>
         <figure className="shot">
-          <ScreenShot />
+          <img
+            src="/about/god-guitar.png"
+            alt={ui[lang].about.portraitAlt}
+          />
           <figcaption>{t.caption}</figcaption>
         </figure>
       </div>
